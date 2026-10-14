@@ -21,6 +21,7 @@ import {
 import { LibraryStore, type LibraryState } from './core/library';
 import { DownloadManager } from './core/downloads';
 import { ProviderRuntime } from './core/runtime';
+import { JellyfinConnection } from './core/jellyfin-connection';
 import { platform } from './platform';
 import { useTVBackHandling } from './ui/focus';
 import { openFilmsManifest, openFilmsProvider } from './providers/open-films';
@@ -28,6 +29,11 @@ import {
   jsonLibraryManifest,
   jsonLibraryProvider,
 } from './providers/json-library';
+import {
+  jellyfinConfiguredManifest,
+  jellyfinManifest,
+  jellyfinProvider,
+} from './providers/jellyfin';
 
 export type Route =
   | {
@@ -59,7 +65,14 @@ const runtime = new ProviderRuntime(platform.storage, (url, options) =>
   platform.request(url, options),
 );
 const downloads = new DownloadManager(library, platform);
-const builtinManifests = [openFilmsManifest, jsonLibraryManifest];
+const jellyfin = new JellyfinConnection(platform.storage, (url, options) =>
+  platform.request(url, options),
+);
+const builtinManifests = [
+  openFilmsManifest,
+  jellyfinManifest,
+  jsonLibraryManifest,
+];
 interface AppContextValue {
   state: LibraryState;
   library: LibraryStore;
@@ -85,6 +98,7 @@ interface AppContextValue {
     settings: Record<string, SettingValue>,
   ): Promise<void>;
   setEnabled(id: string, enabled: boolean): Promise<void>;
+  disconnectJellyfin(): Promise<void>;
   uninstall(id: string): Promise<void>;
   toggleNotify(item: MediaItem): Promise<void>;
   checkUpdates(): Promise<void>;
@@ -128,6 +142,23 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
             await runtime.remove(record.manifest.id);
         if (enabled(openFilmsManifest.id))
           await runtime.register(openFilmsManifest, openFilmsProvider);
+        if (enabled(jellyfinManifest.id)) {
+          let settings: Record<string, SettingValue> = {};
+          try {
+            settings = await jellyfin.restore(
+              current.providerSettings[jellyfinManifest.id] ?? {},
+            );
+          } catch {
+            notify(
+              'Could not read your saved Jellyfin session. Reconnect in Providers.',
+            );
+          }
+          await runtime.register(
+            jellyfinConfiguredManifest(settings),
+            jellyfinProvider,
+            settings,
+          );
+        }
         if (enabled(jsonLibraryManifest.id)) {
           const settings =
             current.providerSettings[jsonLibraryManifest.id] ?? {};
@@ -384,6 +415,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     id: string,
     settings: Record<string, SettingValue>,
   ) {
+    if (id === jellyfinManifest.id) {
+      const saved = await jellyfin.connect(settings);
+      library.setProviderSettings(id, saved);
+      library.setProviderEnabled(id, true);
+      await configureProviders();
+      notify('Connected to Jellyfin as ' + saved.username);
+      return;
+    }
     if (id === jsonLibraryManifest.id && settings.catalogUrl) {
       const url = new URL(String(settings.catalogUrl));
       if (
@@ -398,6 +437,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     library.setProviderSettings(id, settings);
     await configureProviders();
     notify('Provider settings saved');
+  }
+  async function disconnectJellyfin() {
+    if (playback?.item.providerId === jellyfinManifest.id) setPlayback(null);
+    await jellyfin.disconnect();
+    library.setProviderSettings(jellyfinManifest.id, {});
+    await configureProviders();
+    notify('Disconnected from Jellyfin');
   }
   async function setEnabled(id: string, enabled: boolean) {
     library.setProviderEnabled(id, enabled);
@@ -437,6 +483,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         installPlugin,
         updateProviderSettings,
         setEnabled,
+        disconnectJellyfin,
         uninstall,
         toggleNotify,
         checkUpdates,

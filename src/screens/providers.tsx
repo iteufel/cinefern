@@ -34,6 +34,7 @@ import { Dialog, ConfirmDialog } from '../ui/dialog';
 import { colors, isTV, textSize } from '../ui/theme';
 import { useT } from '../ui/i18n';
 import { fetchTextDocument } from '../core/import-document';
+import { jellyfinManifest } from '../providers/jellyfin';
 
 export function ProvidersScreen() {
   const app = useApp();
@@ -46,6 +47,16 @@ export function ProvidersScreen() {
   const [urlDialog, setUrlDialog] = useState(false);
   const [bundleUrl, setBundleUrl] = useState('');
   const [urlError, setUrlError] = useState('');
+  const [settingsError, setSettingsError] = useState('');
+  const isJellyfin = editing?.id === jellyfinManifest.id;
+  const jellyfinConnected =
+    !!app.state.providerSettings[jellyfinManifest.id]?.userId;
+  function closeSettings() {
+    if (busy) return;
+    setEditing(null);
+    setValues({});
+    setSettingsError('');
+  }
   async function loadUrl() {
     setBusy(true);
     setUrlError('');
@@ -81,16 +92,33 @@ export function ProvidersScreen() {
         ?.settings ??
       {};
     setValues({ ...defaults, ...settings });
+    setSettingsError('');
     setEditing(manifest);
   }
   async function saveSettings() {
     if (!editing) return;
     setBusy(true);
+    setSettingsError('');
     try {
       await app.updateProviderSettings(editing.id, values);
       setEditing(null);
+      setValues({});
     } catch (error) {
+      setSettingsError(String(error).replace(/^Error: /, ''));
       app.notify(String(error).replace(/^Error: /, ''));
+    } finally {
+      setBusy(false);
+    }
+  }
+  async function disconnect() {
+    setBusy(true);
+    setSettingsError('');
+    try {
+      await app.disconnectJellyfin();
+      setEditing(null);
+      setValues({});
+    } catch (error) {
+      setSettingsError(String(error).replace(/^Error: /, ''));
     } finally {
       setBusy(false);
     }
@@ -223,6 +251,14 @@ export function ProvidersScreen() {
                 />
               </View>
               <Text style={s.description}>{manifest.description}</Text>
+              {manifest.id === jellyfinManifest.id && (
+                <Text style={s.description}>
+                  {jellyfinConnected
+                    ? 'Saved connection · ' +
+                      app.state.providerSettings[manifest.id]?.username
+                    : 'Add your server address and Jellyfin account to get started.'}
+                </Text>
+              )}
               {record?.error && (
                 <Text style={{ color: colors.warning, fontSize: textSize(13) }}>
                   {record.error}
@@ -264,7 +300,9 @@ export function ProvidersScreen() {
                   compact
                   onPress={() => void edit(manifest)}
                 >
-                  {t.settings}
+                  {manifest.id === jellyfinManifest.id && !jellyfinConnected
+                    ? 'Connect'
+                    : t.settings}
                 </Button>
                 {plugin && (
                   <Button
@@ -406,7 +444,7 @@ export function ProvidersScreen() {
       </Dialog>
       <Dialog
         visible={!!editing}
-        onClose={() => setEditing(null)}
+        onClose={closeSettings}
         title={editing?.name ?? t.settings}
       >
         {editing && (
@@ -470,13 +508,40 @@ export function ProvidersScreen() {
                 native apps use their own network transport.
               </Text>
             )}
+            {isJellyfin && (
+              <Text style={s.description}>
+                Sign in with your Jellyfin account. Include the server’s base
+                path if it has one. Use HTTPS when connecting over the internet.
+              </Text>
+            )}
+            {!!settingsError && (
+              <Text
+                accessibilityRole="alert"
+                style={{ color: colors.danger, fontSize: textSize(14) }}
+              >
+                {settingsError}
+              </Text>
+            )}
             {!!editing.settings?.length && (
               <Button
                 variant="primary"
                 disabled={busy}
                 onPress={() => void saveSettings()}
               >
-                Save settings
+                {busy
+                  ? isJellyfin
+                    ? 'Connecting…'
+                    : 'Saving…'
+                  : isJellyfin
+                    ? jellyfinConnected
+                      ? 'Sign in again'
+                      : 'Connect to Jellyfin'
+                    : 'Save settings'}
+              </Button>
+            )}
+            {isJellyfin && jellyfinConnected && (
+              <Button disabled={busy} onPress={() => void disconnect()}>
+                Disconnect from Jellyfin
               </Button>
             )}
             {editing.homepage && !isTV && (

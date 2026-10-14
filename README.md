@@ -20,7 +20,7 @@ with a new identity and a TypeScript provider system. Its source lives in
 - Real file downloads, offline playback, cancellation, retry, and removal.
 - A new TypeScript provider SDK, installable bundles, settings, lifecycle hooks, and ordered stream resolvers.
 - Responsive desktop/tablet/phone layouts, English/German navigation, data import/export, and appearance preferences.
-- Included Open Cinema films and a configurable JSON library provider.
+- Included Jellyfin, Open Cinema, and JSON library providers.
 - Apple TV interface with Siri Remote focus/navigation, fullscreen playback, and provider installation by URL.
 
 ## Run
@@ -88,6 +88,11 @@ npx eas-cli build --platform all --profile production
 `eas.json` also includes development and preview profiles. Physical iOS distribution and store releases require your own signing credentials.
 
 ## Providers
+
+**Jellyfin is included by default.** Open **Providers → Jellyfin → Connect**, enter your server URL,
+username, and password, then choose **Connect to Jellyfin**. Your movies, shows, seasons, and episodes
+appear in the library feeds and search on desktop, mobile, and Apple TV.
+See [Jellyfin setup](docs/jellyfin.md) for server URLs, playback, and connection management.
 
 Providers are written in TypeScript against [@cinefern/provider-sdk](packages/provider-sdk/src/index.ts).
 Build the included example:

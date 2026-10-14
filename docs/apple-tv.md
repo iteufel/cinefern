@@ -1,5 +1,8 @@
 # Cinefern for Apple TV
 
+The built-in **Jellyfin** provider connects directly from the TV: open **Providers → Jellyfin → Connect** and enter
+the server address and account credentials. See [Jellyfin setup](jellyfin.md) for playback and network requirements.
+
 The Apple TV app shares the React Native screens, provider runtime, watchlist, history, downloads, and TypeScript SDK with the other platforms. It has its own tvOS application (`io.github.iteufel.cinefern.tv`), TV navigation and player, layered app icons, and static top-shelf artwork.
 
 ## Build and run

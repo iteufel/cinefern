@@ -14,7 +14,7 @@
         "UIBackgroundModes": ["audio"],
         "ITSAppUsesNonExemptEncryption": false,
         "NSLocalNetworkUsageDescription": "Connect to media providers and catalogs on your local network.",
-        "NSAppTransportSecurity": { "NSAllowsLocalNetworking": true }
+        "NSAppTransportSecurity": { "NSAllowsArbitraryLoads": true }
       }
     },
     "plugins": [

@@ -6,6 +6,7 @@ const {
   protocol,
   net,
   shell,
+  safeStorage,
 } = require('electron');
 const fs = require('node:fs');
 const fsp = require('node:fs/promises');
@@ -41,6 +42,24 @@ const cleanId = (id) => {
     throw new Error('Invalid download id.');
   return id;
 };
+function secretPath(key) {
+  if (
+    typeof key !== 'string' ||
+    !/^cinefern\.secret\.[a-zA-Z0-9._-]{1,160}$/.test(key)
+  )
+    throw new Error('Invalid credential key.');
+  return path.join(app.getPath('userData'), 'credentials', key + '.bin');
+}
+function requireCredentialStorage() {
+  if (
+    !safeStorage.isEncryptionAvailable() ||
+    (process.platform === 'linux' &&
+      safeStorage.getSelectedStorageBackend() === 'basic_text')
+  )
+    throw new Error(
+      'System credential storage is unavailable. Unlock your system keyring and try again.',
+    );
+}
 function networkUrl(value) {
   const url = new URL(value);
   if (
@@ -100,6 +119,31 @@ function createWindow() {
   });
 }
 app.whenReady().then(async () => {
+  handle('secret:get', async (_, key) => {
+    let encrypted;
+    try {
+      encrypted = await fsp.readFile(secretPath(key));
+    } catch (error) {
+      if (error.code === 'ENOENT') return null;
+      throw error;
+    }
+    requireCredentialStorage();
+    return safeStorage.decryptString(encrypted);
+  });
+  handle('secret:set', async (_, key, value) => {
+    const target = secretPath(key);
+    if (typeof value !== 'string' || value.length > 16_000)
+      throw new Error('Invalid credential value.');
+    requireCredentialStorage();
+    await fsp.mkdir(path.dirname(target), { recursive: true, mode: 0o700 });
+    await fsp.writeFile(target + '.tmp', safeStorage.encryptString(value), {
+      mode: 0o600,
+    });
+    await fsp.rename(target + '.tmp', target);
+  });
+  handle('secret:remove', async (_, key) => {
+    await fsp.rm(secretPath(key), { force: true });
+  });
   protocol.handle('cinefern', async (request) => {
     const url = new URL(request.url);
     if (url.hostname === 'stream') {

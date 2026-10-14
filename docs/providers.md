@@ -3,6 +3,9 @@
 The v1 provider API is new. NW.js plugins, extractors, and Angular extensions are not compatible.
 Providers compile to a single JSON file ending in `.cfprovider`; the same file runs on desktop, Android, iOS, and Apple TV.
 
+Jellyfin is a built-in TypeScript provider using this API, with a host-managed sign-in flow and per-server network access.
+See [Jellyfin setup](jellyfin.md) and [its implementation](../src/providers/jellyfin.ts).
+
 ## Start from the example
 
 Copy `providers/example`, change its manifest id and network origins, and implement the methods you need.

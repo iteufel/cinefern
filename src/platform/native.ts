@@ -19,14 +19,18 @@ export const platform: PlatformServices = {
       key.startsWith('cinefern.secret.')
         ? SecureStore.getItemAsync(key)
         : AsyncStorage.getItem(key),
-    set: (key, value) =>
-      key.startsWith('cinefern.secret.')
-        ? SecureStore.setItemAsync(key, value)
-        : AsyncStorage.setItem(key, value),
-    remove: (key) =>
-      key.startsWith('cinefern.secret.')
-        ? SecureStore.deleteItemAsync(key)
-        : AsyncStorage.removeItem(key),
+    async set(key, value) {
+      if (key.startsWith('cinefern.secret.')) {
+        await SecureStore.setItemAsync(key, value);
+        // Enumerate a marker, never the secret, so resetting the app also clears Keychain entries.
+        await AsyncStorage.setItem(key, 'secure');
+      } else await AsyncStorage.setItem(key, value);
+    },
+    async remove(key) {
+      if (key.startsWith('cinefern.secret.'))
+        await SecureStore.deleteItemAsync(key);
+      await AsyncStorage.removeItem(key);
+    },
     async keys() {
       return [...(await AsyncStorage.getAllKeys())];
     },

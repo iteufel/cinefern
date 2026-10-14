@@ -6,6 +6,9 @@ import type {
 } from './types';
 
 interface DesktopBridge {
+  getSecret(key: string): Promise<string | null>;
+  setSecret(key: string, value: string): Promise<void>;
+  removeSecret(key: string): Promise<void>;
   platform: string;
   request(url: string, options?: HttpOptions): Promise<HttpResponse>;
   download(request: DownloadRequest): Promise<string>;
@@ -53,12 +56,21 @@ export const platform: PlatformServices = {
   name: bridge?.platform ?? 'Web',
   storage: {
     async get(key) {
+      if (bridge && key.startsWith('cinefern.secret.'))
+        return bridge.getSecret(key);
       return localStorage.getItem(key);
     },
     async set(key, value) {
+      if (bridge && key.startsWith('cinefern.secret.')) {
+        await bridge.setSecret(key, value);
+        localStorage.setItem(key, 'secure');
+        return;
+      }
       localStorage.setItem(key, value);
     },
     async remove(key) {
+      if (bridge && key.startsWith('cinefern.secret.'))
+        await bridge.removeSecret(key);
       localStorage.removeItem(key);
     },
     async keys() {

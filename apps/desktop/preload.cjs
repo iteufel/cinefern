@@ -1,5 +1,8 @@
 const { contextBridge, ipcRenderer } = require('electron');
 contextBridge.exposeInMainWorld('cinefern', {
+  getSecret: (key) => ipcRenderer.invoke('secret:get', key),
+  setSecret: (key, value) => ipcRenderer.invoke('secret:set', key, value),
+  removeSecret: (key) => ipcRenderer.invoke('secret:remove', key),
   platform:
     process.platform === 'darwin'
       ? 'macOS'

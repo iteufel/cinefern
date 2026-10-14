@@ -12,7 +12,9 @@
       "supportsTablet": true,
       "infoPlist": {
         "UIBackgroundModes": ["audio"],
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSLocalNetworkUsageDescription": "Connect to Jellyfin and other media servers on your local network.",
+        "NSAppTransportSecurity": { "NSAllowsArbitraryLoads": true }
       }
     },
     "android": {
@@ -30,6 +32,7 @@
       "name": "Cinefern"
     },
     "plugins": [
+      "./plugins/with-provider-network.cjs",
       [
         "expo-video",
         {
