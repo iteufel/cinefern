@@ -412,11 +412,12 @@ export function SearchScreen() {
   const [more, setMore] = useState<MediaItem[]>([]);
   const [cursors, setCursors] = useState<Record<string, string>>({});
   const [loadingMore, setLoadingMore] = useState(false);
+  const [agentQuery, setAgentQuery] = useState('');
   useEffect(() => {
     const timer = setTimeout(() => setDebounced(app.searchQuery.trim()), 350);
     return () => clearTimeout(timer);
   }, [app.searchQuery]);
-  const records = app.runtime
+  const candidates = app.runtime
     .all()
     .filter(
       (p) =>
@@ -424,12 +425,28 @@ export function SearchScreen() {
         (!providerId || p.manifest.id === providerId) &&
         (!p.manifest.adult || app.state.settings.showAdult),
     );
+  const agentSignature = JSON.stringify([debounced, providerId, type]);
+  const agentProviders = candidates.filter(
+    (p) => p.manifest.permissions.agent !== undefined,
+  );
+  const records = candidates.filter(
+    (p) =>
+      p.manifest.permissions.agent === undefined ||
+      agentQuery === agentSignature,
+  );
+  useEffect(
+    () => () => {
+      for (const record of agentProviders) app.agent.cancel(record.manifest.id);
+    },
+    [app.agent, app.searchQuery, providerId, type],
+  );
   const key = JSON.stringify([
     'search',
     app.providerRevision,
     debounced,
     providerId,
     type,
+    agentQuery,
   ]);
   const query = useAsync(key, async () => {
     if (!debounced)
@@ -465,6 +482,12 @@ export function SearchScreen() {
       failures,
     };
   });
+  function searchWithAgents() {
+    if (!app.searchQuery.trim()) return;
+    setDebounced(app.searchQuery.trim());
+    setAgentQuery(JSON.stringify([app.searchQuery.trim(), providerId, type]));
+    query.retry();
+  }
   useEffect(() => {
     setMore([]);
     setCursors(query.data?.cursors ?? {});
@@ -515,8 +538,23 @@ export function SearchScreen() {
         onChange={app.setSearchQuery}
         placeholder={t.searchPlaceholder}
         icon={Search}
+        onSubmit={agentProviders.length ? searchWithAgents : undefined}
         style={{ marginBottom: 18 }}
       />
+      {!!agentProviders.length && (
+        <View style={{ gap: 10, marginBottom: 18, alignItems: 'flex-start' }}>
+          <Button
+            disabled={query.loading || !app.searchQuery.trim()}
+            onPress={searchWithAgents}
+          >
+            Search with agents
+          </Button>
+          <Text style={ui.muted}>
+            Agent providers run when you press this button or submit your
+            search. Uses your AI service credits.
+          </Text>
+        </View>
+      )}
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}

@@ -8,4 +8,4 @@ config.resolver.sourceExts = config.resolver.sourceExts.flatMap((extension) => [
   `tv.${extension}`,
   extension,
 ]);
-module.exports = config;
+module.exports = require('../../scripts/metro-agent.cjs')(config);

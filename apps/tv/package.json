@@ -14,6 +14,7 @@
     "@nyariv/sandboxjs": "^0.9.7",
     "@react-native-async-storage/async-storage": "^2.2.0",
     "expo": "~57.0.28",
+    "expo-crypto": "~57.0.4",
     "expo-file-system": "~57.0.7",
     "expo-linear-gradient": "~57.0.2",
     "expo-secure-store": "~57.0.4",

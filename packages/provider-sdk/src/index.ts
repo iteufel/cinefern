@@ -101,7 +101,12 @@ export interface ProviderManifest {
   color?: string;
   adult?: boolean;
   capabilities: ProviderCapability[];
-  permissions: { network: string[]; storage?: boolean };
+  permissions: {
+    network: string[];
+    storage?: boolean;
+    /** Paid, user-enabled agent access. An empty array requests reasoning only. */
+    agent?: AgentTool[];
+  };
   settings?: ProviderSetting[];
 }
 export interface HttpResponse {
@@ -116,6 +121,8 @@ export interface HttpOptions {
   body?: string;
 }
 export interface ProviderContext {
+  /** Host-owned media agent. Model vendors, credentials, and Deep Agents stay private. */
+  agent: ProviderAgent;
   /** Requests are restricted to exact origins declared in the manifest. */
   http: { request(url: string, options?: HttpOptions): Promise<HttpResponse> };
   storage: {
@@ -125,6 +132,52 @@ export interface ProviderContext {
   };
   settings: Readonly<Record<string, SettingValue>>;
   log(message: string): void;
+}
+export type AgentTool = 'web-search' | 'browser';
+export interface AgentCitation {
+  title: string;
+  url: string;
+}
+export interface AgentUsage {
+  modelCalls: number;
+  toolCalls: number;
+  searchCalls: number;
+}
+export interface AgentResult {
+  text: string;
+  /** Untrusted JSON extracted by the agent; validate before using as application data. */
+  data: Record<string, unknown>;
+  /** Sources observed by host tools, rather than links invented by the model. */
+  citations: AgentCitation[];
+  usage: AgentUsage;
+}
+export interface AgentMediaMatch {
+  title: string;
+  type: 'movie' | 'series' | 'episode';
+  year?: number;
+  overview?: string;
+  url: string;
+}
+export interface AgentSearchResult extends AgentResult {
+  items: AgentMediaMatch[];
+}
+export interface AgentResolveRequest {
+  instructions: string;
+  url?: string;
+  /** Send only the metadata needed for this task, never passwords or access tokens. */
+  context?: string;
+}
+export interface ProviderAgent {
+  status(): Promise<{
+    available: boolean;
+    reason?: string;
+    tools: AgentTool[];
+  }>;
+  search(request: {
+    query: string;
+    limit?: number;
+  }): Promise<AgentSearchResult>;
+  resolve(request: AgentResolveRequest): Promise<AgentResult>;
 }
 export interface SearchOptions {
   query: string;
@@ -242,6 +295,17 @@ export function assertManifest(
         'Network permissions must be exact HTTP(S) origins, without paths or wildcards.',
       );
   }
+  if (
+    manifest.permissions.agent !== undefined &&
+    (!Array.isArray(manifest.permissions.agent) ||
+      manifest.permissions.agent.length > 2 ||
+      new Set(manifest.permissions.agent).size !==
+        manifest.permissions.agent.length ||
+      manifest.permissions.agent.some(
+        (tool) => !['web-search', 'browser'].includes(tool),
+      ))
+  )
+    throw new Error('Unknown or duplicate agent permission.');
   if (manifest.color && !/^#[0-9a-fA-F]{6}$/.test(manifest.color))
     throw new Error('Provider color must be a hex color.');
   if (manifest.homepage) {

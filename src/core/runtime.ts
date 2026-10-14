@@ -17,6 +17,7 @@ import {
   type SettingValue,
 } from '@cinefern/provider-sdk';
 import type { KeyValueStorage } from './library';
+import type { MediaAgentService } from '../agent/service';
 
 export interface ProviderRecord {
   manifest: ProviderManifest;
@@ -31,9 +32,11 @@ export type HttpTransport = (
 export class ProviderRuntime {
   private records = new Map<string, ProviderRecord>();
   private cache = new Map<string, { until: number; value: unknown }>();
+  private leases = new Map<string, { active: boolean }>();
   constructor(
     private storage: KeyValueStorage,
     private transport: HttpTransport,
+    private agent?: MediaAgentService,
   ) {}
   all(): ProviderRecord[] {
     return [...this.records.values()];
@@ -50,6 +53,7 @@ export class ProviderRuntime {
   context(
     manifest: ProviderManifest,
     settings: Record<string, SettingValue>,
+    isActive = () => true,
   ): ProviderContext {
     const defaults = Object.fromEntries(
       (manifest.settings ?? []).map((s) => [s.id, s.default ?? '']),
@@ -61,6 +65,21 @@ export class ProviderRuntime {
       return 'cinefern.provider.' + manifest.id + '.' + name;
     };
     return {
+      agent: this.agent
+        ? this.agent.forProvider(manifest, isActive)
+        : {
+            status: async () => ({
+              available: false,
+              reason: 'Agent service is unavailable.',
+              tools: [],
+            }),
+            search: async () => {
+              throw new Error('Agent service is unavailable.');
+            },
+            resolve: async () => {
+              throw new Error('Agent service is unavailable.');
+            },
+          },
       settings: Object.freeze({ ...defaults, ...settings }),
       http: {
         request: async (url, options) => {
@@ -98,7 +117,8 @@ export class ProviderRuntime {
     builtin = true,
   ) {
     assertManifest(manifest);
-    const context = this.context(manifest, settings);
+    const lease = { active: false };
+    const context = this.context(manifest, settings, () => lease.active);
     const provider = definition.create(context);
     if (!provider || typeof provider.getItem !== 'function')
       throw new Error('A provider must implement getItem.');
@@ -118,12 +138,22 @@ export class ProviderRuntime {
         if (typeof provider[method as keyof MediaProvider] !== 'function')
           throw new Error('Provider is missing ' + method + '.');
     const previous = this.records.get(manifest.id);
+    const previousLease = this.leases.get(manifest.id);
+    if (previousLease) previousLease.active = false;
+    lease.active = true;
+    this.leases.set(manifest.id, lease);
+    this.agent?.cancel(manifest.id);
     if (previous) await previous.provider.dispose?.();
     this.cache.clear();
     const record: ProviderRecord = { manifest, provider, builtin };
     this.records.set(manifest.id, record);
     try {
-      if (provider.initialize) await this.withTimeout(provider.initialize());
+      if (provider.initialize)
+        await this.withTimeout(
+          provider.initialize(),
+          manifest.permissions.agent ? 130_000 : 25_000,
+          () => this.agent?.cancel(manifest.id),
+        );
     } catch (error) {
       record.error = 'Provider initialization failed: ' + String(error);
     }
@@ -142,6 +172,10 @@ export class ProviderRuntime {
     return this.register(bundle.manifest, definition, settings, false);
   }
   async remove(id: string) {
+    const lease = this.leases.get(id);
+    if (lease) lease.active = false;
+    this.leases.delete(id);
+    this.agent?.cancel(id);
     const record = this.records.get(id);
     this.records.delete(id);
     this.cache.clear();
@@ -150,16 +184,20 @@ export class ProviderRuntime {
   clearCache() {
     this.cache.clear();
   }
-  private async withTimeout<T>(promise: Promise<T>): Promise<T> {
+  private async withTimeout<T>(
+    promise: Promise<T>,
+    milliseconds = 25_000,
+    onTimeout?: () => void,
+  ): Promise<T> {
     let timer: ReturnType<typeof setTimeout> | undefined;
     try {
       return await Promise.race([
         promise,
         new Promise<never>((_, reject) => {
-          timer = setTimeout(
-            () => reject(new Error('Provider request timed out.')),
-            25_000,
-          );
+          timer = setTimeout(() => {
+            onTimeout?.();
+            reject(new Error('Provider request timed out.'));
+          }, milliseconds);
         }),
       ]);
     } finally {
@@ -183,6 +221,8 @@ export class ProviderRuntime {
       Promise.resolve(
         (fn as (...a: unknown[]) => unknown).apply(record.provider, args),
       ),
+      record.manifest.permissions.agent ? 130_000 : 25_000,
+      () => this.agent?.cancel(id),
     );
     const validateItems = (items: MediaItem[]) => {
       if (!Array.isArray(items) || items.length > 10_000)

@@ -119,6 +119,7 @@ function createWindow() {
   });
 }
 app.whenReady().then(async () => {
+  require('./agent.cjs').registerAgentHandlers(handle);
   handle('secret:get', async (_, key) => {
     let encrypted;
     try {

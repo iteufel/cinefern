@@ -1,4 +1,6 @@
 import type { HttpOptions, HttpResponse } from '@cinefern/provider-sdk';
+import { portableAgentPlatform } from '../agent/transport';
+import type { BrowserPage } from '../agent/browser';
 import type {
   PlatformServices,
   DownloadProgress,
@@ -6,6 +8,13 @@ import type {
 } from './types';
 
 interface DesktopBridge {
+  agentRequest(
+    id: string,
+    url: string,
+    options: HttpOptions,
+  ): Promise<HttpResponse>;
+  agentBrowse(id: string, url: string): Promise<BrowserPage>;
+  agentCancel(id: string): Promise<void>;
   getSecret(key: string): Promise<string | null>;
   setSecret(key: string, value: string): Promise<void>;
   removeSecret(key: string): Promise<void>;
@@ -28,6 +37,22 @@ declare global {
   }
 }
 const bridge = typeof window === 'undefined' ? undefined : window.cinefern;
+async function agentIPC<T>(
+  signal: AbortSignal,
+  action: (id: string) => Promise<T>,
+): Promise<T> {
+  if (signal.aborted) throw new Error('Agent run cancelled.');
+  const id = crypto.randomUUID();
+  const cancel = () => {
+    void bridge?.agentCancel(id);
+  };
+  signal.addEventListener('abort', cancel, { once: true });
+  try {
+    return await action(id);
+  } finally {
+    signal.removeEventListener('abort', cancel);
+  }
+}
 let database: Promise<IDBDatabase> | undefined;
 function db(): Promise<IDBDatabase> {
   database ??= new Promise((resolve, reject) => {
@@ -53,11 +78,21 @@ async function transaction<T>(
   });
 }
 export const platform: PlatformServices = {
+  agent: bridge
+    ? {
+        request: (url, options, signal) =>
+          agentIPC(signal, (id) => bridge.agentRequest(id, url, options)),
+        browse: (url, signal) =>
+          agentIPC(signal, (id) => bridge.agentBrowse(id, url)),
+      }
+    : portableAgentPlatform(globalThis.fetch),
   name: bridge?.platform ?? 'Web',
   storage: {
     async get(key) {
       if (bridge && key.startsWith('cinefern.secret.'))
         return bridge.getSecret(key);
+      if (key.startsWith('cinefern.secret.agent.'))
+        return sessionStorage.getItem(key);
       return localStorage.getItem(key);
     },
     async set(key, value) {
@@ -66,11 +101,18 @@ export const platform: PlatformServices = {
         localStorage.setItem(key, 'secure');
         return;
       }
+      if (key.startsWith('cinefern.secret.agent.')) {
+        sessionStorage.setItem(key, value);
+        localStorage.setItem(key, 'session');
+        return;
+      }
       localStorage.setItem(key, value);
     },
     async remove(key) {
       if (bridge && key.startsWith('cinefern.secret.'))
         await bridge.removeSecret(key);
+      if (key.startsWith('cinefern.secret.agent.'))
+        sessionStorage.removeItem(key);
       localStorage.removeItem(key);
     },
     async keys() {

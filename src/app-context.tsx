@@ -23,6 +23,8 @@ import { DownloadManager } from './core/downloads';
 import { ProviderRuntime } from './core/runtime';
 import { JellyfinConnection } from './core/jellyfin-connection';
 import { platform } from './platform';
+import { MediaAgentService } from './agent/service';
+import { revokeAgentGrant } from './agent/settings';
 import { useTVBackHandling } from './ui/focus';
 import { openFilmsManifest, openFilmsProvider } from './providers/open-films';
 import {
@@ -61,8 +63,11 @@ export interface Playback {
   startAt: number;
 }
 const library = new LibraryStore(platform.storage);
-const runtime = new ProviderRuntime(platform.storage, (url, options) =>
-  platform.request(url, options),
+const agent = new MediaAgentService(platform.storage, platform.agent);
+const runtime = new ProviderRuntime(
+  platform.storage,
+  (url, options) => platform.request(url, options),
+  agent,
 );
 const downloads = new DownloadManager(library, platform);
 const jellyfin = new JellyfinConnection(platform.storage, (url, options) =>
@@ -77,6 +82,7 @@ interface AppContextValue {
   state: LibraryState;
   library: LibraryStore;
   runtime: ProviderRuntime;
+  agent: MediaAgentService;
   downloads: DownloadManager;
   route: Route;
   navigate(route: Route): void;
@@ -406,6 +412,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   async function installPlugin(bundle: ProviderBundle) {
     if (builtinManifests.some((m) => m.id === bundle.manifest.id))
       throw new Error('A plugin cannot replace a built-in provider.');
+    agent.cancel(bundle.manifest.id);
+    await revokeAgentGrant(platform.storage, bundle.manifest.id);
     await runtime.install(bundle);
     library.install(bundle);
     setRevision((r) => r + 1);
@@ -450,6 +458,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     await configureProviders();
   }
   async function uninstall(id: string) {
+    await revokeAgentGrant(platform.storage, id);
     await runtime.remove(id);
     library.removePlugin(id);
     setRevision((r) => r + 1);
@@ -465,6 +474,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         state,
         library,
         runtime,
+        agent,
         downloads,
         route: stack[stack.length - 1]!,
         navigate,

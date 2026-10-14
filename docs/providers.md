@@ -119,6 +119,7 @@ names for the interpreter. Async functions, closures, and JSON catalogs are cove
 Providers execute in SandboxJS, with an execution quota and request timeout. They receive only the SDK context:
 
 - `context.http.request` returns a plain response with status, ok, headers, and body.
+- `context.agent` exposes host-managed media search and data resolution, with explicit user grants and no API key access. See [media agent setup and provider API](media-agent.md).
 - `context.storage` stores strings under a separate provider namespace.
 - `context.settings` contains declared defaults and the user's configured values.
 - `context.log` writes a provider-prefixed diagnostic.
@@ -130,3 +131,6 @@ Install providers from authors you trust. The interpreter reduces access but is 
 Keep provider requests bounded and avoid background loops. Rebuild and reinstall a bundle to update it.
 
 This repository implements local bundle installation and does not operate a public plugin marketplace.
+
+For a provider using the media agent, build `npm run plugin:agent-example` and install the resulting
+Media Research bundle. It demonstrates both `context.agent.search` and `context.agent.resolve`.

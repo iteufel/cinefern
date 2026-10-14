@@ -17,6 +17,7 @@ jobs:
       - run: npm ci
       - run: npm run check
       - run: npm run plugin:example
+      - run: npm run plugin:agent-example
       - run: npm run build:mobile
       - run: npm run build:tvos
       - uses: actions/upload-artifact@v4

@@ -1,5 +1,6 @@
 import type { HttpOptions, HttpResponse } from '@cinefern/provider-sdk';
 import type { KeyValueStorage } from '../core/library';
+import type { AgentPlatform } from '../agent/transport';
 
 export interface DownloadRequest {
   id: string;
@@ -11,6 +12,7 @@ export interface DownloadProgress {
   totalBytes?: number;
 }
 export interface PlatformServices {
+  agent: AgentPlatform;
   storage: KeyValueStorage;
   request(url: string, options?: HttpOptions): Promise<HttpResponse>;
   readTextFile(): Promise<{ name: string; text: string } | null>;

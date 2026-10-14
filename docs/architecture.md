@@ -29,6 +29,10 @@ flowchart TD
   App --> Downloads[Download manager]
   Interpreter --> Context[Scoped HTTP, storage, settings]
   Context --> Host[Platform services]
+  Context --> Agent[Wrapped media agent]
+  Agent --> DeepAgents[Deep Agents JS]
+  DeepAgents --> AI[OpenAI / xAI / OpenRouter]
+  DeepAgents --> Browser[Platform browser / reader]
   Downloads --> Host
 ```
 
@@ -37,6 +41,7 @@ flowchart TD
 - `App.tsx` contains boot, onboarding, screen selection, and the error boundary.
 - `src/app-context.tsx` connects navigation, provider lifecycle, watchlists, and playback.
 - `src/core` holds platform-independent storage, provider validation/runtime, and download state.
+- `src/agent` owns the wrapped Deep Agents service, credentials/settings, model/search adapters, tool boundaries, and portable page reader. See [media agent](media-agent.md).
 - `src/screens` and `src/ui` contain the responsive React Native interface.
 - `src/player` chooses native or desktop/web playback through Metro platform resolution.
 - `src/platform` implements persistence, file picking, networking, downloads, and export.

@@ -6,7 +6,13 @@
     "output": "release",
     "buildResources": "assets"
   },
-  "files": ["main.cjs", "preload.cjs", "package.json", "!node_modules/**/*"],
+  "files": [
+    "main.cjs",
+    "preload.cjs",
+    "agent.cjs",
+    "package.json",
+    "!node_modules/**/*"
+  ],
   "extraResources": [
     {
       "from": "dist",

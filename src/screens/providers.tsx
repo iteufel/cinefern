@@ -293,6 +293,9 @@ export function ProvidersScreen() {
                       ).length
                     }{' '}
                     network origins
+                    {manifest.permissions.agent !== undefined
+                      ? ' · Agent access requested'
+                      : ''}
                   </Text>
                 </View>
                 <Button
@@ -415,6 +418,17 @@ export function ProvidersScreen() {
                 ? 'Separate provider storage is enabled.'
                 : 'No provider storage access.'}
             </Text>
+            {pending.manifest.permissions.agent !== undefined && (
+              <Text style={s.description}>
+                Requests the media agent
+                {pending.manifest.permissions.agent.length
+                  ? ' with ' + pending.manifest.permissions.agent.join(' and ')
+                  : ' for reasoning'}
+                . Enable access in Settings after installation. Agent requests
+                can use your paid AI credits; plugins never receive your API
+                keys.
+              </Text>
+            )}
             <Text style={s.description}>
               Install providers from authors you trust. Provider code runs in an
               interpreter with declared network access.

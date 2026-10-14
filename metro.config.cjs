@@ -1,2 +1,4 @@
 const { getDefaultConfig } = require('expo/metro-config');
-module.exports = getDefaultConfig(__dirname);
+module.exports = require('./scripts/metro-agent.cjs')(
+  getDefaultConfig(__dirname),
+);

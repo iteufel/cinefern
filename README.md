@@ -21,6 +21,7 @@ with a new identity and a TypeScript provider system. Its source lives in
 - A new TypeScript provider SDK, installable bundles, settings, lifecycle hooks, and ordered stream resolvers.
 - Responsive desktop/tablet/phone layouts, English/German navigation, data import/export, and appearance preferences.
 - Included Jellyfin, Open Cinema, and JSON library providers.
+- Provider media agents backed by Deep Agents JS, with OpenAI/xAI/OpenRouter keys, web search, and browser tools.
 - Apple TV interface with Siri Remote focus/navigation, fullscreen playback, and provider installation by URL.
 
 ## Run
@@ -105,6 +106,11 @@ Then use **Providers → Install provider** to choose the generated `.cfprovider
 On Apple TV, enter the URL of a hosted bundle and review its permissions before installation.
 Edit the example's manifest origins and catalog URL to connect your own server.
 See [the provider guide](docs/providers.md) for capabilities, pagination, lifecycle, settings, and media sources.
+
+**Media agent:** add your API keys and model in **Settings → Media agent**, enable the tools, and grant
+access to individual providers. Plugins call `context.agent.search` and `context.agent.resolve` without
+receiving your keys. Build `npm run plugin:agent-example` for a working research provider.
+See [the media agent guide](docs/media-agent.md) for usage, browser differences, limits, and verification.
 
 **Your Library** accepts a JSON catalog matching [the example format](providers/example/catalog.json).
 Set its catalog URL in Providers; saving grants this included provider access to that origin.

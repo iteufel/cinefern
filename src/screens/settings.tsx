@@ -35,6 +35,7 @@ import { ConfirmDialog, Dialog } from '../ui/dialog';
 import { colors, isTV, textSize } from '../ui/theme';
 import { useT } from '../ui/i18n';
 import { fetchTextDocument } from '../core/import-document';
+import { AgentSettingsPanel } from './agent-settings';
 
 function Row({
   label,
@@ -378,6 +379,7 @@ export function SettingsScreen() {
           </ScrollView>
         </Row>
       </Group>
+      <AgentSettingsPanel />
       <Group title="Open a stream">
         <Text style={s.description}>
           Play an HTTP file or HLS playlist{!isTV && ', or a DASH manifest'}.
@@ -550,8 +552,8 @@ export function SettingsScreen() {
         title="Import library from URL"
       >
         <Text style={s.description}>
-          Host your exported Cinefern library on your server and enter its URL to
-          merge saved titles and history.
+          Host your exported Cinefern library on your server and enter its URL
+          to merge saved titles and history.
         </Text>
         <Input
           value={importUrl}
@@ -584,6 +586,7 @@ export function SettingsScreen() {
               for (const download of [...app.state.downloads])
                 await app.downloads.remove(download.id);
               app.setPlayback(null);
+              app.agent.cancel();
               await app.library.reset();
               await app.configureProviders();
               app.navigate({ name: 'home' });

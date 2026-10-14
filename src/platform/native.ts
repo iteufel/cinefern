@@ -4,6 +4,8 @@ import * as FileSystem from 'expo-file-system/legacy';
 import { Linking, Platform } from 'react-native';
 import type { PlatformServices } from './types';
 import { readTextFile, exportText } from './files';
+import { fetch as expoFetch } from 'expo/fetch';
+import { portableAgentPlatform } from '../agent/transport';
 
 const directory = () => {
   const base = Platform.isTV
@@ -13,6 +15,7 @@ const directory = () => {
   return base + 'media/';
 };
 export const platform: PlatformServices = {
+  agent: portableAgentPlatform(expoFetch as typeof fetch),
   name: Platform.isTV ? 'Apple TV' : Platform.OS === 'ios' ? 'iOS' : 'Android',
   storage: {
     get: (key) =>

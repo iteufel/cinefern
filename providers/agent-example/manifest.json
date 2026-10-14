@@ -1,0 +1,15 @@
+{
+  "id": "org.cinefern.media-research",
+  "name": "Media Research",
+  "version": "1.0.0",
+  "apiVersion": 1,
+  "description": "An example TypeScript provider that researches films through Cinefern's media agent. Adds searchable metadata; playback sources are supplied by your other providers.",
+  "author": "Cinefern contributors",
+  "capabilities": ["search"],
+  "permissions": {
+    "network": [],
+    "storage": true,
+    "agent": ["web-search", "browser"]
+  },
+  "color": "#86D9AB"
+}
