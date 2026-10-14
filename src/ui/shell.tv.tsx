@@ -24,7 +24,7 @@ import {
   type LucideIcon,
 } from 'lucide-react-native';
 import { useApp, type Route } from '../app-context';
-import { colors } from './theme';
+import { colors, radius } from './theme';
 import { useT } from './i18n';
 import { Button } from './components';
 import { Pressable } from './focus';
@@ -144,14 +144,13 @@ const s = StyleSheet.create({
     gap: 32,
     paddingHorizontal: 52,
     paddingVertical: 22,
-    borderBottomWidth: 1,
-    borderColor: colors.border,
+    backgroundColor: colors.background,
   },
   brand: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   mark: {
     width: 48,
     height: 48,
-    borderRadius: 15,
+    borderRadius: 17,
     backgroundColor: colors.accent,
     alignItems: 'center',
     justifyContent: 'center',
@@ -168,12 +167,12 @@ const s = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
-    paddingHorizontal: 18,
+    paddingHorizontal: 22,
     paddingVertical: 16,
-    borderRadius: 12,
+    borderRadius: radius.pill,
     borderColor: 'transparent',
   },
-  selected: { backgroundColor: colors.accentDark },
+  selected: { backgroundColor: colors.raised },
   tabText: { fontSize: 22, color: colors.muted, fontWeight: '600' },
   content: { paddingHorizontal: 72, paddingTop: 34, paddingBottom: 70 },
   hint: { color: colors.subtle, fontSize: 20, marginTop: 40 },
@@ -184,10 +183,10 @@ const s = StyleSheet.create({
     maxWidth: '80%',
     paddingHorizontal: 30,
     paddingVertical: 20,
-    borderRadius: 14,
+    borderRadius: radius.hero,
     backgroundColor: colors.raised,
-    borderColor: colors.accent,
-    borderWidth: 2,
+    borderColor: '#ffffff24',
+    borderWidth: 1,
   },
   toastText: { fontSize: 24, color: colors.text, textAlign: 'center' },
 });

@@ -88,6 +88,20 @@ npx eas-cli build --platform all --profile production
 
 `eas.json` also includes development and preview profiles. Physical iOS distribution and store releases require your own signing credentials.
 
+## Project website
+
+The GitHub Pages landing page is in `website/`. Preview or build it without
+installing application dependencies:
+
+```sh
+npm run site:dev        # http://127.0.0.1:4173/cinefern/
+npm run site:build      # static website in dist-site/
+```
+
+The **GitHub Pages** workflow deploys website changes from `main` after
+**Settings → Pages → Source** is set to **GitHub Actions**.
+See [website development and deployment](docs/website.md) for details.
+
 ## Providers
 
 **Jellyfin is included by default.** Open **Providers → Jellyfin → Connect**, enter your server URL,

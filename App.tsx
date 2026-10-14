@@ -15,7 +15,7 @@ import { AppProvider, useApp } from './src/app-context';
 import { Shell, Logo } from './src/ui/shell';
 import { Button, Chip, Loading, styles as ui } from './src/ui/components';
 import { Dialog } from './src/ui/dialog';
-import { colors, isTV } from './src/ui/theme';
+import { colors, radius, isTV } from './src/ui/theme';
 import { useT } from './src/ui/i18n';
 import {
   HomeScreen,
@@ -158,8 +158,13 @@ function Welcome() {
           </View>
         </View>
         <View style={[s.welcomeMain, width < 820 && { paddingVertical: 45 }]}>
-          <Text style={ui.eyebrow}>A NEW CHAPTER FOR CINEFERN</Text>
-          <Text style={[s.welcomeTitle, width < 820 && { fontSize: 43 }]}>
+          <Text style={ui.eyebrow}>WELCOME TO CINEFERN</Text>
+          <Text
+            style={[
+              s.welcomeTitle,
+              width < 820 && { fontSize: 46, lineHeight: 51 },
+            ]}
+          >
             {t.welcome}
           </Text>
           <Text
@@ -204,15 +209,10 @@ function Welcome() {
                     {
                       transform: [
                         {
-                          rotate:
-                            index === 0
-                              ? '-7deg'
-                              : index === 2
-                                ? '7deg'
-                                : '0deg',
+                          translateY: index === 1 ? 0 : 12,
                         },
                       ],
-                      marginTop: index === 1 ? 0 : 25,
+                      marginTop: 0,
                     },
                   ]}
                 >
@@ -225,7 +225,7 @@ function Welcome() {
                     resizeMode="cover"
                   />
                   <LinearGradient
-                    colors={['#00000000', '#0c101599']}
+                    colors={['#00000000', '#10101266']}
                     style={StyleSheet.absoluteFill}
                   />
                 </View>
@@ -273,11 +273,12 @@ const s = StyleSheet.create({
   },
   welcomeTitle: {
     color: colors.text,
-    fontSize: 66,
-    fontWeight: '600',
-    letterSpacing: -2.5,
+    fontSize: 74,
+    lineHeight: 80,
+    fontWeight: '700',
+    letterSpacing: -3,
     textAlign: 'center',
-    maxWidth: 730,
+    maxWidth: 680,
   },
   welcomeDescription: {
     color: colors.muted,
@@ -309,7 +310,7 @@ const s = StyleSheet.create({
     maxWidth: 200,
     height: 155,
     overflow: 'hidden',
-    borderRadius: 10,
+    borderRadius: radius.card,
     borderWidth: 1,
     borderColor: colors.border,
     backgroundColor: colors.surface,

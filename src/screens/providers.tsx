@@ -1,6 +1,12 @@
 import { Toggle } from '../ui/focus';
 import React, { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  useWindowDimensions,
+} from 'react-native';
 import {
   ArrowDown,
   ArrowUp,
@@ -31,7 +37,7 @@ import {
   styles as ui,
 } from '../ui/components';
 import { Dialog, ConfirmDialog } from '../ui/dialog';
-import { colors, isTV, textSize } from '../ui/theme';
+import { colors, radius, isTV, textSize } from '../ui/theme';
 import { useT } from '../ui/i18n';
 import { fetchTextDocument } from '../core/import-document';
 import { jellyfinManifest } from '../providers/jellyfin';
@@ -39,6 +45,7 @@ import { jellyfinManifest } from '../providers/jellyfin';
 export function ProvidersScreen() {
   const app = useApp();
   const t = useT();
+  const compact = useWindowDimensions().width < 600;
   const [pending, setPending] = useState<ProviderBundle | null>(null);
   const [editing, setEditing] = useState<ProviderManifest | null>(null);
   const [values, setValues] = useState<Record<string, SettingValue>>({});
@@ -172,11 +179,16 @@ export function ProvidersScreen() {
           </Button>
         }
       />
-      <View style={s.intro}>
+      <View
+        style={[
+          s.intro,
+          compact && { flexDirection: 'column', alignItems: 'flex-start' },
+        ]}
+      >
         <View style={s.introIcon}>
           <Code2 size={25} color={colors.accent} />
         </View>
-        <View style={{ flex: 1, gap: 8 }}>
+        <View style={{ flex: compact ? undefined : 1, gap: 8 }}>
           <Text style={s.introTitle}>A player that stays open.</Text>
           <Text style={s.description}>
             Write a provider in TypeScript, build a .cfprovider bundle, and use
@@ -206,7 +218,10 @@ export function ProvidersScreen() {
             .all()
             .find((p) => p.manifest.id === manifest.id);
           return (
-            <View key={manifest.id} style={s.card}>
+            <View
+              key={manifest.id}
+              style={[s.card, compact && { padding: 20 }]}
+            >
               <View style={s.cardHeader}>
                 <View
                   style={[
@@ -226,6 +241,7 @@ export function ProvidersScreen() {
                   <View
                     style={{
                       flexDirection: 'row',
+                      flexWrap: 'wrap',
                       alignItems: 'center',
                       gap: 10,
                     }}
@@ -591,17 +607,17 @@ const s = StyleSheet.create({
     flexDirection: 'row',
     gap: 20,
     padding: 25,
-    backgroundColor: '#15221f',
-    borderRadius: 12,
+    backgroundColor: colors.surface,
+    borderRadius: radius.card,
     borderWidth: 1,
-    borderColor: '#2c4139',
+    borderColor: colors.border,
     marginBottom: 26,
     alignItems: 'center',
   },
   introIcon: {
     padding: 16,
     backgroundColor: colors.accentDark,
-    borderRadius: 12,
+    borderRadius: radius.card,
   },
   introTitle: {
     fontSize: textSize(17),
@@ -615,18 +631,18 @@ const s = StyleSheet.create({
     lineHeight: textSize(22),
   },
   card: {
-    borderRadius: 12,
+    borderRadius: radius.card,
     borderWidth: 1,
     borderColor: colors.border,
     backgroundColor: colors.surface,
-    padding: 23,
+    padding: 26,
     gap: 17,
   },
   cardHeader: { flexDirection: 'row', alignItems: 'center', gap: 15 },
   providerIcon: {
     height: 49,
     width: 49,
-    borderRadius: 12,
+    borderRadius: radius.card,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -635,7 +651,7 @@ const s = StyleSheet.create({
   capability: {
     paddingVertical: 5,
     paddingHorizontal: 8,
-    borderRadius: 5,
+    borderRadius: radius.pill,
     backgroundColor: colors.raised,
   },
   capabilityText: { color: colors.muted, fontSize: textSize(10) },

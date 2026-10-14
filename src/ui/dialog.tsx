@@ -2,7 +2,7 @@ import { Pressable, useTVBackHandling } from './focus';
 import React from 'react';
 import { Modal, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { X } from 'lucide-react-native';
-import { colors, isTV, textSize } from './theme';
+import { colors, radius, glass, isTV, textSize } from './theme';
 import { Button } from './components';
 export function Dialog({
   visible,
@@ -97,7 +97,7 @@ export function ConfirmDialog({
 const s = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: '#000000aa',
+    backgroundColor: '#00000080',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
@@ -106,15 +106,15 @@ const s = StyleSheet.create({
     width: '100%',
     maxWidth: 530,
     maxHeight: '85%',
-    borderRadius: 15,
-    backgroundColor: colors.sidebar,
+    borderRadius: radius.hero,
+    ...glass,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: '#ffffff24',
     overflow: 'hidden',
   },
   header: {
     paddingHorizontal: 24,
-    paddingVertical: 17,
+    paddingVertical: 20,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
@@ -123,8 +123,8 @@ const s = StyleSheet.create({
   },
   title: {
     color: colors.text,
-    fontSize: textSize(20),
-    fontWeight: '600',
+    fontSize: textSize(22),
+    fontWeight: '700',
     flex: 1,
     letterSpacing: -0.5,
   },

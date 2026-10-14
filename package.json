@@ -31,6 +31,8 @@
     "tvos:assets": "node scripts/tv-assets.mjs",
     "native:generate": "expo prebuild",
     "build": "expo export --platform web",
+    "site:build": "node scripts/build-site.mjs",
+    "site:dev": "node scripts/serve-site.mjs",
     "build:mobile": "expo export --platform ios --platform android --output-dir dist-mobile",
     "desktop": "node scripts/desktop-dev.mjs",
     "desktop:pack": "npm run build && electron-builder --dir",
@@ -40,7 +42,7 @@
     "check": "npm run typecheck && npm test",
     "plugin:build": "node scripts/build-provider.mjs",
     "plugin:example": "npm run plugin:build -- providers/example/provider.ts providers/example/manifest.json",
-    "format": "prettier --write src packages providers scripts tests apps/desktop apps/tv/*.ts apps/tv/*.json apps/tv/*.cjs App.tsx index.ts *.json *.cjs README.md docs assets/ATTRIBUTION.md .github/workflows",
+    "format": "prettier --write src packages providers scripts tests apps/desktop apps/tv/*.ts apps/tv/*.json apps/tv/*.cjs App.tsx index.ts *.json *.cjs README.md docs website assets/ATTRIBUTION.md .github/workflows",
     "plugin:agent-example": "node scripts/build-provider.mjs providers/agent-example/provider.ts providers/agent-example/manifest.json",
     "test:agent-desktop": "electron scripts/smoke-agent.cjs"
   },

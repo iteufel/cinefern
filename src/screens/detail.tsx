@@ -36,7 +36,7 @@ import {
   SectionHeader,
   styles as ui,
 } from '../ui/components';
-import { colors, time, isTV, textSize } from '../ui/theme';
+import { colors, radius, time, isTV, textSize } from '../ui/theme';
 import { useT } from '../ui/i18n';
 import { useAsync } from '../ui/use-async';
 import { imageSource } from '../ui/artwork';
@@ -179,13 +179,13 @@ export function DetailScreen() {
           />
         )}
         <LinearGradient
-          colors={['#0c1015f5', '#0c1015a0', '#0c101540']}
+          colors={['#101012db', '#10101285', '#10101220']}
           start={{ x: 0, y: 0.5 }}
           end={{ x: 1, y: 0.5 }}
           style={StyleSheet.absoluteFill}
         />
         <LinearGradient
-          colors={['#0c101500', '#0c1015f8']}
+          colors={['#10101200', '#101012ed']}
           style={StyleSheet.absoluteFill}
         />
         <View style={[s.heroContent, { padding: width < 820 ? 22 : 32 }]}>
@@ -390,20 +390,20 @@ export function DetailScreen() {
 const s = StyleSheet.create({
   hero: {
     overflow: 'hidden',
-    borderRadius: 12,
+    borderRadius: radius.hero,
     backgroundColor: colors.surface,
     justifyContent: 'flex-end',
   },
   heroContent: { maxWidth: 670, gap: 15 },
   title: {
     color: colors.text,
-    fontSize: textSize(48),
+    fontSize: textSize(54),
     fontWeight: '600',
     letterSpacing: -1.5,
   },
-  meta: { color: '#bac5d0', fontSize: textSize(12) },
+  meta: { color: '#d1d1d6', fontSize: textSize(12) },
   overview: {
-    color: '#acb8c4',
+    color: '#c4c4cc',
     lineHeight: textSize(24),
     fontSize: textSize(14),
     maxWidth: 570,
@@ -413,7 +413,7 @@ const s = StyleSheet.create({
     gap: 10,
     alignItems: 'center',
     padding: 18,
-    borderRadius: 10,
+    borderRadius: radius.card,
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
@@ -423,7 +423,7 @@ const s = StyleSheet.create({
     fontSize: textSize(17),
     fontWeight: '600',
   },
-  episodeImage: { width: 135, height: 78, borderRadius: 6 },
+  episodeImage: { width: 135, height: 78, borderRadius: 12 },
   episodeTitle: {
     fontSize: textSize(14),
     fontWeight: '600',
@@ -445,7 +445,7 @@ const s = StyleSheet.create({
   infoLabel: {
     color: colors.subtle,
     fontSize: textSize(9),
-    letterSpacing: 1.7,
+    letterSpacing: 0.5,
   },
   infoValue: {
     color: colors.muted,
@@ -456,7 +456,7 @@ const s = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    borderRadius: 9,
+    borderRadius: radius.control,
     padding: 15,
     backgroundColor: colors.surface,
     minWidth: 220,

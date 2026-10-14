@@ -1,4 +1,4 @@
-import { Platform } from 'react-native';
+import { Platform, type ViewStyle } from 'react-native';
 
 export const isTV = Platform.isTV;
 // TV uses larger type at the same logical resolution for comfortable couch viewing.
@@ -6,20 +6,37 @@ export const textSize = (size: number) =>
   isTV ? Math.max(18, size * 1.5) : size;
 
 export const colors = {
-  background: '#0c1015',
-  sidebar: '#10151b',
-  surface: '#151c24',
-  raised: '#1c2530',
-  border: '#26303b',
-  text: '#eef0f3',
-  muted: '#8895a5',
-  subtle: '#566373',
-  accent: '#a4e3c6',
-  accentDark: '#122e26',
-  warning: '#e7bc78',
-  danger: '#f09b9b',
+  background: '#101012',
+  sidebar: '#18181b',
+  surface: '#1c1c1f',
+  raised: '#2c2c30',
+  border: '#ffffff12',
+  text: '#f5f5f7',
+  muted: '#a1a1aa',
+  subtle: '#8e8e98',
+  accent: '#ade8c9',
+  accentDark: '#203a2d',
+  warning: '#f1c77b',
+  danger: '#ff9c9c',
+  glass: '#242427e8',
+  selection: '#ffffff12',
+  separator: '#ffffff0a',
 };
-export const font = { regular: 'System', mono: 'monospace' };
+export const font = {
+  regular: 'System',
+  mono: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+};
+
+// CSS glass on desktop; a legible translucent material on native platforms.
+// Keeping this web-only avoids adding a native blur dependency to tvOS.
+type GlassStyle = ViewStyle & { backdropFilter?: string };
+export const glass: GlassStyle = {
+  backgroundColor: colors.glass,
+  ...(Platform.OS === 'web'
+    ? { backdropFilter: 'blur(28px) saturate(150%)' }
+    : {}),
+};
+export const radius = { control: 14, card: 22, hero: 28, pill: 999 };
 export function time(seconds: number): string {
   if (!Number.isFinite(seconds)) return '0:00';
   const value = Math.max(0, Math.floor(seconds));

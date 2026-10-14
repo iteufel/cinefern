@@ -23,7 +23,7 @@ import {
 } from 'lucide-react-native';
 import type { MediaItem } from '@cinefern/provider-sdk';
 import { useApp } from '../app-context';
-import { colors, time, isTV, textSize } from './theme';
+import { colors, radius, time, isTV, textSize } from './theme';
 import { Pressable, FocusRegion } from './focus';
 import { useT } from './i18n';
 import { imageSource } from './artwork';
@@ -60,6 +60,7 @@ export function Button({
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={label}
+      accessibilityState={{ disabled: !!disabled }}
       disabled={disabled}
       hasTVPreferredFocus={isTV && preferredFocus}
       onPress={onPress}
@@ -71,7 +72,8 @@ export function Button({
         variant === 'primary' && styles.primary,
         variant === 'ghost' && styles.ghost,
         variant === 'danger' && styles.danger,
-        (pressed || hover) && { opacity: 0.8 },
+        hover && !disabled && { opacity: 0.88 },
+        pressed && !disabled && { opacity: 0.75 },
         disabled && { opacity: 0.4 },
         style,
       ]}
@@ -105,9 +107,13 @@ export function Chip({
       accessibilityRole="button"
       accessibilityState={{ selected }}
       onPress={onPress}
-      style={[styles.chip, selected && styles.selectedChip]}
+      style={({ pressed }) => [
+        styles.chip,
+        selected && styles.selectedChip,
+        pressed && { opacity: 0.7 },
+      ]}
     >
-      <Text style={[styles.chipText, selected && { color: colors.accent }]}>
+      <Text style={[styles.chipText, selected && { color: colors.text }]}>
         {children}
       </Text>
     </Pressable>
@@ -244,7 +250,8 @@ export function Input({
       style={[
         styles.inputWrap,
         style,
-        isTV && focused && { borderColor: colors.accent, borderWidth: 3 },
+        focused && { borderColor: colors.accent },
+        isTV && focused && { borderWidth: 3 },
       ]}
     >
       {Icon && <Icon size={18} color={colors.muted} />}
@@ -283,87 +290,101 @@ export function Card({
   const saved = library.isSaved(item);
   return (
     <View style={{ width, gap: 11 }}>
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={item.title}
-        onHoverIn={() => setHover(true)}
-        onHoverOut={() => setHover(false)}
-        onFocus={() => setHover(true)}
-        onBlur={() => setHover(false)}
-        onLongPress={isTV ? () => toggleSave(item) : undefined}
-        accessibilityHint={
-          isTV
-            ? 'Select for details. Hold Select to save or remove from your watchlist.'
-            : undefined
-        }
-        onPress={() =>
-          navigate(
-            item.type === 'collection'
-              ? {
-                  name: 'collection',
-                  providerId: item.providerId,
-                  id: item.id,
-                  title: item.title,
-                }
-              : item.type === 'person'
+      <View>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={item.title}
+          onHoverIn={() => setHover(true)}
+          onHoverOut={() => setHover(false)}
+          onFocus={() => setHover(true)}
+          onBlur={() => setHover(false)}
+          onLongPress={isTV ? () => toggleSave(item) : undefined}
+          accessibilityHint={
+            isTV
+              ? 'Select for details. Hold Select to save or remove from your watchlist.'
+              : undefined
+          }
+          onPress={() =>
+            navigate(
+              item.type === 'collection'
                 ? {
-                    name: 'person',
+                    name: 'collection',
                     providerId: item.providerId,
                     id: item.id,
                     title: item.title,
                   }
-                : { name: 'item', item },
-          )
-        }
-        style={[
-          styles.cardImage,
-          {
-            height: width * (landscape ? 0.59 : 1.2),
-            borderColor: hover ? colors.accent : colors.border,
-          },
-        ]}
-      >
-        {item.poster && !failed ? (
-          <Image
-            source={imageSource(item.poster)}
-            resizeMode="cover"
-            style={[StyleSheet.absoluteFill, { width: '100%', height: '100%' }]}
-            onError={() => setFailed(true)}
-          />
-        ) : (
-          <View style={[styles.center, { flex: 1 }]}>
-            <Film color={colors.subtle} size={40} />
-            <Text style={styles.muted}>{item.title}</Text>
-          </View>
-        )}
-        <View
+                : item.type === 'person'
+                  ? {
+                      name: 'person',
+                      providerId: item.providerId,
+                      id: item.id,
+                      title: item.title,
+                    }
+                  : { name: 'item', item },
+            )
+          }
           style={[
-            StyleSheet.absoluteFill,
-            { backgroundColor: hover ? '#00000040' : '#00000012' },
+            styles.cardImage,
+            {
+              height: width * (landscape ? 0.59 : 1.4),
+              borderColor: hover ? colors.accent : colors.border,
+            },
           ]}
-        />
-        {item.type === 'series' && (
-          <View style={styles.cardBadge}>
-            <Text style={styles.badgeText}>SERIES</Text>
-          </View>
-        )}
-        {hover && (
-          <View style={styles.cardPlay}>
-            <Play
-              size={23}
-              fill={colors.background}
-              color={colors.background}
+        >
+          {item.poster && !failed ? (
+            <Image
+              source={imageSource(item.poster)}
+              resizeMode="cover"
+              style={[
+                StyleSheet.absoluteFill,
+                { width: '100%', height: '100%' },
+              ]}
+              onError={() => setFailed(true)}
             />
-          </View>
-        )}
+          ) : (
+            <View style={[styles.center, { flex: 1 }]}>
+              <Film color={colors.subtle} size={40} />
+              <Text style={styles.muted}>{item.title}</Text>
+            </View>
+          )}
+          <View
+            style={[
+              StyleSheet.absoluteFill,
+              { backgroundColor: hover ? '#00000040' : '#00000012' },
+            ]}
+          />
+          {item.type === 'series' && (
+            <View style={styles.cardBadge}>
+              <Text style={styles.badgeText}>SERIES</Text>
+            </View>
+          )}
+          {hover && (
+            <View style={styles.cardPlay}>
+              <Play
+                size={23}
+                fill={colors.background}
+                color={colors.background}
+              />
+            </View>
+          )}
+          {progress !== undefined && (
+            <View style={styles.progressTrack}>
+              <View
+                style={{
+                  height: 3,
+                  backgroundColor: colors.accent,
+                  width: `${Math.min(100, Math.max(0, progress * 100))}%`,
+                }}
+              />
+            </View>
+          )}
+        </Pressable>
         {!isTV && (
           <Pressable
             accessibilityRole="button"
             accessibilityLabel={(saved ? 'Remove ' : 'Save ') + item.title}
-            onPress={(e) => {
-              e.stopPropagation();
-              toggleSave(item);
-            }}
+            accessibilityState={{ selected: saved }}
+            onPress={() => toggleSave(item)}
             style={styles.bookmark}
           >
             {saved ? (
@@ -373,18 +394,7 @@ export function Card({
             )}
           </Pressable>
         )}
-        {progress !== undefined && (
-          <View style={styles.progressTrack}>
-            <View
-              style={{
-                height: 3,
-                backgroundColor: colors.accent,
-                width: `${Math.min(100, Math.max(0, progress * 100))}%`,
-              }}
-            />
-          </View>
-        )}
-      </Pressable>
+      </View>
       <View style={{ gap: 5 }}>
         <Text numberOfLines={1} style={styles.cardTitle}>
           {item.title}
@@ -428,7 +438,7 @@ export function MediaRow({
           contentContainerStyle={{
             gap: isTV ? 28 : 18,
             padding: isTV ? 8 : 0,
-            paddingBottom: 4,
+            paddingBottom: 8,
           }}
         >
           {items.map((item) => (
@@ -472,35 +482,44 @@ export const styles = StyleSheet.create({
     gap: 9,
     paddingHorizontal: isTV ? 26 : 19,
     paddingVertical: isTV ? 18 : 13,
-    borderRadius: 9,
+    minHeight: 46,
+    borderRadius: radius.pill,
     backgroundColor: colors.raised,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: 'transparent',
   },
   compact: {
     paddingVertical: isTV ? 14 : 9,
     paddingHorizontal: isTV ? 20 : 12,
-    borderRadius: 8,
+    minHeight: isTV ? 54 : 40,
+    minWidth: 40,
+    borderRadius: radius.pill,
   },
   primary: { backgroundColor: colors.accent, borderColor: colors.accent },
   ghost: { backgroundColor: 'transparent', borderColor: 'transparent' },
   danger: { backgroundColor: '#2d1e23', borderColor: '#493039' },
-  buttonText: { fontSize: textSize(13), fontWeight: '600' },
-  chip: {
-    paddingHorizontal: isTV ? 24 : 15,
-    paddingVertical: isTV ? 14 : 9,
-    borderRadius: 7,
-    borderWidth: 1,
-    borderColor: colors.border,
+  buttonText: {
+    fontSize: textSize(14),
+    fontWeight: '600',
+    letterSpacing: -0.2,
   },
-  selectedChip: { backgroundColor: colors.accentDark, borderColor: '#38564a' },
-  chipText: { color: colors.muted, fontSize: textSize(12), fontWeight: '500' },
+  chip: {
+    paddingHorizontal: isTV ? 24 : 18,
+    paddingVertical: isTV ? 14 : 9,
+    minHeight: 40,
+    borderRadius: radius.pill,
+    borderWidth: 1,
+    borderColor: 'transparent',
+    backgroundColor: colors.surface,
+  },
+  selectedChip: { backgroundColor: colors.raised, borderColor: '#ffffff20' },
+  chipText: { color: colors.muted, fontSize: textSize(13), fontWeight: '600' },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', gap: 15 },
   sectionTitle: {
     color: colors.text,
-    fontSize: textSize(19),
-    fontWeight: '600',
-    letterSpacing: -0.4,
+    fontSize: textSize(23),
+    fontWeight: '700',
+    letterSpacing: -0.7,
   },
   muted: { color: colors.muted, fontSize: textSize(13) },
   pageHeader: {
@@ -508,17 +527,17 @@ export const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: 20,
     alignItems: 'center',
-    marginBottom: 28,
+    marginBottom: 24,
   },
   pageTitle: {
     color: colors.text,
-    fontSize: textSize(33),
-    letterSpacing: -1.1,
-    fontWeight: '600',
+    fontSize: textSize(38),
+    letterSpacing: -1.3,
+    fontWeight: '700',
   },
   eyebrow: {
-    color: colors.accent,
-    letterSpacing: 2.2,
+    color: colors.muted,
+    letterSpacing: 1.1,
     fontSize: textSize(10),
     fontWeight: '600',
   },
@@ -537,8 +556,8 @@ export const styles = StyleSheet.create({
   emptyIcon: {
     width: 64,
     height: 64,
-    borderRadius: 18,
-    backgroundColor: colors.accentDark,
+    borderRadius: radius.card,
+    backgroundColor: colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 5,
@@ -553,21 +572,22 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 10,
     alignItems: 'center',
-    borderRadius: 8,
+    borderRadius: radius.control,
     borderWidth: 1,
     borderColor: colors.border,
-    backgroundColor: colors.surface,
+    backgroundColor: colors.raised,
     paddingHorizontal: 14,
   },
   input: {
     color: colors.text,
     fontSize: textSize(14),
-    paddingVertical: 13,
+    paddingVertical: 12,
+    minHeight: 44,
     flex: 1,
     minWidth: 0,
   },
   cardImage: {
-    borderRadius: 11,
+    borderRadius: 16,
     overflow: 'hidden',
     backgroundColor: colors.surface,
     borderWidth: 1,
@@ -579,8 +599,8 @@ export const styles = StyleSheet.create({
     position: 'absolute',
     left: 10,
     top: 10,
-    borderRadius: 4,
-    backgroundColor: '#0c1015cc',
+    borderRadius: 6,
+    backgroundColor: '#101012b3',
     paddingHorizontal: 7,
     paddingVertical: 4,
   },
@@ -593,7 +613,7 @@ export const styles = StyleSheet.create({
   cardPlay: {
     width: 48,
     height: 48,
-    backgroundColor: colors.accent,
+    backgroundColor: colors.text,
     borderRadius: 24,
     alignItems: 'center',
     justifyContent: 'center',
@@ -602,8 +622,12 @@ export const styles = StyleSheet.create({
     position: 'absolute',
     top: 9,
     right: 9,
-    backgroundColor: '#0c1015cc',
-    borderRadius: 7,
+    backgroundColor: '#101012b3',
+    borderRadius: radius.pill,
+    minWidth: 36,
+    minHeight: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
     padding: 8,
   },
   progressTrack: {

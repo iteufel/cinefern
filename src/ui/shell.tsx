@@ -24,9 +24,12 @@ import {
   Tv,
   type LucideIcon,
 } from 'lucide-react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 import { useApp, type Route } from '../app-context';
-import { colors } from './theme';
+import { colors, glass, radius } from './theme';
 import { useT } from './i18n';
 import { Button, Input } from './components';
 
@@ -51,6 +54,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
   const app = useApp();
   const t = useT();
   const { width } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
   const mobile = width < 820;
   const nav = (
     name: Route['name'],
@@ -69,7 +73,11 @@ export function Shell({ children }: { children: React.ReactNode }) {
         accessibilityLabel={title}
         accessibilityState={{ selected }}
         onPress={() => app.navigate({ name, filter } as Route)}
-        style={[s.nav, selected && s.navSelected]}
+        style={({ pressed }) => [
+          s.nav,
+          selected && s.navSelected,
+          pressed && s.navSelected,
+        ]}
       >
         <Icon
           size={18}
@@ -103,7 +111,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
               {nav('home', Film, t.movies, 'movie')}
               {nav('home', Tv, t.series, 'series')}
               {nav('search', Search, t.search)}
-              <Text style={[s.group, { marginTop: 27 }]}>{t.library}</Text>
+              <Text style={[s.group, { marginTop: 21 }]}>{t.library}</Text>
               {nav('watchlist', Bookmark, t.watchlist)}
               {nav('downloads', Download, t.downloads)}
               {nav('history', History, t.history)}
@@ -170,7 +178,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
               <View style={s.status}>
                 <View style={s.statusDot} />
                 <Text style={s.statusText}>
-                  OPEN SOURCE. OPEN POSSIBILITIES.
+                  Open source. Open possibilities.
                 </Text>
               </View>
             </View>
@@ -178,7 +186,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
         )}
         <View style={{ flex: 1, minWidth: 0 }}>
           <View
-            style={[s.toolbar, mobile && { paddingHorizontal: 18, height: 67 }]}
+            style={[s.toolbar, mobile && { paddingHorizontal: 20, height: 64 }]}
           >
             {mobile ? (
               <Logo small />
@@ -192,7 +200,9 @@ export function Shell({ children }: { children: React.ReactNode }) {
                   disabled={!app.canGoBack}
                   onPress={app.back}
                 />
-                <Text style={s.breadcrumb}>Your cinema, your way.</Text>
+                {width >= 1100 && (
+                  <Text style={s.breadcrumb}>Your cinema, your way.</Text>
+                )}
               </View>
             )}
             {!mobile && (
@@ -207,7 +217,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
                 icon={Search}
                 style={{
                   width: Math.min(360, width * 0.3),
-                  backgroundColor: colors.background,
+                  backgroundColor: colors.surface,
                 }}
               />
             )}
@@ -237,24 +247,24 @@ export function Shell({ children }: { children: React.ReactNode }) {
             showsVerticalScrollIndicator={false}
             contentContainerStyle={[
               s.content,
-              { padding: mobile ? 20 : 36, paddingBottom: 50 },
+              { padding: mobile ? 20 : 32, paddingBottom: mobile ? 112 : 48 },
             ]}
           >
             <View
-              style={{ width: '100%', maxWidth: 1480, alignSelf: 'center' }}
+              style={{ width: '100%', maxWidth: 1400, alignSelf: 'center' }}
             >
               {children}
             </View>
             <View style={s.footer}>
-              <Text style={s.footerText}>CINEFERN 5.0</Text>
+              <Text style={s.footerText}>Cinefern 5.0</Text>
               <View style={s.footerLine} />
-              <Text style={s.footerText}>A SPACE FOR EVERY STORY</Text>
+              <Text style={s.footerText}>A space for every story.</Text>
             </View>
           </ScrollView>
         </View>
       </View>
       {mobile && (
-        <View style={s.mobileNav}>
+        <View style={[s.mobileNav, { bottom: Math.max(insets.bottom, 12) }]}>
           {[
             ['home', Compass, t.discover],
             ['search', Search, t.search],
@@ -269,8 +279,13 @@ export function Shell({ children }: { children: React.ReactNode }) {
                 key={String(name)}
                 accessibilityRole="button"
                 accessibilityLabel={String(label)}
+                accessibilityState={{ selected }}
                 onPress={() => app.navigate({ name } as Route)}
-                style={s.mobileTab}
+                style={({ pressed }) => [
+                  s.mobileTab,
+                  selected && s.mobileTabSelected,
+                  pressed && { opacity: 0.7 },
+                ]}
               >
                 <Symbol
                   size={20}
@@ -290,7 +305,14 @@ export function Shell({ children }: { children: React.ReactNode }) {
       {!!app.toast && (
         <Pressable
           onPress={() => app.notify('')}
-          style={[s.toast, mobile && { bottom: 85, left: 20, right: 20 }]}
+          style={[
+            s.toast,
+            mobile && {
+              bottom: Math.max(insets.bottom, 12) + 82,
+              left: 20,
+              right: 20,
+            },
+          ]}
         >
           <Text style={{ color: colors.text, fontSize: 13 }}>{app.toast}</Text>
         </Pressable>
@@ -300,22 +322,27 @@ export function Shell({ children }: { children: React.ReactNode }) {
 }
 export function useContentWidth() {
   const { width } = useWindowDimensions();
-  return Math.min(1480, width - (width >= 820 ? 298 : 40));
+  return Math.min(1400, width - (width >= 820 ? 296 : 40));
 }
 const s = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.background },
   row: { flex: 1, flexDirection: 'row' },
   sidebar: {
-    width: 226,
+    width: 232,
     backgroundColor: colors.sidebar,
     borderRightColor: colors.border,
     borderRightWidth: 1,
   },
-  brand: { paddingHorizontal: 25, paddingVertical: 30, marginBottom: 10 },
+  brand: {
+    paddingHorizontal: 27,
+    paddingTop: 28,
+    paddingBottom: 30,
+    marginBottom: 4,
+  },
   logoMark: {
     width: 33,
     height: 33,
-    borderRadius: 10,
+    borderRadius: 11,
     backgroundColor: colors.accent,
     alignItems: 'center',
     justifyContent: 'center',
@@ -323,43 +350,43 @@ const s = StyleSheet.create({
   logo: {
     color: colors.text,
     fontSize: 24,
-    fontWeight: '700',
-    letterSpacing: -1.2,
+    fontWeight: '600',
+    letterSpacing: -1,
   },
   group: {
     color: colors.subtle,
-    fontSize: 9,
-    letterSpacing: 1.6,
+    fontSize: 10,
+    letterSpacing: 0.5,
     fontWeight: '600',
     marginLeft: 13,
-    marginBottom: 13,
+    marginBottom: 10,
   },
   nav: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 13,
     paddingHorizontal: 13,
-    paddingVertical: 13,
-    borderRadius: 8,
+    paddingVertical: 11,
+    borderRadius: 12,
     marginBottom: 3,
   },
-  navSelected: { backgroundColor: '#20352d' },
+  navSelected: { backgroundColor: colors.selection },
   navText: { color: colors.muted, fontSize: 13, fontWeight: '500', flex: 1 },
   count: {
     color: colors.accent,
     fontSize: 10,
-    backgroundColor: colors.accentDark,
-    borderRadius: 4,
+    backgroundColor: colors.selection,
+    borderRadius: radius.pill,
     paddingHorizontal: 6,
     paddingVertical: 2,
   },
   divider: {
     height: 1,
     backgroundColor: colors.border,
-    marginVertical: 26,
+    marginVertical: 15,
     marginHorizontal: 13,
   },
-  providerMark: { width: 7, height: 7, borderRadius: 3, marginHorizontal: 5 },
+  providerMark: { width: 8, height: 8, borderRadius: 4, marginHorizontal: 5 },
   sidebarFooter: {
     paddingHorizontal: 17,
     paddingBottom: 22,
@@ -382,15 +409,15 @@ const s = StyleSheet.create({
   },
   statusText: {
     color: colors.subtle,
-    fontSize: 6.5,
-    letterSpacing: 0.7,
-    fontWeight: '600',
+    fontSize: 9,
+    letterSpacing: 0,
+    fontWeight: '400',
   },
   toolbar: {
-    height: 82,
-    paddingHorizontal: 30,
+    height: 72,
+    paddingHorizontal: 28,
     borderBottomWidth: 1,
-    borderBottomColor: '#1c242e',
+    borderBottomColor: colors.separator,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -407,28 +434,41 @@ const s = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 15,
-    marginTop: 55,
+    marginTop: 44,
   },
-  footerText: { color: colors.subtle, fontSize: 8, letterSpacing: 1.5 },
-  footerLine: { flex: 1, height: 1, backgroundColor: '#202832' },
+  footerText: { color: colors.subtle, fontSize: 10 },
+  footerLine: { flex: 1, height: 1, backgroundColor: colors.separator },
   mobileNav: {
+    ...glass,
+    position: 'absolute',
+    left: 12,
+    right: 12,
     flexDirection: 'row',
-    backgroundColor: colors.sidebar,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-    paddingVertical: 12,
+    borderWidth: 1,
+    borderColor: '#ffffff1f',
+    borderRadius: 28,
+    padding: 6,
   },
-  mobileTab: { flex: 1, alignItems: 'center', gap: 5 },
-  mobileLabel: { fontSize: 9, color: colors.muted },
+  mobileTab: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 5,
+    paddingVertical: 10,
+    minHeight: 58,
+    borderRadius: 22,
+  },
+  mobileTabSelected: { backgroundColor: '#ffffff10' },
+  mobileLabel: { fontSize: 9, fontWeight: '500', color: colors.muted },
   toast: {
     position: 'absolute',
     bottom: 28,
     right: 28,
     maxWidth: 470,
     padding: 18,
-    backgroundColor: colors.raised,
-    borderRadius: 10,
+    ...glass,
+    borderRadius: radius.card,
     borderWidth: 1,
-    borderColor: '#466052',
+    borderColor: '#ffffff24',
   },
 });

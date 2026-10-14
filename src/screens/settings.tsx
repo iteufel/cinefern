@@ -1,6 +1,6 @@
 import { Toggle } from '../ui/focus';
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import {
   ArrowUpRight,
   Download,
@@ -32,7 +32,7 @@ import {
   styles as ui,
 } from '../ui/components';
 import { ConfirmDialog, Dialog } from '../ui/dialog';
-import { colors, isTV, textSize } from '../ui/theme';
+import { colors, radius, isTV, textSize } from '../ui/theme';
 import { useT } from '../ui/i18n';
 import { fetchTextDocument } from '../core/import-document';
 import { AgentSettingsPanel } from './agent-settings';
@@ -336,7 +336,7 @@ export function SettingsScreen() {
             'Use the mouse wheel over the desktop player.',
           )}
         <Row label="Preferred video quality">
-          <ScrollView horizontal contentContainerStyle={s.choices}>
+          <View style={s.choices}>
             {[480, 720, 1080, 2160].map((quality) => (
               <Chip
                 key={quality}
@@ -346,7 +346,7 @@ export function SettingsScreen() {
                 {quality === 2160 ? '4K' : quality + 'p'}
               </Chip>
             ))}
-          </ScrollView>
+          </View>
         </Row>
         <Row label="Audio language">
           <View style={s.choices}>
@@ -364,7 +364,7 @@ export function SettingsScreen() {
           </View>
         </Row>
         <Row label="Subtitle language">
-          <ScrollView horizontal contentContainerStyle={s.choices}>
+          <View style={s.choices}>
             {['', 'en', 'de', 'fr', 'es'].map((language) => (
               <Chip
                 key={language}
@@ -376,7 +376,7 @@ export function SettingsScreen() {
                 {language ? language.toUpperCase() : 'Off'}
               </Chip>
             ))}
-          </ScrollView>
+          </View>
         </Row>
       </Group>
       <AgentSettingsPanel />
@@ -604,15 +604,15 @@ export function SettingsScreen() {
 const s = StyleSheet.create({
   group: {
     padding: 24,
-    borderRadius: 12,
+    borderRadius: radius.card,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: 'transparent',
     backgroundColor: colors.surface,
-    marginBottom: 20,
+    marginBottom: 24,
   },
   groupTitle: {
     color: colors.text,
-    fontSize: textSize(17),
+    fontSize: textSize(19),
     fontWeight: '600',
     marginBottom: 10,
     letterSpacing: -0.3,
@@ -624,9 +624,9 @@ const s = StyleSheet.create({
     gap: 15,
     paddingVertical: 18,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: colors.separator,
   },
-  label: { color: colors.text, fontSize: textSize(13), fontWeight: '500' },
+  label: { color: colors.text, fontSize: textSize(14), fontWeight: '500' },
   description: {
     color: colors.muted,
     fontSize: textSize(12),
@@ -634,6 +634,7 @@ const s = StyleSheet.create({
     maxWidth: 750,
   },
   choices: {
+    maxWidth: '100%',
     flexDirection: 'row',
     gap: 8,
     flexWrap: 'wrap',

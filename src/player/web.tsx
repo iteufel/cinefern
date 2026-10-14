@@ -16,7 +16,7 @@ import type { MediaPlayerClass } from 'dashjs';
 import { useApp } from '../app-context';
 import { platform } from '../platform';
 import { Button, Chip, styles as ui } from '../ui/components';
-import { colors, time } from '../ui/theme';
+import { colors, glass, radius, time } from '../ui/theme';
 import { useT } from '../ui/i18n';
 import { parseSubtitles } from './subtitles';
 import { artworkUri } from '../ui/artwork';
@@ -674,8 +674,8 @@ const s = StyleSheet.create({
     width: '100%',
     maxWidth: 1060,
     maxHeight: '96%',
-    backgroundColor: colors.sidebar,
-    borderRadius: 13,
+    ...glass,
+    borderRadius: radius.card,
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: colors.border,

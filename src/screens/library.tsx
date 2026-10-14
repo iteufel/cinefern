@@ -25,7 +25,7 @@ import {
   styles as ui,
 } from '../ui/components';
 import { useContentWidth } from '../ui/shell';
-import { colors, bytes, time, isTV, textSize } from '../ui/theme';
+import { colors, radius, bytes, time, isTV, textSize } from '../ui/theme';
 import { useT } from '../ui/i18n';
 import { ConfirmDialog } from '../ui/dialog';
 import { imageSource } from '../ui/artwork';
@@ -422,19 +422,19 @@ export function HistoryScreen() {
 }
 const s = StyleSheet.create({
   download: {
-    padding: 16,
+    padding: 20,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 16,
     backgroundColor: colors.surface,
-    borderRadius: 10,
+    borderRadius: radius.card,
     borderWidth: 1,
     borderColor: colors.border,
   },
   thumbnail: {
     width: 94,
     height: 66,
-    borderRadius: 7,
+    borderRadius: 12,
     backgroundColor: colors.raised,
     overflow: 'hidden',
   },

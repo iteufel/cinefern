@@ -1,0 +1,969 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f5f5f7" />
+    <title>Cinefern — Your cinema. Everywhere.</title>
+    <meta
+      name="description"
+      content="Meet Cinefern, an open-source media player for desktop, mobile, and Apple TV. Bring your library, connect Jellyfin, and make yourself at home."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Cinefern — Your cinema. Everywhere." />
+    <meta
+      property="og:description"
+      content="Your films, your library, your way. An open-source media player for desktop, mobile, and Apple TV."
+    />
+    <meta
+      property="og:image"
+      content="https://iteufel.github.io/cinefern/assets/social-card.png"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preload" as="image" href="assets/films/sintel-backdrop.jpg" />
+    <script src="main.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <div class="container nav-wrap">
+        <a class="brand" href="#" aria-label="Cinefern home"
+          ><span class="brand-mark"
+            ><svg aria-hidden="true">
+              <use href="assets/icons.svg#play" /></svg></span
+          ><span>cine<span class="mint">fern</span></span></a
+        >
+        <button
+          class="menu-toggle icon-button"
+          type="button"
+          aria-label="Open navigation"
+          aria-expanded="false"
+          aria-controls="navigation"
+          hidden
+        >
+          <svg aria-hidden="true"><use href="assets/icons.svg#menu" /></svg>
+        </button>
+        <nav id="navigation" class="navigation" aria-label="Main navigation">
+          <a href="#experience">The experience</a>
+          <a href="#providers">Providers</a>
+          <a href="#platforms">Platforms</a>
+          <span class="nav-divider" aria-hidden="true"></span>
+          <a
+            class="github-link"
+            href="https://github.com/iteufel/cinefern"
+            aria-label="Cinefern on GitHub"
+            ><svg aria-hidden="true"><use href="assets/icons.svg#github" /></svg
+          ></a>
+          <a class="button button-small" href="#get-cinefern"
+            >Get Cinefern
+            <svg aria-hidden="true">
+              <use href="assets/icons.svg#arrow-up" /></svg
+          ></a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="hero container" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <a
+            class="eyebrow hero-badge"
+            href="https://github.com/iteufel/cinefern"
+            ><span class="status-dot"></span> Open source. Open possibilities.
+            <svg aria-hidden="true"><use href="assets/icons.svg#arrow" /></svg
+          ></a>
+          <h1 id="hero-title">Your cinema.<br /><span>Everywhere.</span></h1>
+          <p class="hero-description">
+            A beautiful home for the stories you love.<br
+              class="desktop-break"
+            />
+            Bring your library. Find your next favorite. Press play.
+          </p>
+          <div class="hero-actions">
+            <a class="button" href="#get-cinefern"
+              >Get Cinefern
+              <svg aria-hidden="true"><use href="assets/icons.svg#arrow" /></svg
+            ></a>
+            <a class="button button-secondary" href="#preview"
+              ><svg aria-hidden="true">
+                <use href="assets/icons.svg#play" />
+              </svg>
+              Take a closer look</a
+            >
+          </div>
+          <p class="hero-note">
+            Free &amp; open source <span>·</span> Made for your screens
+          </p>
+        </div>
+
+        <div class="showcase" id="preview">
+          <div class="showcase-glow" aria-hidden="true"></div>
+          <div class="app-window">
+            <div class="window-bar">
+              <span class="window-dots" aria-hidden="true"
+                ><i></i><i></i><i></i></span
+              ><span>cinefern</span
+              ><span class="preview-label"
+                ><span class="status-dot"></span> Interactive preview</span
+              >
+            </div>
+            <div class="app-layout">
+              <aside
+                class="app-sidebar"
+                aria-label="Illustrated app navigation"
+              >
+                <div class="brand app-brand">
+                  <span class="brand-mark"
+                    ><svg aria-hidden="true">
+                      <use href="assets/icons.svg#play" /></svg></span
+                  ><span>cine<span class="mint">fern</span></span>
+                </div>
+                <p class="sidebar-label">EXPLORE</p>
+                <div class="sidebar-item selected">
+                  <svg aria-hidden="true">
+                    <use href="assets/icons.svg#compass" />
+                  </svg>
+                  Discover
+                </div>
+                <div class="sidebar-item">
+                  <svg aria-hidden="true">
+                    <use href="assets/icons.svg#film" />
+                  </svg>
+                  Movies
+                </div>
+                <div class="sidebar-item">
+                  <svg aria-hidden="true">
+                    <use href="assets/icons.svg#tv" />
+                  </svg>
+                  Series
+                </div>
+                <div class="sidebar-item">
+                  <svg aria-hidden="true">
+                    <use href="assets/icons.svg#search" />
+                  </svg>
+                  Search
+                </div>
+                <p class="sidebar-label">YOUR LIBRARY</p>
+                <div class="sidebar-item">
+                  <svg aria-hidden="true">
+                    <use href="assets/icons.svg#bookmark" />
+                  </svg>
+                  Watchlist <span class="sidebar-count">4</span>
+                </div>
+                <div class="sidebar-item">
+                  <svg aria-hidden="true">
+                    <use href="assets/icons.svg#download" />
+                  </svg>
+                  Downloads
+                </div>
+                <div class="sidebar-bottom">
+                  <span class="status-dot"></span> A little more cinema.
+                </div>
+              </aside>
+              <div class="app-main">
+                <div class="app-heading">
+                  <div>
+                    <span class="tiny-label">YOUR PERSONAL CINEMA</span>
+                    <h2>Discover</h2>
+                  </div>
+                  <span class="provider-status"
+                    ><span class="status-dot"></span> Open Cinema</span
+                  >
+                </div>
+                <div
+                  class="featured-film"
+                  aria-live="polite"
+                  aria-atomic="true"
+                >
+                  <img
+                    id="featured-art"
+                    src="assets/films/sintel-backdrop.jpg"
+                    width="1280"
+                    height="544"
+                    alt="Sintel faces an adversary in a mountainous landscape"
+                    fetchpriority="high"
+                  />
+                  <div class="film-shade"></div>
+                  <div class="film-copy">
+                    <span class="film-eyebrow">Blender open movie</span>
+                    <h3 id="featured-title">Sintel</h3>
+                    <p class="film-meta" id="featured-meta">
+                      2010 <span>·</span> Fantasy, Adventure <span>·</span> 15
+                      min
+                    </p>
+                    <p class="film-description" id="featured-description">
+                      Some journeys take you further than you ever imagined.
+                    </p>
+                    <div class="film-actions">
+                      <button
+                        class="button preview-play"
+                        id="preview-play"
+                        type="button"
+                        hidden
+                      >
+                        <svg aria-hidden="true">
+                          <use href="assets/icons.svg#play" /></svg
+                        ><span>Play trailer</span></button
+                      ><a
+                        class="film-info"
+                        id="film-info"
+                        href="https://studio.blender.org/films/sintel/"
+                        >About the film
+                        <svg aria-hidden="true">
+                          <use href="assets/icons.svg#arrow-up" /></svg
+                      ></a>
+                    </div>
+                  </div>
+                  <span class="film-number" aria-hidden="true"
+                    ><span id="film-index">01</span> / 04</span
+                  >
+                </div>
+                <div class="film-shelf-heading">
+                  <h3>A little wonder. A lot of imagination.</h3>
+                  <span
+                    >Pick a story
+                    <svg aria-hidden="true">
+                      <use href="assets/icons.svg#arrow" /></svg
+                  ></span>
+                </div>
+                <div class="film-shelf" aria-label="Choose a film to preview">
+                  <button
+                    type="button"
+                    class="film-card active"
+                    data-film="sintel"
+                    aria-pressed="true"
+                  >
+                    <span class="film-thumbnail"
+                      ><img
+                        src="assets/films/sintel-backdrop.jpg"
+                        width="320"
+                        height="180"
+                        alt="" /><span class="film-card-play"
+                        ><svg aria-hidden="true">
+                          <use
+                            href="assets/icons.svg#play"
+                          /></svg></span></span
+                    ><span class="film-card-title">Sintel</span
+                    ><span class="film-card-meta">Fantasy · 2010</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="film-card"
+                    data-film="bunny"
+                    aria-pressed="false"
+                  >
+                    <span class="film-thumbnail"
+                      ><img
+                        class="bunny-art"
+                        src="assets/films/bunny-poster.jpg"
+                        width="320"
+                        height="180"
+                        alt=""
+                        loading="lazy" /><span class="film-card-play"
+                        ><svg aria-hidden="true">
+                          <use
+                            href="assets/icons.svg#play"
+                          /></svg></span></span
+                    ><span class="film-card-title">Big Buck Bunny</span
+                    ><span class="film-card-meta">Animation · 2008</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="film-card"
+                    data-film="elephants"
+                    aria-pressed="false"
+                  >
+                    <span class="film-thumbnail"
+                      ><img
+                        src="assets/films/elephants-dream.jpg"
+                        width="320"
+                        height="180"
+                        alt=""
+                        loading="lazy" /><span class="film-card-play"
+                        ><svg aria-hidden="true">
+                          <use
+                            href="assets/icons.svg#play"
+                          /></svg></span></span
+                    ><span class="film-card-title">Elephants Dream</span
+                    ><span class="film-card-meta">Sci-fi · 2006</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="film-card"
+                    data-film="tears"
+                    aria-pressed="false"
+                  >
+                    <span class="film-thumbnail"
+                      ><img
+                        src="assets/films/tears-of-steel.jpg"
+                        width="320"
+                        height="180"
+                        alt=""
+                        loading="lazy" /><span class="film-card-play"
+                        ><svg aria-hidden="true">
+                          <use
+                            href="assets/icons.svg#play"
+                          /></svg></span></span
+                    ><span class="film-card-title">Tears of Steel</span
+                    ><span class="film-card-meta">Sci-fi · 2012</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="showcase-caption">
+            A little look inside Cinefern.
+            <span>Artwork from the Blender open films.</span>
+          </p>
+        </div>
+
+        <div class="platform-strip" aria-label="Supported platforms">
+          <span>AT HOME ON</span>
+          <div>
+            <svg aria-hidden="true">
+              <use href="assets/icons.svg#monitor" />
+            </svg>
+            macOS
+          </div>
+          <div>
+            <svg aria-hidden="true">
+              <use href="assets/icons.svg#monitor" />
+            </svg>
+            Windows
+          </div>
+          <div>
+            <svg aria-hidden="true">
+              <use href="assets/icons.svg#terminal" />
+            </svg>
+            Linux
+          </div>
+          <div>
+            <svg aria-hidden="true"><use href="assets/icons.svg#phone" /></svg>
+            iOS
+          </div>
+          <div>
+            <svg aria-hidden="true"><use href="assets/icons.svg#phone" /></svg>
+            Android
+          </div>
+          <div>
+            <svg aria-hidden="true"><use href="assets/icons.svg#tv" /></svg>
+            Apple TV
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="section container"
+        id="experience"
+        aria-labelledby="experience-title"
+      >
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Thoughtfully simple.</p>
+            <h2 id="experience-title">
+              Settle in.<br /><span class="muted-heading"
+                >We thought of the little things.</span
+              >
+            </h2>
+          </div>
+          <p>
+            From the first scene to the final credits,<br
+              class="desktop-break"
+            />
+            everything has its place.
+          </p>
+        </div>
+        <div class="feature-grid">
+          <article class="feature-card library-card">
+            <div class="feature-text">
+              <span class="feature-icon"
+                ><svg aria-hidden="true">
+                  <use href="assets/icons.svg#bookmark" /></svg
+              ></span>
+              <h3>Your next watch.<br />Already waiting.</h3>
+              <p>
+                Keep a watchlist, explore your providers, and pick up right
+                where you left off.
+              </p>
+            </div>
+            <div
+              class="continue-preview"
+              aria-label="Illustration of saved playback progress"
+            >
+              <span class="tiny-label">CONTINUE WATCHING</span>
+              <div class="continue-film">
+                <img
+                  src="assets/films/tears-of-steel.jpg"
+                  alt=""
+                  width="400"
+                  height="180"
+                  loading="lazy"
+                /><span class="continue-play"
+                  ><svg aria-hidden="true">
+                    <use href="assets/icons.svg#play" /></svg
+                ></span>
+                <div class="continue-gradient"></div>
+                <div class="continue-caption">
+                  <strong>Tears of Steel</strong><span>4 min left</span>
+                </div>
+                <div class="progress-track"><span></span></div>
+              </div>
+              <div class="continue-footer">
+                <span class="status-dot"></span> Your place, remembered.
+              </div>
+            </div>
+          </article>
+          <article class="feature-card player-card">
+            <div class="feature-text">
+              <span class="feature-icon"
+                ><svg aria-hidden="true">
+                  <use href="assets/icons.svg#settings" /></svg
+              ></span>
+              <h3>Just the way<br />you like to watch.</h3>
+              <p>
+                Subtitles, audio tracks, playback speed, and picture in picture.
+                You’re in control.
+              </p>
+            </div>
+            <div class="player-options" aria-label="Example playback options">
+              <div>
+                <span>Subtitles</span
+                ><span
+                  >English
+                  <svg aria-hidden="true">
+                    <use href="assets/icons.svg#check" /></svg
+                ></span>
+              </div>
+              <div>
+                <span>Playback speed</span
+                ><span class="speed-choices">0.75× <b>1×</b> 1.25×</span>
+              </div>
+              <div>
+                <span>Picture in picture</span
+                ><svg class="mint" aria-hidden="true">
+                  <use href="assets/icons.svg#monitor" />
+                </svg>
+              </div>
+            </div>
+          </article>
+          <article class="small-feature">
+            <svg aria-hidden="true">
+              <use href="assets/icons.svg#download" />
+            </svg>
+            <div>
+              <h3>Good films. Off the grid.</h3>
+              <p>
+                Save supported file sources and take your favorites offline.
+              </p>
+            </div>
+          </article>
+          <article class="small-feature">
+            <svg aria-hidden="true"><use href="assets/icons.svg#layers" /></svg>
+            <div>
+              <h3>One more episode?</h3>
+              <p>Seasons, episode queues, and autoplay keep the story going.</p>
+            </div>
+          </article>
+          <article class="small-feature">
+            <svg aria-hidden="true"><use href="assets/icons.svg#globe" /></svg>
+            <div>
+              <h3>Make yourself at home.</h3>
+              <p>
+                English and German navigation. Your library, ready to import or
+                export.
+              </p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section
+        class="section providers-section"
+        id="providers"
+        aria-labelledby="providers-title"
+      >
+        <div class="container providers-grid">
+          <div class="providers-copy">
+            <p class="eyebrow">An open world of possibilities.</p>
+            <h2 id="providers-title">
+              A player.<br />A world of possibilities.
+            </h2>
+            <p>
+              Great stories come from everywhere. Bring them together with a
+              provider system built to stay open.
+            </p>
+            <a
+              class="text-link"
+              href="https://github.com/iteufel/cinefern/blob/main/docs/providers.md"
+              >Explore the provider guide
+              <svg aria-hidden="true"><use href="assets/icons.svg#arrow" /></svg
+            ></a>
+            <div class="developer-note">
+              <svg aria-hidden="true"><use href="assets/icons.svg#code" /></svg>
+              <p>
+                <strong>Have something in mind?</strong><br />Build your own
+                provider with the TypeScript SDK.
+              </p>
+            </div>
+          </div>
+          <div class="provider-cards">
+            <a
+              class="provider-card"
+              href="https://github.com/iteufel/cinefern/blob/main/docs/jellyfin.md"
+              ><span class="provider-icon jellyfin-icon"
+                ><svg viewBox="0 0 32 32" aria-hidden="true">
+                  <path
+                    d="M14 6c1-2 3-2 4 0l10 18c1 2 0 3-2 3H6c-2 0-3-1-2-3Z"
+                  />
+                  <path d="m16 13 6 10H10Z" /></svg
+              ></span>
+              <div>
+                <h3>Jellyfin <span>BUILT IN</span></h3>
+                <p>
+                  Your server. Your collection.<br />Connect and feel right at
+                  home.
+                </p>
+              </div>
+              <svg class="provider-arrow" aria-hidden="true">
+                <use href="assets/icons.svg#arrow-up" /></svg
+            ></a>
+            <a
+              class="provider-card"
+              href="https://github.com/iteufel/cinefern/blob/main/src/providers/open-films.ts"
+              ><span class="provider-icon cinema-icon"
+                ><svg aria-hidden="true">
+                  <use href="assets/icons.svg#film" /></svg
+              ></span>
+              <div>
+                <h3>Open Cinema <span>BUILT IN</span></h3>
+                <p>
+                  Independent worlds. Extraordinary stories.<br />Discover
+                  Blender’s open films.
+                </p>
+              </div>
+              <svg class="provider-arrow" aria-hidden="true">
+                <use href="assets/icons.svg#arrow-up" /></svg
+            ></a>
+            <a
+              class="provider-card"
+              href="https://github.com/iteufel/cinefern/blob/main/providers/example/catalog.json"
+              ><span class="provider-icon custom-icon"
+                ><svg aria-hidden="true">
+                  <use href="assets/icons.svg#layers" /></svg
+              ></span>
+              <div>
+                <h3>Your Library <span>MAKE IT YOURS</span></h3>
+                <p>
+                  A simple JSON catalog.<br />A personal collection, all
+                  together.
+                </p>
+              </div>
+              <svg class="provider-arrow" aria-hidden="true">
+                <use href="assets/icons.svg#arrow-up" /></svg
+            ></a>
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="section container platforms-section"
+        id="platforms"
+        aria-labelledby="platforms-title"
+      >
+        <div class="center-heading">
+          <p class="eyebrow">Made for every screen.</p>
+          <h2 id="platforms-title">Every screen is a good screen.</h2>
+          <p>One familiar experience. Room for all the ways you watch.</p>
+        </div>
+        <div class="device-scene" aria-hidden="true">
+          <div class="device-ambient"></div>
+          <div class="device-tv">
+            <div class="device-screen">
+              <img
+                src="assets/films/sintel-backdrop.jpg"
+                alt=""
+                width="1280"
+                height="544"
+                loading="lazy"
+              />
+              <div class="device-screen-shade"></div>
+              <span class="device-brand"
+                >cine<span class="mint">fern</span></span
+              >
+              <div class="device-title">
+                <span>YOUR EVENING, SORTED.</span><strong>Sintel</strong
+                ><span class="device-play"
+                  ><svg><use href="assets/icons.svg#play" /></svg> Play</span
+                >
+              </div>
+            </div>
+            <div class="tv-foot"></div>
+          </div>
+          <div class="device-laptop">
+            <div class="laptop-screen">
+              <img
+                src="assets/films/tears-of-steel.jpg"
+                alt=""
+                width="600"
+                height="300"
+                loading="lazy"
+              />
+              <div class="device-screen-shade"></div>
+              <span class="device-brand"
+                >cine<span class="mint">fern</span></span
+              >
+              <div class="device-title">
+                <span>MAKE TIME FOR A LITTLE WONDER.</span
+                ><strong>Tears of Steel</strong>
+              </div>
+            </div>
+            <div class="laptop-base"></div>
+          </div>
+          <div class="device-phone">
+            <div class="phone-island"></div>
+            <img
+              src="assets/films/bunny-poster.jpg"
+              alt=""
+              width="300"
+              height="430"
+              loading="lazy"
+            />
+            <div class="device-screen-shade"></div>
+            <div class="phone-copy">
+              <span>TAKE A LITTLE CINEMA WITH YOU.</span
+              ><strong>Big Buck<br />Bunny</strong
+              ><span class="device-play"
+                ><svg><use href="assets/icons.svg#play" /></svg> Play</span
+              >
+            </div>
+          </div>
+        </div>
+        <div class="device-labels">
+          <div>
+            <svg aria-hidden="true">
+              <use href="assets/icons.svg#monitor" />
+            </svg>
+            <h3>At your desk</h3>
+            <p>macOS · Windows · Linux</p>
+          </div>
+          <div>
+            <svg aria-hidden="true"><use href="assets/icons.svg#phone" /></svg>
+            <h3>On the move</h3>
+            <p>iOS · Android</p>
+          </div>
+          <div>
+            <svg aria-hidden="true"><use href="assets/icons.svg#tv" /></svg>
+            <h3>On the big screen</h3>
+            <p>Apple TV · Siri Remote</p>
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="section container get-section"
+        id="get-cinefern"
+        aria-labelledby="get-title"
+      >
+        <div class="get-heading">
+          <p class="eyebrow">Your next chapter starts here.</p>
+          <h2 id="get-title">
+            Meet your new<br /><span class="serif-accent"
+              >favorite player.</span
+            >
+          </h2>
+          <p>
+            Cinefern is free, open source, and growing.<br />Get a development
+            build, or make it your own.
+          </p>
+          <a class="text-link" href="https://github.com/iteufel/cinefern"
+            ><svg aria-hidden="true">
+              <use href="assets/icons.svg#github" />
+            </svg>
+            Explore on GitHub
+            <svg aria-hidden="true">
+              <use href="assets/icons.svg#arrow-up" /></svg></a
+          ><span class="license-note"
+            >Made with care. Shared under AGPL-3.0.</span
+          >
+        </div>
+        <div class="get-panel">
+          <div
+            class="platform-tabs"
+            role="tablist"
+            aria-label="Choose your platform"
+            hidden
+          >
+            <button
+              id="tab-desktop"
+              type="button"
+              role="tab"
+              aria-selected="true"
+              aria-controls="panel-desktop"
+              tabindex="0"
+              data-platform="desktop"
+            >
+              <svg aria-hidden="true">
+                <use href="assets/icons.svg#monitor" />
+              </svg>
+              Desktop</button
+            ><button
+              id="tab-mobile"
+              type="button"
+              role="tab"
+              aria-selected="false"
+              aria-controls="panel-mobile"
+              tabindex="-1"
+              data-platform="mobile"
+            >
+              <svg aria-hidden="true">
+                <use href="assets/icons.svg#phone" />
+              </svg>
+              Mobile</button
+            ><button
+              id="tab-tv"
+              type="button"
+              role="tab"
+              aria-selected="false"
+              aria-controls="panel-tv"
+              tabindex="-1"
+              data-platform="tv"
+            >
+              <svg aria-hidden="true"><use href="assets/icons.svg#tv" /></svg>
+              Apple TV
+            </button>
+          </div>
+          <div
+            class="platform-panel"
+            id="panel-desktop"
+            role="tabpanel"
+            aria-labelledby="tab-desktop"
+            tabindex="0"
+          >
+            <span class="build-badge"
+              ><span class="status-dot"></span> DEVELOPER PREVIEW</span
+            >
+            <h3>A home on your desktop.</h3>
+            <p>
+              Build Cinefern for macOS, Windows, or Linux. CI installer
+              artifacts are available to repository collaborators after
+              successful builds.
+            </p>
+            <a
+              class="button"
+              href="https://github.com/iteufel/cinefern/actions/workflows/build.yml"
+              >View desktop builds
+              <svg aria-hidden="true">
+                <use href="assets/icons.svg#arrow-up" /></svg></a
+            ><a
+              class="subtle-link"
+              href="https://github.com/iteufel/cinefern#build"
+              >Build from source
+              <svg aria-hidden="true"><use href="assets/icons.svg#arrow" /></svg
+            ></a>
+          </div>
+          <div
+            class="platform-panel"
+            id="panel-mobile"
+            role="tabpanel"
+            aria-labelledby="tab-mobile"
+            tabindex="0"
+          >
+            <span class="build-badge"
+              ><span class="status-dot"></span> NATIVE APP TARGETS</span
+            >
+            <h3>A little cinema to go.</h3>
+            <p>
+              Run the native Expo app on iOS or Android with the platform’s
+              development tools. Store releases and signed mobile downloads are
+              not available yet.
+            </p>
+            <a class="button" href="https://github.com/iteufel/cinefern#run"
+              >Set up the mobile app
+              <svg aria-hidden="true">
+                <use href="assets/icons.svg#arrow-up" /></svg></a
+            ><a
+              class="subtle-link"
+              href="https://github.com/iteufel/cinefern#build"
+              >Native build instructions
+              <svg aria-hidden="true"><use href="assets/icons.svg#arrow" /></svg
+            ></a>
+          </div>
+          <div
+            class="platform-panel"
+            id="panel-tv"
+            role="tabpanel"
+            aria-labelledby="tab-tv"
+            tabindex="0"
+          >
+            <span class="build-badge"
+              ><span class="status-dot"></span> MADE FOR THE SOFA</span
+            >
+            <h3>Give your stories a bigger screen.</h3>
+            <p>
+              A dedicated Apple TV interface with Siri Remote navigation and
+              fullscreen playback. Build for tvOS with a compatible Xcode
+              installation and Apple signing setup.
+            </p>
+            <a
+              class="button"
+              href="https://github.com/iteufel/cinefern/blob/main/docs/apple-tv.md"
+              >Open the Apple TV guide
+              <svg aria-hidden="true">
+                <use href="assets/icons.svg#arrow-up" /></svg></a
+            ><a
+              class="subtle-link"
+              href="https://github.com/iteufel/cinefern#build"
+              >All build options
+              <svg aria-hidden="true"><use href="assets/icons.svg#arrow" /></svg
+            ></a>
+          </div>
+          <div class="quick-start">
+            <div>
+              <span>Or start with the web preview</span
+              ><span>Node.js 22.13+</span>
+            </div>
+            <pre><code id="start-command">git clone https://github.com/iteufel/cinefern.git
+cd cinefern
+npm ci &amp;&amp; npm run web</code></pre>
+            <button
+              type="button"
+              class="copy-button icon-button"
+              aria-label="Copy web preview commands"
+              hidden
+            >
+              <svg aria-hidden="true"><use href="assets/icons.svg#copy" /></svg>
+            </button>
+            <p class="copy-status" role="status" aria-live="polite"></p>
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="section container faq-section"
+        aria-labelledby="faq-title"
+      >
+        <div>
+          <p class="eyebrow">A few good questions.</p>
+          <h2 id="faq-title">Before you<br />press play.</h2>
+        </div>
+        <div class="faq-list">
+          <details>
+            <summary>
+              Does Cinefern include movies?<span aria-hidden="true">+</span>
+            </summary>
+            <p>
+              Open Cinema includes a curated selection of freely available
+              Blender open films. Connect your Jellyfin server, add a JSON
+              catalog, or install a provider to bring your own media. Cinefern
+              doesn’t include a commercial streaming subscription.
+            </p>
+          </details>
+          <details>
+            <summary>
+              Does my progress sync between devices?<span aria-hidden="true"
+                >+</span
+              >
+            </summary>
+            <p>
+              Cinefern saves watch history and playback progress on your device.
+              You can move library data with import and export. Automatic
+              cross-device cloud sync is not currently included.
+            </p>
+          </details>
+          <details>
+            <summary>
+              What can I watch offline?<span aria-hidden="true">+</span>
+            </summary>
+            <p>
+              You can download supported progressive HTTP media files. Adaptive
+              HLS and DASH streams, live streams, and DRM-protected media are
+              not available for offline download. On Apple TV, the system may
+              clear cached downloads to free space.
+            </p>
+          </details>
+          <details>
+            <summary>
+              Can I help build Cinefern?<span aria-hidden="true">+</span>
+            </summary>
+            <p>
+              Absolutely. Explore the
+              <a href="https://github.com/iteufel/cinefern">source on GitHub</a
+              >, report an issue, improve the documentation, or create a
+              provider with the TypeScript SDK. Cinefern is the modern successor
+              to NWPlay, built with React Native and TypeScript.
+            </p>
+          </details>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer container">
+      <div class="footer-main">
+        <a class="brand" href="#" aria-label="Cinefern home"
+          ><span class="brand-mark"
+            ><svg aria-hidden="true">
+              <use href="assets/icons.svg#play" /></svg></span
+          ><span>cine<span class="mint">fern</span></span></a
+        >
+        <p>Your cinema. Everywhere.</p>
+        <nav aria-label="Footer navigation">
+          <a href="https://github.com/iteufel/cinefern">GitHub</a
+          ><a href="https://github.com/iteufel/cinefern#readme">Documentation</a
+          ><a href="https://github.com/iteufel/cinefern/issues"
+            >Say hello
+            <svg aria-hidden="true">
+              <use href="assets/icons.svg#arrow-up" /></svg
+          ></a>
+        </nav>
+      </div>
+      <div class="footer-bottom">
+        <p>An open-source project. A love letter to movie night.</p>
+        <div>
+          <a href="https://github.com/iteufel/cinefern/blob/main/LICENSE"
+            >AGPL-3.0</a
+          ><a href="credits.html">Artwork &amp; credits</a
+          ><a href="#" aria-label="Back to top">Back to top ↑</a>
+        </div>
+      </div>
+    </footer>
+
+    <dialog id="film-dialog" class="film-dialog" aria-labelledby="dialog-title">
+      <div class="dialog-heading">
+        <div>
+          <span class="eyebrow">Blender open movie</span>
+          <h2 id="dialog-title">Sintel — official trailer</h2>
+        </div>
+        <button
+          type="button"
+          class="icon-button"
+          id="close-dialog"
+          aria-label="Close video"
+        >
+          <svg aria-hidden="true"><use href="assets/icons.svg#close" /></svg>
+        </button>
+      </div>
+      <video
+        id="preview-video"
+        controls
+        playsinline
+        preload="none"
+        poster="assets/films/sintel-backdrop.jpg"
+      ></video>
+      <p id="video-status" role="status"></p>
+      <p class="video-credit">
+        © Blender Foundation ·
+        <a href="https://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a> ·
+        <a
+          href="https://media.w3.org/2010/05/sintel/trailer.mp4"
+          id="video-source"
+          >Open video directly
+          <svg aria-hidden="true"><use href="assets/icons.svg#arrow-up" /></svg
+        ></a>
+      </p>
+    </dialog>
+  </body>
+</html>

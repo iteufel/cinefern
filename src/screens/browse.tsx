@@ -47,7 +47,7 @@ import {
   styles as ui,
 } from '../ui/components';
 import { useContentWidth } from '../ui/shell';
-import { colors, isTV, textSize } from '../ui/theme';
+import { colors, radius, isTV, textSize } from '../ui/theme';
 import { useT } from '../ui/i18n';
 import { useAsync } from '../ui/use-async';
 import { imageSource } from '../ui/artwork';
@@ -124,7 +124,7 @@ export function HomeScreen() {
                 ? t.series
                 : t.discover
         }
-        eyebrow="THE GOOD PART STARTS HERE"
+        eyebrow="YOUR PERSONAL CINEMA"
         action={
           <View style={s.connection}>
             <View style={s.dot} />
@@ -204,7 +204,7 @@ export function HomeScreen() {
       ) : (
         <>
           {hero && (
-            <View style={[s.hero, { minHeight: width < 820 ? 390 : 370 }]}>
+            <View style={[s.hero, { minHeight: width < 820 ? 420 : 410 }]}>
               <Image
                 source={imageSource(hero.backdrop || hero.poster)}
                 style={[
@@ -216,32 +216,33 @@ export function HomeScreen() {
               <LinearGradient
                 colors={
                   app.state.settings.vibrancy
-                    ? ['#0a121bf5', '#0a121bad', '#0a121b18']
-                    : ['#0a121bc5', '#0a121bc5']
+                    ? ['#101012d9', '#10101275', '#10101208']
+                    : ['#101012c5', '#101012c5']
                 }
                 start={{ x: 0, y: 0.5 }}
                 end={{ x: 1, y: 0.5 }}
                 style={StyleSheet.absoluteFill}
               />
               <LinearGradient
-                colors={['#0a121b00', '#0a121be8']}
+                colors={['#10101200', '#101012c9']}
                 style={StyleSheet.absoluteFill}
               />
-              <View style={[s.heroContent, { padding: width < 820 ? 25 : 36 }]}>
+              <View style={[s.heroContent, { padding: width < 820 ? 24 : 40 }]}>
                 <View style={s.heroEyebrow}>
-                  <View
+                  <Text
                     style={{
-                      width: 18,
-                      height: 1,
-                      backgroundColor: colors.accent,
+                      color: '#ffffffde',
+                      fontSize: textSize(12),
+                      fontWeight: '600',
                     }}
-                  />
-                  <Text style={ui.eyebrow}>IN THE SPOTLIGHT</Text>
+                  >
+                    Featured film
+                  </Text>
                 </View>
                 <Text
                   style={[
                     s.heroTitle,
-                    width < 820 && { fontSize: textSize(43) },
+                    width < 820 && { fontSize: textSize(46) },
                   ]}
                 >
                   {hero.title}
@@ -269,6 +270,10 @@ export function HomeScreen() {
                   <Button
                     icon={Play}
                     variant="primary"
+                    style={{
+                      backgroundColor: colors.text,
+                      borderColor: 'transparent',
+                    }}
                     disabled={app.playingLoading}
                     onPress={() =>
                       hero.type === 'series'
@@ -282,8 +287,8 @@ export function HomeScreen() {
                     icon={app.library.isSaved(hero) ? Check : Bookmark}
                     onPress={() => app.toggleSave(hero)}
                     style={{
-                      backgroundColor: '#15232ab0',
-                      borderColor: '#61716c70',
+                      backgroundColor: '#ffffff1f',
+                      borderColor: '#ffffff20',
                     }}
                   >
                     {app.library.isSaved(hero) ? t.saved : t.save}
@@ -302,23 +307,29 @@ export function HomeScreen() {
                     <Pressable
                       accessibilityRole="button"
                       accessibilityLabel={'Feature ' + item.title}
+                      accessibilityState={{ selected: featuredIndex === index }}
+                      hitSlop={6}
                       key={mediaKey(item)}
                       onPress={() => setFeaturedIndex(index)}
-                      style={[
-                        s.pageDot,
-                        featuredIndex === index && {
-                          backgroundColor: colors.accent,
-                          width: 23,
-                        },
-                      ]}
-                    />
+                      style={s.pageDotTarget}
+                    >
+                      <View
+                        style={[
+                          s.pageDot,
+                          featuredIndex === index && {
+                            backgroundColor: colors.text,
+                            width: 18,
+                          },
+                        ]}
+                      />
+                    </Pressable>
                   ))}
                 </View>
               )}
             </View>
           )}
           <View style={s.editorialLine}>
-            <Text style={s.editorialText}>LESS SCROLLING. MORE STORIES.</Text>
+            <Text style={s.editorialText}>Find your next favorite.</Text>
             <View
               style={{ height: 1, backgroundColor: colors.border, flex: 1 }}
             />
@@ -794,40 +805,49 @@ const s = StyleSheet.create({
   dot: { height: 5, width: 5, borderRadius: 3, backgroundColor: colors.accent },
   connectionText: { color: colors.muted, fontSize: textSize(10) },
   hero: {
-    borderRadius: 14,
+    borderRadius: radius.hero,
     backgroundColor: colors.surface,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: '#324039',
-    justifyContent: 'center',
+    borderColor: colors.border,
+    justifyContent: 'flex-end',
   },
-  heroContent: { maxWidth: 590 },
+  heroContent: { maxWidth: 680, paddingBottom: 50 },
   heroEyebrow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
-    marginBottom: 24,
+    marginBottom: 18,
   },
   heroTitle: {
-    fontSize: textSize(56),
-    fontWeight: '600',
+    fontSize: textSize(64),
+    fontWeight: '700',
     color: colors.text,
-    letterSpacing: -2,
+    letterSpacing: -2.4,
     marginBottom: 10,
   },
-  heroMeta: { fontSize: textSize(11), color: '#bcc6ce', marginBottom: 14 },
+  heroMeta: { fontSize: textSize(12), color: '#d1d1d6', marginBottom: 14 },
   heroDescription: {
-    color: '#a8b4c0',
+    color: '#d1d1d6',
     fontSize: textSize(13),
     lineHeight: textSize(22),
-    maxWidth: 400,
+    maxWidth: 430,
   },
   heroPagination: {
     position: 'absolute',
-    right: 25,
-    bottom: 24,
+    right: 18,
+    bottom: 15,
     flexDirection: 'row',
-    gap: 6,
+    padding: 2,
+    borderRadius: radius.pill,
+    backgroundColor: '#10101266',
+  },
+  pageDotTarget: {
+    width: 32,
+    height: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 16,
   },
   pageDot: {
     width: 6,
@@ -839,11 +859,11 @@ const s = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 15,
-    marginVertical: 31,
+    marginVertical: 32,
   },
   editorialText: {
     color: colors.subtle,
-    fontSize: textSize(8),
-    letterSpacing: 1.7,
+    fontSize: textSize(12),
+    letterSpacing: 0,
   },
 });
