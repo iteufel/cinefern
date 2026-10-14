@@ -1,0 +1,176 @@
+name: TestFlight
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: Apps to upload to TestFlight
+        type: choice
+        options: [all, ios, tvos]
+        default: all
+
+permissions:
+  contents: read
+
+concurrency:
+  group: testflight-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+      - run: python3 -m unittest discover -s tests -p 'apple_ci_test.py'
+
+  upload:
+    needs: validate
+    runs-on: macos-26
+    timeout-minutes: 90
+    environment: testflight
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: ios
+            root: .
+            scheme: Cinefern
+            destination: generic/platform=iOS
+            app_type: ios
+            bundle_id: io.github.iteufel.cinefern
+            profile_secret: IOS_APP_STORE_PROFILE_BASE64
+          - platform: tvos
+            root: apps/tv
+            scheme: CinefernTV
+            destination: generic/platform=tvOS
+            app_type: appletvos
+            bundle_id: io.github.iteufel.cinefern.tv
+            profile_secret: TVOS_APP_STORE_PROFILE_BASE64
+    env:
+      CI: '1'
+      APPLE_TEAM_ID: ${{ vars.APPLE_TEAM_ID }}
+      APP_ROOT: ${{ matrix.root }}
+      APP_SCHEME: ${{ matrix.scheme }}
+      APP_BUNDLE_ID: ${{ matrix.bundle_id }}
+      BUILD_NUMBER: ${{ github.run_number }}.${{ github.run_attempt }}
+    steps:
+      - name: Select platform
+        id: selected
+        env:
+          REQUESTED_PLATFORM: ${{ inputs.platform || 'all' }}
+        run: |
+          echo "BUILD_DIR=$RUNNER_TEMP/testflight-${{ matrix.platform }}" >> "$GITHUB_ENV"
+          if [[ "$REQUESTED_PLATFORM" == all || "$REQUESTED_PLATFORM" == '${{ matrix.platform }}' ]]; then
+            echo 'enabled=true' >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/checkout@v7
+        if: steps.selected.outputs.enabled == 'true'
+      - name: Check Apple configuration
+        if: steps.selected.outputs.enabled == 'true'
+        env:
+          CERTIFICATE: ${{ secrets.APPLE_DISTRIBUTION_P12_BASE64 }}
+          CERTIFICATE_PASSWORD: ${{ secrets.APPLE_DISTRIBUTION_P12_PASSWORD }}
+          PROFILE: ${{ secrets[matrix.profile_secret] }}
+          API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          API_PRIVATE_KEY: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
+        run: |
+          for name in APPLE_TEAM_ID CERTIFICATE CERTIFICATE_PASSWORD PROFILE API_KEY_ID API_ISSUER_ID API_PRIVATE_KEY; do
+            if [[ -z "${!name}" ]]; then
+              echo "::error::Missing $name. See docs/testflight.md."
+              exit 1
+            fi
+          done
+      - uses: actions/setup-node@v7
+        if: steps.selected.outputs.enabled == 'true'
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        if: steps.selected.outputs.enabled == 'true'
+        run: npm ci
+      - name: Generate device project
+        if: steps.selected.outputs.enabled == 'true'
+        working-directory: ${{ matrix.root }}
+        run: npx expo prebuild --platform ios --no-install
+      - name: Install CocoaPods dependencies
+        if: steps.selected.outputs.enabled == 'true'
+        working-directory: ${{ matrix.root }}/ios
+        run: pod install
+      - name: Import Apple Distribution certificate
+        if: steps.selected.outputs.enabled == 'true'
+        id: certificate
+        uses: apple-actions/import-codesign-certs@v3
+        with:
+          keychain: cinefern-testflight
+          p12-file-base64: ${{ secrets.APPLE_DISTRIBUTION_P12_BASE64 }}
+          p12-password: ${{ secrets.APPLE_DISTRIBUTION_P12_PASSWORD }}
+      - name: Install and validate App Store profile
+        if: steps.selected.outputs.enabled == 'true'
+        id: profile
+        env:
+          PROFILE_BASE64: ${{ secrets[matrix.profile_secret] }}
+          APP_PLATFORM: ${{ matrix.platform }}
+        run: python3 scripts/apple-profile.py
+      - name: Configure app signing and build number
+        if: steps.selected.outputs.enabled == 'true'
+        env:
+          PROFILE_UUID: ${{ steps.profile.outputs.uuid }}
+        run: node scripts/apple-signing.cjs
+      - name: Archive for physical devices
+        if: steps.selected.outputs.enabled == 'true'
+        env:
+          DESTINATION: ${{ matrix.destination }}
+        run: |
+          set -o pipefail
+          xcodebuild archive \
+            -workspace "$APP_ROOT/ios/$APP_SCHEME.xcworkspace" \
+            -scheme "$APP_SCHEME" -configuration Release \
+            -destination "$DESTINATION" \
+            -archivePath "$BUILD_DIR/$APP_SCHEME.xcarchive" \
+            -derivedDataPath "$BUILD_DIR/DerivedData" \
+            | tee "$BUILD_DIR/archive.log"
+      - name: Export App Store IPA
+        if: steps.selected.outputs.enabled == 'true'
+        run: |
+          set -o pipefail
+          xcodebuild -exportArchive \
+            -archivePath "$BUILD_DIR/$APP_SCHEME.xcarchive" \
+            -exportOptionsPlist "$BUILD_DIR/ExportOptions.plist" \
+            -exportPath "$BUILD_DIR/export" \
+            | tee "$BUILD_DIR/export.log"
+      - name: Upload to TestFlight
+        if: steps.selected.outputs.enabled == 'true'
+        uses: apple-actions/upload-testflight-build@v3
+        with:
+          app-path: ${{ env.BUILD_DIR }}/export/${{ matrix.scheme }}.ipa
+          app-type: ${{ matrix.app_type }}
+          issuer-id: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          api-key-id: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          api-private-key: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
+      - name: Save IPA and build logs
+        if: always() && steps.selected.outputs.enabled == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: testflight-${{ matrix.platform }}-${{ github.run_number }}-${{ github.run_attempt }}
+          path: |
+            ${{ env.BUILD_DIR }}/export/*.ipa
+            ${{ env.BUILD_DIR }}/*.log
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Remove provisioning profile
+        if: always() && steps.profile.outputs.path != ''
+        env:
+          PROFILE_PATH: ${{ steps.profile.outputs.path }}
+        run: rm -f "$PROFILE_PATH"
+      - name: Remove signing keychain
+        if: always() && steps.certificate.outputs.keychain-password != ''
+        run: security delete-keychain cinefern-testflight.keychain

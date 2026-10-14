@@ -35,6 +35,10 @@ xcodebuild -workspace apps/tv/ios/CinefernTV.xcworkspace \
 
 The application is written to `build/tvos/Build/Products/Release-appletvsimulator/CinefernTV.app`. A manual GitHub Actions run builds the same artifact. For physical devices, select the CinefernTV scheme in Xcode and configure your team/signing. EAS profiles live in `apps/tv/eas.json`; run EAS from that directory and supply your own project and tvOS provisioning profile for distribution. See [Expo's TV build and credentials guide](https://docs.expo.dev/guides/building-for-tv/).
 
+For installation through TestFlight, the separate **TestFlight** GitHub Actions workflow
+builds a signed Apple TV device archive and uploads the IPA to App Store Connect.
+See [TestFlight account and CI setup](testflight.md).
+
 ## Siri Remote
 
 - Directional controls move between tabs, titles, and buttons. The mint border marks the focused item; focus guides remember the last control in a region.

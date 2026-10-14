@@ -62,7 +62,7 @@ npm run check           # TypeScript and core/integration tests
 npm run build           # static web renderer in dist/
 npm run build:mobile    # iOS and Android Hermes bundles in dist-mobile/
 npm run build:tvos      # Apple TV Hermes bundle in dist-tvos/
-npm run desktop:pack    # unsigned/unpacked desktop app in release/
+npm run desktop:pack    # unpacked desktop app in release/ (ad hoc signed on macOS)
 npm run desktop:dist    # installers for the current host
 ```
 
@@ -76,9 +76,30 @@ npm run desktop:dist -- --linux
 
 Windows uses NSIS, macOS uses DMG, and Linux uses AppImage/deb.
 macOS and Windows support x64/arm64 package targets; use `--x64` or `--arm64` to select an architecture.
-Release signing/notarization credentials are supplied through electron-builder's environment.
-The CI workflow builds unsigned desktop installers on all three hosts and exports both mobile bundles.
+macOS builds use an ad hoc signature by default, and CI verifies the signatures before uploading the DMGs.
+This prevents an invalid signature after Electron is repackaged, but does not provide Apple notarization.
+For Developer ID releases, override `mac.identity` with your certificate name (for example,
+`npm run desktop:dist -- --mac -c.mac.identity="Developer ID Application: Your Name (TEAMID)"`)
+and supply electron-builder's signing/notarization credentials through the environment.
+The CI workflow builds ad hoc signed macOS installers and unsigned Windows/Linux installers, and exports both mobile bundles.
 A manual workflow run also compiles an Android debug APK, an unsigned iOS simulator application, and an Apple TV simulator application.
+For signed iOS and Apple TV builds uploaded to TestFlight, use the separate
+**TestFlight** workflow after [connecting your Apple Developer account](docs/testflight.md).
+
+### Opening a downloaded macOS test build
+
+Older builds can show “Cinefern.app is damaged” because packaging left an invalid Electron signature.
+Replace them with a newly built DMG. Ad hoc signed test builds still require a Gatekeeper exception
+because they are not notarized. For a build you trust, copy Cinefern to Applications, then run:
+
+```sh
+codesign --verify --deep --strict --verbose=2 /Applications/Cinefern.app
+xattr -dr com.apple.quarantine /Applications/Cinefern.app
+open /Applications/Cinefern.app
+```
+
+Only remove quarantine after signature verification succeeds. Public releases should use Developer ID
+signing and Apple notarization so users do not need this exception.
 
 Mobile JS export is a bundle check, not an APK/IPA. Build native binaries with the local toolchain or your Expo EAS account:
 

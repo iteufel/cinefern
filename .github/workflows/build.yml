@@ -50,6 +50,12 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npx electron-builder --${{ matrix.target }} --publish never
+      - name: Verify macOS app signatures
+        if: matrix.target == 'mac'
+        run: |
+          for app in release/mac*/Cinefern.app; do
+            codesign --verify --deep --strict --verbose=2 "$app"
+          done
       - uses: actions/upload-artifact@v4
         with:
           name: desktop-${{ matrix.target }}
