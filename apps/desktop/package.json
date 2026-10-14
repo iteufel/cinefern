@@ -2,7 +2,10 @@
   "name": "cinefern-desktop",
   "version": "5.0.0",
   "description": "Cinefern universal media player",
-  "author": "Cinefern contributors",
+  "author": {
+    "name": "Cinefern contributors",
+    "email": "contact@nwplay.org"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/iteufel/cinefern.git",
