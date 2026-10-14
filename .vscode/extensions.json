@@ -1,9 +1,6 @@
 {
-"recommendations": [
-"nrwl.angular-console",
-"ms-vscode.vscode-typescript-tslint-plugin",
-"esbenp.prettier-vscode",
-"angular.ng-template"
-]
-
+  "recommendations": [
+    "esbenp.prettier-vscode",
+    "msjsdiag.vscode-react-native"
+  ]
 }

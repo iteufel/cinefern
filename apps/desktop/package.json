@@ -1,0 +1,13 @@
+{
+  "name": "cinefern-desktop",
+  "version": "5.0.0",
+  "description": "Cinefern universal media player",
+  "author": "Cinefern contributors",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iteufel/cinefern.git",
+    "directory": "apps/desktop"
+  },
+  "license": "AGPL-3.0-or-later",
+  "main": "main.cjs"
+}

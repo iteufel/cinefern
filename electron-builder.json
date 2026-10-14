@@ -1,0 +1,44 @@
+{
+  "appId": "io.github.iteufel.cinefern",
+  "productName": "Cinefern",
+  "directories": {
+    "app": "apps/desktop",
+    "output": "release",
+    "buildResources": "assets"
+  },
+  "files": ["main.cjs", "preload.cjs", "package.json", "!node_modules/**/*"],
+  "extraResources": [
+    {
+      "from": "dist",
+      "to": "renderer"
+    }
+  ],
+  "mac": {
+    "category": "public.app-category.entertainment",
+    "target": [
+      {
+        "target": "dmg",
+        "arch": ["x64", "arm64"]
+      }
+    ],
+    "icon": "assets/icon.icns"
+  },
+  "win": {
+    "target": [
+      {
+        "target": "nsis",
+        "arch": ["x64", "arm64"]
+      }
+    ],
+    "icon": "assets/icon.ico"
+  },
+  "linux": {
+    "target": ["AppImage", "deb"],
+    "category": "AudioVideo",
+    "icon": "assets/icon.png"
+  },
+  "nsis": {
+    "oneClick": false,
+    "allowToChangeInstallationDirectory": true
+  }
+}

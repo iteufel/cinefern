@@ -1,0 +1,24 @@
+{
+  "id": "org.example.catalog",
+  "name": "Example Catalog",
+  "version": "1.0.0",
+  "apiVersion": 1,
+  "description": "A TypeScript media-provider example. Connect a JSON catalog served from example.com.",
+  "author": "Your name",
+  "capabilities": ["browse", "search", "sources"],
+  "permissions": { "network": ["https://example.com"], "storage": true },
+  "settings": [
+    {
+      "id": "catalogUrl",
+      "label": "Catalog URL",
+      "type": "text",
+      "default": "https://example.com/catalog.json"
+    },
+    {
+      "id": "token",
+      "label": "Access token",
+      "type": "password",
+      "default": ""
+    }
+  ]
+}

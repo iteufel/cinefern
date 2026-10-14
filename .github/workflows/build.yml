@@ -1,112 +1,120 @@
-name: NWPlay
-
+name: Cinefern
 on:
   push:
-    branches:
-      - master
-env:
-  CYPRESS_INSTALL_BINARY: 0
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
 jobs:
-  build-ui:
+  validate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
-          node-version: 14
+          node-version: 22
+          cache: npm
       - run: npm ci
-      - run: npx nx build --prod
-      - run: node ./tools/post.build.js
-      - uses: actions/upload-artifact@v2
+      - run: npm run check
+      - run: npm run plugin:example
+      - run: npm run build:mobile
+      - run: npm run build:tvos
+      - uses: actions/upload-artifact@v4
         with:
-          name: app-ui
-          path: dist/apps/ui/**
-  build-macos:
-    needs: [ build-ui ]
-    runs-on: macOS-latest
+          name: native-js-bundles
+          path: |
+            dist-mobile/
+            dist-tvos/
+  desktop:
+    needs: validate
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            target: mac
+          - os: windows-latest
+            target: win
+          - os: ubuntu-latest
+            target: linux
+    runs-on: ${{ matrix.os }}
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: 'false'
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
-          node-version: 12
-      - uses: actions/download-artifact@v2
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npx electron-builder --${{ matrix.target }} --publish never
+      - uses: actions/upload-artifact@v4
         with:
-          name: app-ui
-          path: dist/apps/ui
-      - run: npm i nwjs-builder-phoenix
-      - run: node node_modules/nwjs-builder-phoenix/dist/bin/build.js --tasks mac-x64 ./dist/apps/ui
-      - uses: actions/upload-artifact@v2
-        with:
-          name: macos-x64
-          path: dist/apps/dist/*mac*.zip
-  build-linux:
-    needs: [ build-ui ]
+          name: desktop-${{ matrix.target }}
+          path: |
+            release/*.dmg
+            release/*.exe
+            release/*.AppImage
+            release/*.deb
+          if-no-files-found: error
+  android:
+    if: github.event_name == 'workflow_dispatch'
+    needs: validate
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
-          node-version: 12
-      - uses: actions/download-artifact@v2
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v6
         with:
-          name: app-ui
-          path: dist/apps/ui
-      - run: npm i nwjs-builder-phoenix
-      - run: node node_modules/nwjs-builder-phoenix/dist/bin/build.js --tasks linux-x86,linux-x64 ./dist/apps/ui
-      - uses: actions/upload-artifact@v2
+          distribution: temurin
+          java-version: '21'
+      - run: npm ci
+      - run: npm run native:generate -- --platform android --no-install
+      - run: ./gradlew assembleDebug
+        working-directory: android
+      - uses: actions/upload-artifact@v4
         with:
-          name: linux-x86
-          path: dist/apps/dist/*linux-x86*.zip
-      - uses: actions/upload-artifact@v2
-        with:
-          name: linux-x64
-          path: dist/apps/dist/*linux-x64*.zip
-  build-win:
-    needs: [ build-ui ]
-    runs-on: windows-latest
+          name: android-debug
+          path: android/app/build/outputs/apk/debug/*.apk
+  ios:
+    if: github.event_name == 'workflow_dispatch'
+    needs: validate
+    runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
-          node-version: 12
-      - uses: actions/download-artifact@v2
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run native:generate -- --platform ios --no-install
+      - run: pod install
+        working-directory: ios
+      - run: xcodebuild -workspace ios/Cinefern.xcworkspace -scheme Cinefern -configuration Release -sdk iphonesimulator -derivedDataPath build/ios CODE_SIGNING_ALLOWED=NO
+      - uses: actions/upload-artifact@v4
         with:
-          name: app-ui
-          path: dist/apps/ui
-      - run: npm i
-      - run: node node_modules/nwjs-builder-phoenix/dist/bin/build.js --tasks win-x86,win-x64 ./dist/apps/ui
-      - run: node tools/createWindowsSetup
-      - uses: actions/upload-artifact@v2
-        with:
-          name: windows-x86
-          path: dist/apps/dist/*win-x86*.zip
-      - uses: actions/upload-artifact@v2
-        with:
-          name: windows-x64
-          path: dist/apps/dist/**/*win-x64*.zip
-      - uses: actions/upload-artifact@v2
-        with:
-          name: windows-x64-install
-          path: dist/apps/dist/*win-x64*.exe
-      - uses: actions/upload-artifact@v2
-        with:
-          name: windows-x86-install
-          path: dist/apps/dist/*win-x86*.exe
-  create-release:
-    needs: [ build-win, build-macos, build-linux ]
-    name: "Pre Release"
-    runs-on: ubuntu-latest
+          name: ios-simulator
+          path: build/ios/Build/Products/Release-iphonesimulator/Cinefern.app
+  tvos:
+    if: github.event_name == 'workflow_dispatch'
+    needs: validate
+    runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
-          path: artifacts
-      - uses: "marvinpinto/action-automatic-releases@latest"
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run tvos:generate
+      - run: pod install
+        working-directory: apps/tv/ios
+      - run: xcodebuild -workspace apps/tv/ios/CinefernTV.xcworkspace -scheme CinefernTV -configuration Release -sdk appletvsimulator -destination 'generic/platform=tvOS Simulator' -derivedDataPath build/tvos CODE_SIGNING_ALLOWED=NO
+      - uses: actions/upload-artifact@v4
         with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "latest"
-          prerelease: true
-          title: "Development Build"
-          files: |
-            artifacts/**/*.zip
-            artifacts/**/*.exe
+          name: apple-tv-simulator
+          path: build/tvos/Build/Products/Release-appletvsimulator/CinefernTV.app

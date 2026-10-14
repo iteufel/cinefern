@@ -1,0 +1,29 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "resolveJsonModule": true,
+    "types": ["node"],
+    "baseUrl": "."
+  },
+  "include": [
+    "App.tsx",
+    "index.ts",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "packages/**/*.ts",
+    "providers/**/*.ts",
+    "tests/**/*.ts",
+    "apps/tv/index.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "dist-mobile",
+    "dist-tvos",
+    "release",
+    "ios",
+    "android"
+  ]
+}
