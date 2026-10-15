@@ -1,0 +1,13 @@
+{
+  "name": "@cinefern/apple-player",
+  "version": "5.1.0",
+  "private": true,
+  "main": "index.tsx",
+  "description": "Native AVKit menus for Cinefern",
+  "license": "AGPL-3.0-or-later",
+  "peerDependencies": {
+    "expo": "*",
+    "react": "*",
+    "react-native": "*"
+  }
+}

@@ -134,3 +134,15 @@ This repository implements local bundle installation and does not operate a publ
 
 For a provider using the media agent, build `npm run plugin:agent-example` and install the resulting
 Media Research bundle. It demonstrates both `context.agent.search` and `context.agent.resolve`.
+
+### Audio tracks selected by the provider
+
+When a stream exposes only one audio rendition (for example a Jellyfin HLS transcode),
+return `audioTracks: [{ id, label, language }]` and `audioTrackId` on the `MediaSource`.
+Track IDs must be unique and stable for that title and media version, including tracks
+with the same language such as commentary. The native player calls `getSources` again
+with `PlaybackPreferences.audioTrackId` and `audioLanguage` when the user selects a
+track, and preserves the playback position, pause state, and rate while replacing the
+stream. Return a source whose `audioTrackId` matches the request or throw an actionable
+error. Do not persist this per-title ID as a global language preference. Sources that
+already expose multiple embedded tracks continue to support native track selection.

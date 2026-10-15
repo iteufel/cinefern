@@ -5,7 +5,7 @@ import { useApp } from '../app-context';
 import { platform } from '../platform';
 import { Button, Chip, Input } from '../ui/components';
 import { Toggle } from '../ui/focus';
-import { colors, textSize } from '../ui/theme';
+import { colors, isIOS, textSize } from '../ui/theme';
 import {
   AGENT_BACKENDS,
   BACKEND_LABELS,
@@ -116,8 +116,11 @@ export function AgentSettingsPanel() {
         value={value}
         onValueChange={onValueChange}
         disabled={!loaded || busy}
-        trackColor={{ false: colors.border, true: '#355848' }}
-        thumbColor={value ? colors.accent : colors.muted}
+        trackColor={{
+          false: colors.border,
+          true: isIOS ? '#30d158' : '#355848',
+        }}
+        thumbColor={isIOS ? undefined : value ? colors.accent : colors.muted}
       />
     </View>
   );

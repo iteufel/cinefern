@@ -1,6 +1,18 @@
 import { useApp } from '../app-context';
 const en = {
   discover: 'Discover',
+  libraryTitle: 'Library',
+  forYou: 'For You',
+  featured: 'Featured',
+  welcomeToCinefern: 'Welcome to Cinefern',
+  welcomeWatch: 'Your own cinema',
+  welcomeWatchDescription: 'Discover films and series, all in one place.',
+  welcomeProviders: 'Bring your library',
+  welcomeProvidersDescription:
+    'Connect Jellyfin or add your favorite providers.',
+  welcomeOffline: 'Take it with you',
+  welcomeOfflineDescription:
+    'Save your favorites and download films for later.',
   movies: 'Movies',
   series: 'Series',
   search: 'Search',
@@ -43,6 +55,18 @@ const en = {
 };
 const de: typeof en = {
   discover: 'Entdecken',
+  libraryTitle: 'Mediathek',
+  forYou: 'Für dich',
+  featured: 'Im Spotlight',
+  welcomeToCinefern: 'Willkommen bei Cinefern',
+  welcomeWatch: 'Dein eigenes Kino',
+  welcomeWatchDescription: 'Entdecke Filme und Serien an einem Ort.',
+  welcomeProviders: 'Deine Sammlung',
+  welcomeProvidersDescription:
+    'Verbinde Jellyfin oder füge deine Lieblingsanbieter hinzu.',
+  welcomeOffline: 'Für unterwegs',
+  welcomeOfflineDescription:
+    'Speichere Favoriten und lade Filme für später herunter.',
   movies: 'Filme',
   series: 'Serien',
   search: 'Suche',

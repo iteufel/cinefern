@@ -43,6 +43,11 @@ flowchart TD
 - `src/core` holds platform-independent storage, provider validation/runtime, and download state.
 - `src/agent` owns the wrapped Deep Agents service, credentials/settings, model/search adapters, tool boundaries, and portable page reader. See [media agent](media-agent.md).
 - `src/screens` and `src/ui` contain the responsive React Native interface.
+- `src/ui/native-experience.ios.tsx` selects native UIKit tabs and navigation stacks for iPhone/iPad. Its screen-scoped application context keeps each mounted screen's media route independent, and native back gestures update the navigator directly.
+- `src/screens/apple.tsx` provides iOS Discover and Library screens; `src/ui/welcome.ios.tsx` supplies iOS onboarding. Shared forms use native sheet presentation and confirmation alerts on iOS.
+- `native-experience.tv.tsx`, `tv-navigation.ts`, and `shell.tv.tsx` provide the TV sidebar and independent navigation branches. Covered screens stay mounted to preserve focus guides and scroll offsets. `screens/tv-home.tsx` provides the cinematic hero and landscape shelves.
+- `ui/glass-view.native.tsx` uses the system Liquid Glass material, respecting availability and Reduce Transparency.
+- `player/use-native-playback.ts` handles native track events, provider audio negotiation, source replacement, and progress. `player/apple.tsx` uses AVKit controls. `packages/apple-player` adds UIKit menus on iOS and AVKit transport menus/sidecar captions on tvOS, without replacing Expo's AVPlayer.
 - `src/player` chooses native or desktop/web playback through Metro platform resolution.
 - `src/platform` implements persistence, file picking, networking, downloads, and export.
 - `packages/provider-sdk` defines the new provider contract.
@@ -65,8 +70,7 @@ Apple TV uses AsyncStorage and purgeable cache storage for downloaded media; see
 Desktop uses renderer storage and app-managed files in Electron's user-data directory.
 The browser preview stores downloaded blobs in IndexedDB. Browser quota and CORS restrictions apply.
 Progressive files can be downloaded, cancelled, removed, and retried. Retry starts a new transfer; there is no partial-transfer resume.
-External subtitles use VTT/SRT cues; native custom subtitle overlays are shown in the in-app player, while embedded
-tracks follow the platform's native fullscreen player.
+External subtitles use VTT/SRT cues. On tvOS the local native module places them in AVKit's content overlay so they remain visible in fullscreen; picture in picture uses embedded subtitles. The iOS player keeps its native options menu and sidecar captions in the full-screen app presentation. Embedded tracks are selected directly through AVPlayer.
 
 ## Desktop boundary
 

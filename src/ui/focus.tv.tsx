@@ -1,4 +1,10 @@
-import React, { forwardRef, useState, useEffect, useRef } from 'react';
+import React, {
+  forwardRef,
+  useState,
+  useEffect,
+  useRef,
+  useContext,
+} from 'react';
 import {
   Pressable as NativePressable,
   TVFocusGuideView,
@@ -10,6 +16,7 @@ import {
   type ViewProps,
 } from 'react-native';
 import { colors } from './theme';
+import { TVFocusMemory } from './focus-memory';
 
 const backHandlers = new Set<symbol>();
 export function useTVBackHandling(active: boolean) {
@@ -33,14 +40,27 @@ export const Pressable = forwardRef<View, PressableProps>(function Pressable(
   ref,
 ) {
   const [focused, setFocused] = useState(false);
+  const node = useRef<View | null>(null);
+  const remember = useContext(TVFocusMemory);
   return (
     <NativePressable
       {...props}
-      ref={ref}
+      ref={(view) => {
+        node.current = view;
+        if (typeof ref === 'function') ref(view);
+        else if (ref) ref.current = view;
+      }}
       disabled={disabled}
       focusable={!disabled && props.focusable !== false}
+      tvParallaxProperties={{
+        enabled: true,
+        magnification: 1.055,
+        pressMagnification: 1,
+        ...props.tvParallaxProperties,
+      }}
       onFocus={(event) => {
         setFocused(true);
+        remember(node.current);
         onFocus?.(event);
       }}
       onBlur={(event) => {
@@ -50,11 +70,14 @@ export const Pressable = forwardRef<View, PressableProps>(function Pressable(
       style={(state) => [
         typeof style === 'function' ? style(state) : style,
         // Keep the border width stable so focus never moves the surrounding layout.
-        { borderWidth: 3 },
+        { borderWidth: 3, borderColor: 'transparent' },
         focused &&
           !disabled && {
-            borderColor: colors.accent,
-            transform: [{ scale: 1.025 }],
+            borderColor: '#ffffff',
+            shadowColor: '#ffffff',
+            shadowOpacity: 0.2,
+            shadowRadius: 18,
+            shadowOffset: { width: 0, height: 4 },
           },
       ]}
     />
@@ -62,7 +85,7 @@ export const Pressable = forwardRef<View, PressableProps>(function Pressable(
 });
 
 export function FocusRegion(props: ViewProps) {
-  return <TVFocusGuideView autoFocus {...props} />;
+  return <TVFocusGuideView autoFocus trapFocusRight {...props} />;
 }
 
 // UISwitch isn't available on tvOS. The remote selects this focusable toggle.

@@ -66,11 +66,20 @@ export interface MediaSource {
   label: string;
   quality?: number;
   audioLanguage?: string;
+  /** Tracks selected by asking the provider for a new stream (for example Jellyfin HLS). */
+  audioTracks?: SourceAudioTrack[];
+  audioTrackId?: string;
   headers?: Record<string, string>;
   subtitles?: Subtitle[];
   downloadable?: boolean;
   live?: boolean;
   resolverId?: string;
+}
+export interface SourceAudioTrack {
+  /** Opaque provider ID. Distinguishes commentary tracks in the same language. */
+  id: string;
+  label: string;
+  language: string;
 }
 export interface ProviderSetting {
   id: string;
@@ -193,6 +202,8 @@ export interface CollectionOptions {
 export interface PlaybackPreferences {
   quality: number;
   audioLanguage: string;
+  /** Only applies to the current title; do not persist as a global preference. */
+  audioTrackId?: string;
   subtitleLanguage: string;
 }
 export interface MediaProvider {
@@ -392,6 +403,25 @@ export function assertSource(value: unknown): asserts value is MediaSource {
     const uri = new URL(subtitle.url);
     if (!['http:', 'https:'].includes(uri.protocol))
       throw new Error('Subtitle URLs must use HTTP or HTTPS.');
+  }
+  if (source.audioTracks !== undefined) {
+    if (!Array.isArray(source.audioTracks) || source.audioTracks.length > 100)
+      throw new Error('Provider returned invalid audio tracks.');
+    const ids = new Set<string>();
+    for (const track of source.audioTracks) {
+      if (
+        !track ||
+        typeof track.id !== 'string' ||
+        !track.id ||
+        typeof track.label !== 'string' ||
+        typeof track.language !== 'string' ||
+        ids.has(track.id)
+      )
+        throw new Error('Provider returned invalid audio tracks.');
+      ids.add(track.id);
+    }
+    if (source.audioTrackId !== undefined && !ids.has(source.audioTrackId))
+      throw new Error('Provider returned an unknown selected audio track.');
   }
 }
 export function chooseSource(

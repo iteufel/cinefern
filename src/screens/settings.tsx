@@ -32,7 +32,7 @@ import {
   styles as ui,
 } from '../ui/components';
 import { ConfirmDialog, Dialog } from '../ui/dialog';
-import { colors, radius, isTV, textSize } from '../ui/theme';
+import { colors, radius, isTV, isIOS, textSize } from '../ui/theme';
 import { useT } from '../ui/i18n';
 import { fetchTextDocument } from '../core/import-document';
 import { AgentSettingsPanel } from './agent-settings';
@@ -63,7 +63,12 @@ function Group({
   title: string;
   children: React.ReactNode;
 }) {
-  return (
+  return isIOS ? (
+    <View style={s.appleGroup}>
+      <Text style={s.appleGroupTitle}>{title}</Text>
+      <View style={s.appleGroupContent}>{children}</View>
+    </View>
+  ) : (
     <View style={s.group}>
       <Text style={s.groupTitle}>{title}</Text>
       {children}
@@ -90,8 +95,13 @@ export function SettingsScreen() {
         accessibilityLabel={label}
         value={Boolean(settings[key])}
         onValueChange={(v) => app.library.setSettings({ [key]: v })}
-        trackColor={{ false: colors.border, true: '#355848' }}
-        thumbColor={settings[key] ? colors.accent : colors.muted}
+        trackColor={{
+          false: colors.border,
+          true: isIOS ? '#30d158' : '#355848',
+        }}
+        thumbColor={
+          isIOS ? undefined : settings[key] ? colors.accent : colors.muted
+        }
       />
     </Row>
   );
@@ -284,7 +294,7 @@ export function SettingsScreen() {
                   app.library.setSettings({ detailPresentation: 'page' })
                 }
               >
-                Page
+                {isIOS ? 'Screen' : 'Page'}
               </Chip>
               <Chip
                 selected={settings.detailPresentation === 'modal'}
@@ -292,7 +302,7 @@ export function SettingsScreen() {
                   app.library.setSettings({ detailPresentation: 'modal' })
                 }
               >
-                Dialog
+                {isIOS ? 'Sheet' : 'Dialog'}
               </Chip>
             </View>
           </Row>
@@ -548,6 +558,7 @@ export function SettingsScreen() {
       </Group>
       <Dialog
         visible={importUrlDialog}
+        dismissible={!busy}
         onClose={() => !busy && setImportUrlDialog(false)}
         title="Import library from URL"
       >
@@ -602,6 +613,20 @@ export function SettingsScreen() {
   );
 }
 const s = StyleSheet.create({
+  appleGroup: { marginBottom: 28 },
+  appleGroupTitle: {
+    color: colors.muted,
+    fontSize: 13,
+    textTransform: 'uppercase',
+    marginBottom: 8,
+    paddingHorizontal: 16,
+  },
+  appleGroupContent: {
+    borderRadius: 12,
+    backgroundColor: colors.surface,
+    paddingHorizontal: 16,
+    paddingVertical: 4,
+  },
   group: {
     padding: 24,
     borderRadius: radius.card,
@@ -621,15 +646,19 @@ const s = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     flexWrap: 'wrap',
-    gap: 15,
-    paddingVertical: 18,
-    borderBottomWidth: 1,
+    gap: isIOS ? 12 : 15,
+    paddingVertical: isIOS ? 14 : 18,
+    borderBottomWidth: isIOS ? StyleSheet.hairlineWidth : 1,
     borderBottomColor: colors.separator,
   },
-  label: { color: colors.text, fontSize: textSize(14), fontWeight: '500' },
+  label: {
+    color: colors.text,
+    fontSize: textSize(isIOS ? 17 : 14),
+    fontWeight: '500',
+  },
   description: {
     color: colors.muted,
-    fontSize: textSize(12),
+    fontSize: textSize(isIOS ? 13 : 12),
     lineHeight: textSize(20),
     maxWidth: 750,
   },

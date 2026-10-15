@@ -37,7 +37,7 @@ import {
   styles as ui,
 } from '../ui/components';
 import { Dialog, ConfirmDialog } from '../ui/dialog';
-import { colors, radius, isTV, textSize } from '../ui/theme';
+import { colors, radius, isTV, isIOS, textSize } from '../ui/theme';
 import { useT } from '../ui/i18n';
 import { fetchTextDocument } from '../core/import-document';
 import { jellyfinManifest } from '../providers/jellyfin';
@@ -257,8 +257,13 @@ export function ProvidersScreen() {
                 <Toggle
                   accessibilityLabel={'Enable ' + manifest.name}
                   value={enabled}
-                  trackColor={{ false: colors.border, true: '#355848' }}
-                  thumbColor={enabled ? colors.accent : colors.muted}
+                  trackColor={{
+                    false: colors.border,
+                    true: isIOS ? '#30d158' : '#355848',
+                  }}
+                  thumbColor={
+                    isIOS ? undefined : enabled ? colors.accent : colors.muted
+                  }
                   onValueChange={(value) =>
                     void app
                       .setEnabled(manifest.id, value)
@@ -379,6 +384,7 @@ export function ProvidersScreen() {
       )}
       <Dialog
         visible={urlDialog || !!pending}
+        dismissible={!busy}
         onClose={() => {
           if (!busy) {
             setUrlDialog(false);
@@ -474,6 +480,7 @@ export function ProvidersScreen() {
       </Dialog>
       <Dialog
         visible={!!editing}
+        dismissible={!busy}
         onClose={closeSettings}
         title={editing?.name ?? t.settings}
       >

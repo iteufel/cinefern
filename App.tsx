@@ -33,6 +33,7 @@ import { ProvidersScreen } from './src/screens/providers';
 import { SettingsScreen } from './src/screens/settings';
 import { Player } from './src/player';
 import { imageSource } from './src/ui/artwork';
+import { NativeApplication, NativeWelcome } from './src/ui/native-experience';
 
 class ErrorBoundary extends Component<
   { children: React.ReactNode },
@@ -77,7 +78,9 @@ function Application() {
         <Loading />
       </View>
     );
-  if (!app.state.setupComplete) return <Welcome />;
+  if (!app.state.setupComplete)
+    return NativeWelcome ? <NativeWelcome /> : <Welcome />;
+  if (NativeApplication) return <NativeApplication />;
   const route = app.route;
   const modalDetails =
     !isTV &&

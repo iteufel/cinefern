@@ -47,7 +47,7 @@ import {
   styles as ui,
 } from '../ui/components';
 import { useContentWidth } from '../ui/shell';
-import { colors, radius, isTV, textSize } from '../ui/theme';
+import { colors, radius, isTV, isIOS, textSize } from '../ui/theme';
 import { useT } from '../ui/i18n';
 import { useAsync } from '../ui/use-async';
 import { imageSource } from '../ui/artwork';
@@ -700,9 +700,11 @@ export function CollectionScreen() {
         eyebrow="CURATED FOR YOUR NEXT WATCH"
         description={query.data?.description}
         action={
-          <Button icon={ChevronLeft} onPress={app.back}>
-            {t.back}
-          </Button>
+          !isIOS && (
+            <Button icon={ChevronLeft} onPress={app.back}>
+              {t.back}
+            </Button>
+          )
         }
       />
       <ScrollView
@@ -775,9 +777,11 @@ export function PersonScreen() {
         eyebrow="THE PEOPLE BEHIND THE STORIES"
         description={query.data?.person.biography}
         action={
-          <Button icon={ChevronLeft} onPress={app.back}>
-            {t.back}
-          </Button>
+          !isIOS && (
+            <Button icon={ChevronLeft} onPress={app.back}>
+              {t.back}
+            </Button>
+          )
         }
       />
       {query.loading ? (

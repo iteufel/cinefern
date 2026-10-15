@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   ActivityIndicator,
   Image,
@@ -23,10 +23,12 @@ import {
 } from 'lucide-react-native';
 import type { MediaItem } from '@cinefern/provider-sdk';
 import { useApp } from '../app-context';
-import { colors, radius, time, isTV, textSize } from './theme';
+import { colors, radius, time, isTV, isIOS, textSize } from './theme';
+import { ScreenLayoutContext } from './screen-layout';
 import { Pressable, FocusRegion } from './focus';
 import { useT } from './i18n';
 import { imageSource } from './artwork';
+import { TVFocusMemory } from './focus-memory';
 
 export function Button({
   children,
@@ -51,11 +53,17 @@ export function Button({
 }) {
   const [hover, setHover] = useState(false);
   const foreground =
-    variant === 'primary'
-      ? colors.background
-      : variant === 'danger'
-        ? colors.danger
-        : colors.text;
+    isTV && hover && !disabled && variant !== 'danger'
+      ? '#111111'
+      : variant === 'primary'
+        ? isIOS
+          ? '#ffffff'
+          : colors.background
+        : variant === 'danger'
+          ? colors.danger
+          : variant === 'ghost' && isIOS
+            ? colors.accent
+            : colors.text;
   return (
     <Pressable
       accessibilityRole="button"
@@ -66,6 +74,12 @@ export function Button({
       onPress={onPress}
       onHoverIn={() => setHover(true)}
       onHoverOut={() => setHover(false)}
+      onFocus={() => {
+        if (isTV) setHover(true);
+      }}
+      onBlur={() => {
+        if (isTV) setHover(false);
+      }}
       style={({ pressed }) => [
         styles.button,
         compact && styles.compact,
@@ -73,6 +87,10 @@ export function Button({
         variant === 'ghost' && styles.ghost,
         variant === 'danger' && styles.danger,
         hover && !disabled && { opacity: 0.88 },
+        isTV &&
+          hover &&
+          !disabled &&
+          variant !== 'danger' && { backgroundColor: '#fff', opacity: 1 },
         pressed && !disabled && { opacity: 0.75 },
         disabled && { opacity: 0.4 },
         style,
@@ -150,6 +168,18 @@ export function PageHeader({
   action?: React.ReactNode;
 }) {
   const compact = useWindowDimensions().width < 650;
+  const { nativeHeader } = useContext(ScreenLayoutContext);
+  if (nativeHeader) {
+    if (!description && !action) return null;
+    return (
+      <View style={{ gap: 16, marginBottom: 24 }}>
+        {description && (
+          <Text style={[styles.muted, { lineHeight: 22 }]}>{description}</Text>
+        )}
+        {action}
+      </View>
+    );
+  }
   return (
     <View
       style={[
@@ -245,6 +275,7 @@ export function Input({
   style?: StyleProp<ViewStyle>;
 }) {
   const [focused, setFocused] = useState(false);
+  const remember = useContext(TVFocusMemory);
   return (
     <View
       style={[
@@ -264,8 +295,13 @@ export function Input({
         secureTextEntry={secret}
         autoCapitalize="none"
         autoCorrect={false}
+        clearButtonMode={isIOS && !secret ? 'while-editing' : 'never'}
+        returnKeyType={onSubmit ? 'search' : 'done'}
         onSubmitEditing={onSubmit}
-        onFocus={() => setFocused(true)}
+        onFocus={() => {
+          setFocused(true);
+          if (isTV) remember(null);
+        }}
         onBlur={() => setFocused(false)}
         style={styles.input}
         selectionColor={colors.accent}
@@ -288,6 +324,7 @@ export function Card({
   const [hover, setHover] = useState(false);
   const [failed, setFailed] = useState(false);
   const saved = library.isSaved(item);
+  const artwork = landscape ? item.backdrop || item.poster : item.poster;
   return (
     <View style={{ width, gap: 11 }}>
       <View>
@@ -331,9 +368,9 @@ export function Card({
             },
           ]}
         >
-          {item.poster && !failed ? (
+          {artwork && !failed ? (
             <Image
-              source={imageSource(item.poster)}
+              source={imageSource(artwork)}
               resizeMode="cover"
               style={[
                 StyleSheet.absoluteFill,
@@ -350,7 +387,13 @@ export function Card({
           <View
             style={[
               StyleSheet.absoluteFill,
-              { backgroundColor: hover ? '#00000040' : '#00000012' },
+              {
+                backgroundColor: isTV
+                  ? 'transparent'
+                  : hover
+                    ? '#00000040'
+                    : '#00000012',
+              },
             ]}
           />
           {item.type === 'series' && (
@@ -358,7 +401,7 @@ export function Card({
               <Text style={styles.badgeText}>SERIES</Text>
             </View>
           )}
-          {hover && (
+          {hover && !isTV && (
             <View style={styles.cardPlay}>
               <Play
                 size={23}
@@ -445,8 +488,8 @@ export function MediaRow({
             <Card
               key={item.providerId + ':' + item.id}
               item={item}
-              width={isTV ? (landscape ? 380 : 270) : landscape ? 268 : 194}
-              landscape={landscape}
+              width={isTV ? 360 : landscape ? 268 : isIOS ? 154 : 194}
+              landscape={isTV || landscape}
               progress={progress?.(item)}
             />
           ))}
@@ -469,7 +512,12 @@ export function MediaGrid({
       style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 18, rowGap: 28 }}
     >
       {items.map((item) => (
-        <Card key={item.providerId + ':' + item.id} item={item} width={width} />
+        <Card
+          key={item.providerId + ':' + item.id}
+          item={item}
+          width={width}
+          landscape={isTV}
+        />
       ))}
     </View>
   );
@@ -483,7 +531,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: isTV ? 26 : 19,
     paddingVertical: isTV ? 18 : 13,
     minHeight: 46,
-    borderRadius: radius.pill,
+    borderRadius: isIOS ? 12 : radius.pill,
     backgroundColor: colors.raised,
     borderWidth: 1,
     borderColor: 'transparent',
@@ -491,29 +539,33 @@ export const styles = StyleSheet.create({
   compact: {
     paddingVertical: isTV ? 14 : 9,
     paddingHorizontal: isTV ? 20 : 12,
-    minHeight: isTV ? 54 : 40,
-    minWidth: 40,
+    minHeight: isTV ? 54 : isIOS ? 44 : 40,
+    minWidth: isIOS ? 44 : 40,
     borderRadius: radius.pill,
   },
   primary: { backgroundColor: colors.accent, borderColor: colors.accent },
   ghost: { backgroundColor: 'transparent', borderColor: 'transparent' },
   danger: { backgroundColor: '#2d1e23', borderColor: '#493039' },
   buttonText: {
-    fontSize: textSize(14),
+    fontSize: textSize(isIOS ? 17 : 14),
     fontWeight: '600',
     letterSpacing: -0.2,
   },
   chip: {
     paddingHorizontal: isTV ? 24 : 18,
     paddingVertical: isTV ? 14 : 9,
-    minHeight: 40,
+    minHeight: isIOS ? 44 : 40,
     borderRadius: radius.pill,
     borderWidth: 1,
     borderColor: 'transparent',
     backgroundColor: colors.surface,
   },
   selectedChip: { backgroundColor: colors.raised, borderColor: '#ffffff20' },
-  chipText: { color: colors.muted, fontSize: textSize(13), fontWeight: '600' },
+  chipText: {
+    color: colors.muted,
+    fontSize: textSize(isIOS ? 15 : 13),
+    fontWeight: '600',
+  },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', gap: 15 },
   sectionTitle: {
     color: colors.text,
@@ -521,7 +573,7 @@ export const styles = StyleSheet.create({
     fontWeight: '700',
     letterSpacing: -0.7,
   },
-  muted: { color: colors.muted, fontSize: textSize(13) },
+  muted: { color: colors.muted, fontSize: textSize(isIOS ? 15 : 13) },
   pageHeader: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -580,14 +632,14 @@ export const styles = StyleSheet.create({
   },
   input: {
     color: colors.text,
-    fontSize: textSize(14),
+    fontSize: textSize(isIOS ? 17 : 14),
     paddingVertical: 12,
     minHeight: 44,
     flex: 1,
     minWidth: 0,
   },
   cardImage: {
-    borderRadius: 16,
+    borderRadius: isIOS ? 10 : 16,
     overflow: 'hidden',
     backgroundColor: colors.surface,
     borderWidth: 1,
@@ -624,8 +676,8 @@ export const styles = StyleSheet.create({
     right: 9,
     backgroundColor: '#101012b3',
     borderRadius: radius.pill,
-    minWidth: 36,
-    minHeight: 36,
+    minWidth: isIOS ? 44 : 36,
+    minHeight: isIOS ? 44 : 36,
     alignItems: 'center',
     justifyContent: 'center',
     padding: 8,

@@ -1,6 +1,6 @@
 {
   "name": "cinefern",
-  "version": "5.0.0",
+  "version": "5.1.0",
   "private": true,
   "description": "An open, universal media player built with React Native",
   "license": "AGPL-3.0-or-later",
@@ -19,6 +19,13 @@
   "overrides": {
     "react-native": "npm:react-native-tvos@0.86.3-0"
   },
+  "expo": {
+    "install": {
+      "exclude": [
+        "react-native-screens@4.30.0"
+      ]
+    }
+  },
   "scripts": {
     "start": "expo start",
     "web": "expo start --web --port 8081",
@@ -29,6 +36,7 @@
     "tvos:generate": "npm run native:generate --workspace @cinefern/tv --",
     "build:tvos": "npm run build --workspace @cinefern/tv",
     "tvos:assets": "node scripts/tv-assets.mjs",
+    "icons:build": "node scripts/app-icons.mjs",
     "native:generate": "expo prebuild",
     "build": "expo export --platform web",
     "site:build": "node scripts/build-site.mjs",
@@ -47,23 +55,29 @@
     "test:agent-desktop": "electron scripts/smoke-agent.cjs"
   },
   "dependencies": {
-    "@cinefern/provider-sdk": "5.0.0",
+    "@cinefern/apple-player": "5.1.0",
+    "@cinefern/provider-sdk": "5.1.0",
     "@expo/metro-runtime": "~57.0.16",
     "@langchain/core": "^1.2.17",
     "@langchain/openai": "^1.6.2",
     "@noble/hashes": "^2.4.0",
     "@nyariv/sandboxjs": "^0.9.7",
     "@react-native-async-storage/async-storage": "^2.2.0",
+    "@react-navigation/bottom-tabs": "7.21.0",
+    "@react-navigation/native": "7.5.1",
+    "@react-navigation/native-stack": "7.21.0",
     "dashjs": "^5.0.3",
     "deepagents": "^1.15.0",
     "expo": "~57.0.28",
     "expo-crypto": "~57.0.4",
     "expo-document-picker": "~57.0.3",
     "expo-file-system": "~57.0.7",
+    "expo-glass-effect": "57.0.4",
     "expo-linear-gradient": "~57.0.2",
     "expo-secure-store": "~57.0.4",
     "expo-sharing": "~57.0.23",
     "expo-status-bar": "~57.0.1",
+    "expo-symbols": "57.0.3",
     "expo-system-ui": "~57.0.4",
     "expo-video": "~57.0.5",
     "hls.js": "^1.6.15",
@@ -75,6 +89,7 @@
     "react-dom": "19.2.3",
     "react-native": "npm:react-native-tvos@0.86.3-0",
     "react-native-safe-area-context": "~5.7.0",
+    "react-native-screens": "4.30.0",
     "react-native-svg": "^15.15.4",
     "react-native-web": "^0.21.0",
     "util": "^0.12.5",
@@ -91,6 +106,7 @@
     "electron": "^44.7.2",
     "electron-builder": "^26.0.12",
     "esbuild": "^0.25.0",
+    "pngjs": "7.0.0",
     "prettier": "^3.6.0",
     "tsx": "^4.20.0",
     "typescript": "~5.9.2"

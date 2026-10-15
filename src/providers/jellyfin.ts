@@ -156,7 +156,7 @@ function authorization(deviceId: string, token?: string) {
   return (
     'MediaBrowser Client="Cinefern", Device="Cinefern", DeviceId="' +
     quote(deviceId) +
-    '", Version="5.0.0"' +
+    '", Version="5.1.0"' +
     (token ? ', Token="' + quote(token) + '"' : '')
   );
 }
@@ -271,7 +271,8 @@ export function jellyfinConfiguredManifest(
 }
 
 function language(code?: string): string {
-  const value = (code ?? '').toLowerCase();
+  const value =
+    (code ?? '').toLowerCase().replace('_', '-').split('-')[0] ?? '';
   return (
     (
       {
@@ -728,16 +729,31 @@ export const jellyfinProvider = defineProvider({
               '). Check playback permissions on the server.',
           );
         const sources: MediaSource[] = [];
+        const requestedTrack = preferences.audioTrackId;
+        let foundRequestedTrack = !requestedTrack;
         for (let source of (info.MediaSources ?? []).slice(0, 10)) {
           if (!source.Id) continue;
-          const preferredAudio = source.MediaStreams?.find(
+          const originalStreams = source.MediaStreams ?? [];
+          const audioId = (index: number) => source.Id + ':' + index;
+          const explicitAudio = originalStreams.find(
             (s) =>
               s.Type === 'Audio' &&
-              language(s.Language) === language(preferences.audioLanguage),
+              s.Index !== undefined &&
+              audioId(s.Index) === requestedTrack,
           );
+          if (requestedTrack && !explicitAudio) continue;
+          if (explicitAudio) foundRequestedTrack = true;
+          const preferredAudio =
+            explicitAudio ??
+            originalStreams.find(
+              (s) =>
+                s.Type === 'Audio' &&
+                language(s.Language) === language(preferences.audioLanguage),
+            );
           if (
             preferredAudio?.Index !== undefined &&
-            preferredAudio.Index !== source.DefaultAudioStreamIndex
+            (preferredAudio.Index !== source.DefaultAudioStreamIndex ||
+              !!explicitAudio)
           ) {
             // Selecting a different track needs a server remux; a static MP4 keeps its original default track.
             const selected = await playback({
@@ -752,7 +768,13 @@ export const jellyfinProvider = defineProvider({
               throw new Error(
                 'Jellyfin could not select the requested audio track. Check transcoding permissions.',
               );
-            source = selectedSource;
+            source = {
+              ...source,
+              ...selectedSource,
+              SupportsDirectPlay: false,
+              DefaultAudioStreamIndex: preferredAudio.Index,
+              MediaStreams: originalStreams,
+            };
           }
           const streams = source.MediaStreams ?? [];
           const audio =
@@ -787,6 +809,15 @@ export const jellyfinProvider = defineProvider({
             }));
           const common = {
             audioLanguage: language(audio?.Language),
+            audioTracks: originalStreams
+              .filter((s) => s.Type === 'Audio' && s.Index !== undefined)
+              .map((s) => ({
+                id: audioId(s.Index!),
+                label: s.DisplayTitle || s.Language || 'Audio ' + s.Index,
+                language: language(s.Language),
+              })),
+            audioTrackId:
+              audio?.Index === undefined ? undefined : audioId(audio.Index),
             subtitles,
             downloadable: false,
           };
@@ -822,6 +853,10 @@ export const jellyfinProvider = defineProvider({
               url: transcodeUrl(source.TranscodingUrl),
             });
         }
+        if (!foundRequestedTrack)
+          throw new Error(
+            'The requested audio track is no longer available. Reload this title.',
+          );
         if (!sources.length)
           throw new Error(
             'Jellyfin has no compatible stream. Allow H.264/AAC transcoding for this user on the server.',

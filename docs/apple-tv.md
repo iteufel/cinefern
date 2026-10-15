@@ -41,12 +41,13 @@ See [TestFlight account and CI setup](testflight.md).
 
 ## Siri Remote
 
-- Directional controls move between tabs, titles, and buttons. The mint border marks the focused item; focus guides remember the last control in a region.
+- Directional controls move between the glass sidebar, cinematic shelves, titles, and buttons. A white highlight and gentle enlargement identify focus. Opening details keeps the underlying screen mounted, so Back restores the selected title and shelf position.
 - Select opens a title. Hold Select on a poster to save/remove it from the watchlist. Details also has a Save button.
 - Search and provider settings use the tvOS text-entry interface.
-- Back returns through screens and dismisses dialogs. In the player it closes playback and saves progress.
-- Play/Pause toggles playback. When controls are hidden, Left/Right skip ten seconds; Select or Up/Down reveals controls. While controls are visible, directional presses navigate buttons.
-- Playback options include source/quality, speed, audio tracks, embedded or VTT/SRT subtitles, and the episode queue. The player supports automatic next episodes and picture in picture.
+- Back returns through detail screens and dismisses dialogs. At a main screen it opens the sidebar; a second Back from the sidebar returns to the tvOS Home screen. Sidebar switches do not accumulate a history of tabs.
+- The player presents AVPlayerViewController. AVKit handles Play/Pause, scrubbing, transport focus, captions, and fullscreen dismissal with the standard Siri Remote behavior.
+- Native transport-bar menus include audio language, subtitles, speed, source/quality, and the episode queue. Jellyfin audio changes request the exact server track, including commentary tracks, and preserve position, speed, and pause state. Late-arriving embedded tracks update the menus as they become available.
+- Navigation surfaces use real Liquid Glass on supported tvOS 26 configurations, with an opaque fallback for older systems and Reduce Transparency. Build with Xcode 26.4 or newer to enable the current system appearance.
 
 ## Providers and library
 
@@ -66,11 +67,11 @@ Downloads cache progressive files, not HLS/DASH segments. tvOS can purge cached 
 
 The root `react-native` dependency aliases `react-native-tvos@0.86.3-0` for both phone and TV. The root override prevents npm from installing a second phone-only runtime through peer dependencies. TV-specific Metro resolution selects `*.tv.tsx` / `*.tv.ts` only for the TV app.
 
-Unsupported document-picker, sharing, and DOM webview modules are excluded from tvOS autolinking. The TV build compiles React Native and Expo modules from source to avoid iOS-only precompiled artifacts. TV media files use the cache directory. `scripts/tv-assets.mjs` generates the committed icon layers and top-shelf images; regenerate with `npm run tvos:assets`.
+Unsupported document-picker, sharing, and DOM webview modules are excluded from tvOS autolinking. The TV build compiles React Native and Expo modules from source to avoid iOS-only precompiled artifacts. The local `@cinefern/apple-player` Expo module adds menus and sidecar captions to the existing AVKit player using public UIKit APIs. TV media files use the cache directory. `scripts/tv-assets.mjs` packages the shared icon master into the committed icon layers and top-shelf images; regenerate with `npm run tvos:assets`.
 
 ```sh
 npm run check
 npm run build:tvos
 ```
 
-Hermes export checks the TV JavaScript module graph, not native compilation. Local verification includes TypeScript, the provider/library tests, remote event handling, hosted document validation, tvOS project generation, and Hermes export. This workstation has Command Line Tools only, with no usable Xcode/tvOS simulator, so native compilation, Siri Remote focus behavior, and playback on an Apple TV still require device testing. The native CI job has been configured but has not been run from this workspace.
+Hermes export checks the TV JavaScript module graph, not native compilation. Automated checks cover navigation stacks, audio identities without Apple track IDs, exact Jellyfin track negotiation, transport-state restoration, hosted documents, and the shared provider/library behavior. Native compilation, Siri Remote focus, Liquid Glass, AVKit menus, and playback still require simulator/device testing. Open Xcode to accept its license and install the tvOS runtime before running these checks. The native CI job has been configured but has not been run from this workspace.

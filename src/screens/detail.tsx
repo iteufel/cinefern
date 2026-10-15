@@ -36,19 +36,21 @@ import {
   SectionHeader,
   styles as ui,
 } from '../ui/components';
-import { colors, radius, time, isTV, textSize } from '../ui/theme';
+import { colors, radius, time, isTV, isIOS, textSize } from '../ui/theme';
 import { useT } from '../ui/i18n';
 import { useAsync } from '../ui/use-async';
 import { imageSource } from '../ui/artwork';
+import { Dialog } from '../ui/dialog';
 
 export function DetailScreen() {
   const app = useApp();
   const t = useT();
-  const { width } = useWindowDimensions();
+  const { width, height } = useWindowDimensions();
   const route = app.route;
   const initial = route.name === 'item' ? route.item : undefined;
   const [seasonId, setSeasonId] = useState('');
   const [downloading, setDownloading] = useState(false);
+  const [showOverview, setShowOverview] = useState(false);
   const query = useAsync(
     JSON.stringify([
       'detail',
@@ -118,6 +120,7 @@ export function DetailScreen() {
   useEffect(() => {
     if (
       !query.data ||
+      !app.screenActive ||
       !app.state.settings.autoplayTrailers ||
       app.playback ||
       item?.type !== 'movie'
@@ -159,18 +162,32 @@ export function DetailScreen() {
   const playTarget = isSeries ? episodes.data?.[0] : item;
   return (
     <>
-      <View style={{ marginBottom: 20 }}>
-        <Button
-          icon={ArrowLeft}
-          variant="ghost"
-          compact
-          onPress={app.back}
-          style={{ alignSelf: 'flex-start' }}
-        >
-          {t.back}
-        </Button>
-      </View>
-      <View style={[s.hero, { minHeight: width < 820 ? 390 : 400 }]}>
+      {!isIOS && !isTV && (
+        <View style={{ marginBottom: 20 }}>
+          <Button
+            icon={ArrowLeft}
+            variant="ghost"
+            compact
+            onPress={app.back}
+            style={{ alignSelf: 'flex-start' }}
+          >
+            {t.back}
+          </Button>
+        </View>
+      )}
+      <View
+        style={[
+          s.hero,
+          { minHeight: width < 820 ? 390 : 400 },
+          isTV && {
+            minHeight: Math.max(540, height * 0.68),
+            marginLeft: -184,
+            marginRight: -52,
+            marginTop: -56,
+            borderRadius: 0,
+          },
+        ]}
+      >
         {(item.backdrop || item.poster) && (
           <Image
             source={imageSource(item.backdrop || item.poster)}
@@ -188,7 +205,18 @@ export function DetailScreen() {
           colors={['#10101200', '#101012ed']}
           style={StyleSheet.absoluteFill}
         />
-        <View style={[s.heroContent, { padding: width < 820 ? 22 : 32 }]}>
+        <View
+          style={[
+            s.heroContent,
+            { padding: width < 820 ? 22 : 32 },
+            isTV && {
+              padding: 52,
+              paddingLeft: 184,
+              maxWidth: 1182,
+              paddingTop: 90,
+            },
+          ]}
+        >
           <Text style={ui.eyebrow}>
             {provider?.manifest.name.toUpperCase() ?? 'DIRECT STREAM'} /{' '}
             {item.type.toUpperCase()}
@@ -205,7 +233,21 @@ export function DetailScreen() {
               .filter(Boolean)
               .join('   /   ')}
           </Text>
-          <Text style={s.overview}>{item.overview}</Text>
+          <Text style={s.overview} numberOfLines={isTV ? 4 : undefined}>
+            {item.overview}
+          </Text>
+          {isTV && (item.overview?.length ?? 0) > 300 && (
+            <Button
+              compact
+              variant="ghost"
+              onPress={() => setShowOverview(true)}
+              style={{ alignSelf: 'flex-start' }}
+            >
+              {app.state.settings.language === 'de'
+                ? 'Mehr anzeigen'
+                : 'Read more'}
+            </Button>
+          )}
           <View
             style={{
               flexDirection: 'row',
@@ -239,7 +281,7 @@ export function DetailScreen() {
                 {t.trailer}
               </Button>
             )}
-            {!isSeries && provider?.provider.getSources && (
+            {!isTV && !isSeries && provider?.provider.getSources && (
               <Button
                 icon={Download}
                 disabled={downloading}
@@ -250,6 +292,18 @@ export function DetailScreen() {
           </View>
         </View>
       </View>
+      {isTV && (
+        <Dialog
+          visible={showOverview}
+          title={item.title}
+          onClose={() => setShowOverview(false)}
+          wide
+        >
+          <Text style={[s.overview, { maxWidth: undefined }]}>
+            {item.overview}
+          </Text>
+        </Dialog>
+      )}
       {isSeries && (
         <View style={{ marginTop: 32, gap: 20, marginBottom: 35 }}>
           <SectionHeader title={t.episodes} />
@@ -397,7 +451,7 @@ const s = StyleSheet.create({
   heroContent: { maxWidth: 670, gap: 15 },
   title: {
     color: colors.text,
-    fontSize: textSize(54),
+    fontSize: isTV ? 64 : textSize(54),
     fontWeight: '600',
     letterSpacing: -1.5,
   },
@@ -406,7 +460,7 @@ const s = StyleSheet.create({
     color: '#c4c4cc',
     lineHeight: textSize(24),
     fontSize: textSize(14),
-    maxWidth: 570,
+    maxWidth: isTV ? 850 : 570,
   },
   episode: {
     flexDirection: 'row',

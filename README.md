@@ -20,9 +20,10 @@ with a new identity and a TypeScript provider system. Its source lives in
 - Real file downloads, offline playback, cancellation, retry, and removal.
 - A new TypeScript provider SDK, installable bundles, settings, lifecycle hooks, and ordered stream resolvers.
 - Responsive desktop/tablet/phone layouts, English/German navigation, data import/export, and appearance preferences.
+- iPhone and iPad interface with native Apple tabs, collapsing large titles, swipe-back navigation, SF Symbols, grouped settings, and sheet dialogs.
 - Included Jellyfin, Open Cinema, and JSON library providers.
 - Provider media agents backed by Deep Agents JS, with OpenAI/xAI/OpenRouter keys, web search, and browser tools.
-- Apple TV interface with Siri Remote focus/navigation, fullscreen playback, and provider installation by URL.
+- Apple TV interface with a glass sidebar, cinematic shelves, restored Siri Remote focus, native AVKit playback, and provider installation by URL.
 
 ## Run
 
@@ -44,6 +45,15 @@ npm run android   # Android SDK and a compatible JDK
 Expo generates native projects from `app.json`; generated `ios/` and `android/` are ignored.
 Run `npm run native:generate -- --no-install` to generate them without installing native dependencies.
 SDK 57 currently requires Xcode 26.4+ for iOS builds. The [Expo compatibility table](https://docs.expo.dev/versions/latest/) is the source for toolchain requirements.
+
+The iOS app renders React Native views with UIKit navigation. Its Discover and Library screens are designed for iPhone and iPad; media providers, downloads, and playback use the shared application services.
+The native tab bar follows the installed iOS version, including the system's glass appearance where available.
+Player and TV navigation surfaces also use native Liquid Glass on supported systems and respect Reduce Transparency. The Apple player uses AVKit controls and UIKit menus; Jellyfin audio languages can be switched during playback without losing position or pause state.
+Use a native development build (`npm run ios`) to review this interface; the browser preview renders the desktop/web layout.
+The navigation dependencies are pinned, with `react-native-screens` 4.30.0 explicitly retained for the [native tab navigator](https://reactnavigation.org/docs/native-bottom-tab-navigator/).
+After pulling the native dependency changes, regenerate the iOS project and rebuild it. Open Xcode once to accept its license and install an iOS simulator runtime if required.
+
+The new app icon is `assets/icon.png`, an opaque 1024px master. `npm run icons:build` regenerates its macOS and Windows containers on macOS; `npm run tvos:assets` packages the same artwork for Apple TV icons and Top Shelf. The artwork brief is saved in `assets/icon-prompt.txt`.
 
 Apple TV has a separate native project under `apps/tv`, sharing the same screens, library, and TypeScript providers:
 

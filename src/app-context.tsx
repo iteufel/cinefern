@@ -88,6 +88,7 @@ interface AppContextValue {
   navigate(route: Route): void;
   back(): void;
   canGoBack: boolean;
+  screenActive: boolean;
   providerRevision: number;
   providersReady: boolean;
   manifests: ProviderManifest[];
@@ -480,6 +481,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         navigate,
         back,
         canGoBack: stack.length > 1,
+        screenActive: true,
         providerRevision,
         providersReady,
         manifests,
@@ -511,4 +513,23 @@ export function useApp() {
   const context = useContext(Context);
   if (!context) throw new Error('Missing AppProvider.');
   return context;
+}
+
+// Native navigators keep screens mounted. Scope each screen's route so a push
+// never changes the media being rendered by the screen underneath it.
+export function AppNavigationProvider({
+  children,
+  ...navigation
+}: Pick<
+  AppContextValue,
+  'route' | 'navigate' | 'back' | 'canGoBack' | 'screenActive'
+> & {
+  children: React.ReactNode;
+}) {
+  const app = useApp();
+  return (
+    <Context.Provider value={{ ...app, ...navigation }}>
+      {children}
+    </Context.Provider>
+  );
 }

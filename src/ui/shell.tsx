@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   Pressable,
   ScrollView,
@@ -29,7 +29,8 @@ import {
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 import { useApp, type Route } from '../app-context';
-import { colors, glass, radius } from './theme';
+import { colors, glass, radius, isIOS } from './theme';
+import { ScreenLayoutContext } from './screen-layout';
 import { useT } from './i18n';
 import { Button, Input } from './components';
 
@@ -322,6 +323,9 @@ export function Shell({ children }: { children: React.ReactNode }) {
 }
 export function useContentWidth() {
   const { width } = useWindowDimensions();
+  const layout = useContext(ScreenLayoutContext);
+  if (layout.contentWidth) return layout.contentWidth;
+  if (isIOS) return Math.min(1000, width - 40);
   return Math.min(1400, width - (width >= 820 ? 296 : 40));
 }
 const s = StyleSheet.create({

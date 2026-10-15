@@ -549,3 +549,67 @@ test('connection errors are actionable and never echo passwords or server respon
     );
   }
 });
+
+test('Jellyfin switches exact audio tracks in the player, preserves all choices and excludes static MP4', async () => {
+  const requests: Record<string, any>[] = [];
+  const streams = [
+    { Type: 'Video', Height: 1080 },
+    { Type: 'Audio', Index: 1, Language: 'deu', DisplayTitle: 'Deutsch' },
+    { Type: 'Audio', Index: 2, Language: 'eng', DisplayTitle: 'English' },
+    {
+      Type: 'Audio',
+      Index: 3,
+      Language: 'eng',
+      DisplayTitle: 'English commentary',
+    },
+  ];
+  const runtime = await provider(async (_url, options) => {
+    const request = JSON.parse(options?.body ?? '{}');
+    requests.push(request);
+    return response({
+      MediaSources: [
+        {
+          Id: 'version-one',
+          Container: 'mp4',
+          SupportsDirectPlay: true,
+          DefaultAudioStreamIndex: request.AudioStreamIndex ?? 1,
+          TranscodingUrl:
+            '/Videos/movie-one/master.m3u8?AudioStreamIndex=' +
+            (request.AudioStreamIndex ?? 1),
+          // Some servers return only the selected stream on the second request.
+          MediaStreams: request.AudioStreamIndex
+            ? streams.filter((s) => s.Index === request.AudioStreamIndex)
+            : streams,
+        },
+      ],
+    });
+  });
+  const result = await runtime.call<MediaSource[]>(
+    jellyfinManifest.id,
+    'getSources',
+    ['movie-one', { ...preferences, audioTrackId: 'version-one:3' }],
+  );
+  assert.equal(requests.length, 2);
+  assert.equal(requests[1]!.AudioStreamIndex, 3);
+  assert.equal(requests[1]!.EnableDirectPlay, false);
+  assert.equal(result.length, 1);
+  const source = result[0]!;
+  assertSource(source);
+  assert.equal(source.type, 'hls');
+  assert.equal(source.quality, 1080);
+  assert.equal(source.audioTrackId, 'version-one:3');
+  assert.equal(source.audioTracks?.length, 3);
+  assert.equal(source.audioTracks?.[2]?.label, 'English commentary');
+  assert.equal(new URL(source.url).searchParams.get('AudioStreamIndex'), '3');
+  assert.equal(
+    new URL(source.url).searchParams.get('api_key'),
+    settings.accessToken,
+  );
+  await assert.rejects(
+    runtime.call(jellyfinManifest.id, 'getSources', [
+      'movie-one',
+      { ...preferences, audioTrackId: 'version-one:99' },
+    ]),
+    /no longer available/,
+  );
+});

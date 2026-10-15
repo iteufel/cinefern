@@ -85,7 +85,7 @@ export function WatchlistScreen() {
         : 'Provider watchlists imported',
     );
   }
-  const columns = Math.max(2, Math.floor(width / 200));
+  const columns = Math.max(2, Math.floor(width / (isTV ? 340 : 200)));
   const cardWidth = (width - (columns - 1) * 18) / columns;
   return (
     <>
@@ -165,7 +165,7 @@ export function WatchlistScreen() {
               key={mediaKey(entry.item)}
               style={{ width: cardWidth, gap: 9 }}
             >
-              <Card item={entry.item} width={cardWidth} />
+              <Card item={entry.item} width={cardWidth} landscape={isTV} />
               {entry.item.type === 'series' && (
                 <Button
                   compact
