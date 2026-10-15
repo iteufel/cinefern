@@ -16,6 +16,9 @@ export interface PlayerMenusProps extends ViewProps {
   caption?: string;
   problem?: string;
   onReady?: () => void;
+  onMenuVisibilityChange?: (event: {
+    nativeEvent: { visible: boolean };
+  }) => void;
   onSelect: (event: { nativeEvent: { id: string } }) => void;
 }
 // iPhone uses a UIKit pop-up menu. tvOS installs these same menus directly

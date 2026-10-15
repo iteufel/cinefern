@@ -17,10 +17,9 @@ public final class CinefernPlayerMenusModule: Module {
   public func definition() -> ModuleDefinition {
     Name("CinefernPlayerMenus")
     View(CinefernPlayerMenusView.self) {
-      Events("onSelect", "onReady")
+      Events("onSelect", "onReady", "onMenuVisibilityChange")
       Prop("groups") { (view, groups: [PlayerMenuGroup]) in
-        view.groups = groups
-        view.updateMenus()
+        view.setGroups(groups)
       }
       Prop("caption") { (view, caption: String?) in view.setCaption(caption ?? "") }
       Prop("problem") { (view, problem: String?) in view.showProblem(problem ?? "") }
@@ -28,11 +27,45 @@ public final class CinefernPlayerMenusModule: Module {
   }
 }
 
+#if !os(tvOS)
+private final class PlayerMenuButton: UIButton {
+  var onVisibilityChange: ((Bool) -> Void)?
+
+  override func contextMenuInteraction(
+    _ interaction: UIContextMenuInteraction,
+    willDisplayMenuFor configuration: UIContextMenuConfiguration,
+    animator: UIContextMenuInteractionAnimating?
+  ) {
+    super.contextMenuInteraction(interaction, willDisplayMenuFor: configuration, animator: animator)
+    onVisibilityChange?(true)
+  }
+
+  override func contextMenuInteraction(
+    _ interaction: UIContextMenuInteraction,
+    willEndFor configuration: UIContextMenuConfiguration,
+    animator: UIContextMenuInteractionAnimating?
+  ) {
+    super.contextMenuInteraction(interaction, willEndFor: configuration, animator: animator)
+    // Keep the menu's anchor visible until UIKit finishes dismissing it.
+    if let animator {
+      animator.addCompletion { [weak self] in self?.onVisibilityChange?(false) }
+    } else {
+      onVisibilityChange?(false)
+    }
+  }
+}
+#endif
+
 final class CinefernPlayerMenusView: ExpoView {
   let onSelect = EventDispatcher()
   let onReady = EventDispatcher()
+  let onMenuVisibilityChange = EventDispatcher()
   var groups: [PlayerMenuGroup] = []
+  #if os(tvOS)
   private let menuButton = UIButton(type: .system)
+  #else
+  private let menuButton = PlayerMenuButton(type: .system)
+  #endif
   private let captionLabel = UILabel()
   private weak var controller: AVPlayerViewController?
   private var attachment: DispatchWorkItem?
@@ -46,6 +79,9 @@ final class CinefernPlayerMenusView: ExpoView {
     menuButton.tintColor = .white
     menuButton.accessibilityLabel = "Audio, subtitles and playback options"
     menuButton.showsMenuAsPrimaryAction = true
+    menuButton.onVisibilityChange = { [weak self] visible in
+      self?.onMenuVisibilityChange(["visible": visible])
+    }
     addSubview(menuButton)
     #endif
     captionLabel.textColor = .white
@@ -157,6 +193,23 @@ final class CinefernPlayerMenusView: ExpoView {
     #else
     menuButton.menu = UIMenu(children: menus)
     #endif
+  }
+
+  // AVKit resets transport-bar focus and dismisses an open menu when this
+  // property is reassigned. React renders during every playback time update;
+  // only rebuild the native menus when their actual choices have changed.
+  func setGroups(_ next: [PlayerMenuGroup]) {
+    let unchanged = groups.count == next.count && zip(groups, next).allSatisfy { previous, current in
+      previous.title == current.title && previous.symbol == current.symbol &&
+      previous.options.count == current.options.count &&
+      zip(previous.options, current.options).allSatisfy { old, new in
+        old.id == new.id && old.label == new.label &&
+        old.selected == new.selected && old.disabled == new.disabled
+      }
+    }
+    guard !unchanged else { return }
+    groups = next
+    updateMenus()
   }
 
   func setCaption(_ text: String) {

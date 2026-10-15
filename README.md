@@ -21,7 +21,7 @@ with a new identity and a TypeScript provider system. Its source lives in
 - A new TypeScript provider SDK, installable bundles, settings, lifecycle hooks, and ordered stream resolvers.
 - Responsive desktop/tablet/phone layouts, English/German navigation, data import/export, and appearance preferences.
 - iPhone and iPad interface with native Apple tabs, collapsing large titles, swipe-back navigation, SF Symbols, grouped settings, and sheet dialogs.
-- Included Jellyfin, Open Cinema, and JSON library providers.
+- Optional Jellyfin and JSON library providers. All providers start disabled; no demo catalog is loaded.
 - Provider media agents backed by Deep Agents JS, with OpenAI/xAI/OpenRouter keys, web search, and browser tools.
 - Apple TV interface with a glass sidebar, cinematic shelves, restored Siri Remote focus, native AVKit playback, and provider installation by URL.
 
@@ -135,7 +135,8 @@ See [website development and deployment](docs/website.md) for details.
 
 ## Providers
 
-**Jellyfin is included by default.** Open **Providers → Jellyfin → Connect**, enter your server URL,
+**All providers start disabled.** Jellyfin and JSON library connectors are available in Providers; no movies or demo catalog are included.
+Open **Providers → Jellyfin → Connect**, enter your server URL,
 username, and password, then choose **Connect to Jellyfin**. Your movies, shows, seasons, and episodes
 appear in the library feeds and search on desktop, mobile, and Apple TV.
 See [Jellyfin setup](docs/jellyfin.md) for server URLs, playback, and connection management.
@@ -147,7 +148,7 @@ Build the included example:
 npm run plugin:example
 ```
 
-Then use **Providers → Install provider** to choose the generated `.cfprovider` file.
+Then use **Providers → Install provider** to choose the generated `.cfprovider` file. Installed bundles stay disabled until you enable them in Providers.
 On Apple TV, enter the URL of a hosted bundle and review its permissions before installation.
 Edit the example's manifest origins and catalog URL to connect your own server.
 See [the provider guide](docs/providers.md) for capabilities, pagination, lifecycle, settings, and media sources.

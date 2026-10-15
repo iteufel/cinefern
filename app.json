@@ -3,7 +3,7 @@
     "name": "Cinefern",
     "slug": "cinefern",
     "scheme": "cinefern",
-    "version": "5.1.0",
+    "version": "5.1.1",
     "orientation": "default",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
@@ -11,10 +11,14 @@
       "bundleIdentifier": "io.github.iteufel.cinefern",
       "supportsTablet": true,
       "infoPlist": {
+        "UIViewControllerBasedStatusBarAppearance": true,
+        "UIStatusBarStyle": "UIStatusBarStyleLightContent",
         "UIBackgroundModes": ["audio"],
         "ITSAppUsesNonExemptEncryption": false,
         "NSLocalNetworkUsageDescription": "Connect to Jellyfin and other media servers on your local network.",
-        "NSAppTransportSecurity": { "NSAllowsArbitraryLoads": true }
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true
+        }
       }
     },
     "android": {
@@ -32,6 +36,7 @@
       "name": "Cinefern"
     },
     "plugins": [
+      "./plugins/with-apple-scenes.cjs",
       "./plugins/with-provider-network.cjs",
       [
         "expo-video",

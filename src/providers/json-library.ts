@@ -5,9 +5,10 @@ import {
   type ProviderManifest,
   type HomeFeed,
 } from '@cinefern/provider-sdk';
+import { JSON_LIBRARY_PROVIDER_ID } from './ids';
 
 export const jsonLibraryManifest: ProviderManifest = {
-  id: 'io.github.iteufel.cinefern.json-library',
+  id: JSON_LIBRARY_PROVIDER_ID,
   name: 'Your Library',
   version: '1.0.0',
   apiVersion: 1,

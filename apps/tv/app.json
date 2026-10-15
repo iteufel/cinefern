@@ -3,7 +3,7 @@
     "name": "Cinefern TV",
     "slug": "cinefern-tv",
     "scheme": "cinefern-tv",
-    "version": "5.1.0",
+    "version": "5.1.1",
     "orientation": "landscape",
     "icon": "../../assets/icon.png",
     "userInterfaceStyle": "dark",
@@ -14,14 +14,20 @@
         "UIBackgroundModes": ["audio"],
         "ITSAppUsesNonExemptEncryption": false,
         "NSLocalNetworkUsageDescription": "Connect to media providers and catalogs on your local network.",
-        "NSAppTransportSecurity": { "NSAllowsArbitraryLoads": true }
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true
+        }
       }
     },
     "plugins": [
+      "../../plugins/with-apple-scenes.cjs",
       "./with-tv-build.cjs",
       [
         "expo-video",
-        { "supportsBackgroundPlayback": true, "supportsPictureInPicture": true }
+        {
+          "supportsBackgroundPlayback": true,
+          "supportsPictureInPicture": true
+        }
       ],
       [
         "@react-native-tvos/config-tv",

@@ -1,8 +1,17 @@
-import React, { useState } from 'react';
+import {
+  Host,
+  Picker,
+  Text as SwiftText,
+  Button as SwiftButton,
+  Section,
+} from '@expo/ui/swift-ui';
+import { pickerStyle, tag } from '@expo/ui/swift-ui/modifiers';
+import { AppleForm } from '../ui/apple-controls';
+import { useState } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { SymbolView, type SymbolViewProps } from 'expo-symbols';
-import { Bookmark, ChevronRight, Play } from 'lucide-react-native';
+import type { SFSymbol } from 'sf-symbols-typescript';
+import { Bookmark, Check, Info, ChevronRight, Play } from 'lucide-react-native';
 import {
   mediaKey,
   type HomeFeed,
@@ -79,44 +88,36 @@ export function IOSHomeScreen() {
       .filter((collection) => collection.items.length) ?? [];
   const continuing = continueWatching(app.state.history).filter(
     (entry) =>
+      (entry.item.providerId === 'direct' ||
+        app.library.isProviderEnabled(entry.item.providerId)) &&
       visible(entry.item) &&
       (!route.providerId || entry.item.providerId === route.providerId),
   );
   return (
     <>
-      <View accessibilityRole="tablist" style={s.segmented}>
-        {(
-          [
-            [undefined, t.forYou],
-            ['movie', t.movies],
-            ['series', t.series],
-          ] as const
-        ).map(([filter, label]) => (
-          <Pressable
-            key={label}
-            accessibilityRole="tab"
-            accessibilityState={{ selected: route.filter === filter }}
-            onPress={() => {
-              setFeaturedIndex(0);
-              app.navigate({
-                name: 'home',
-                providerId: route.providerId,
-                filter,
-              });
-            }}
-            style={[s.segment, route.filter === filter && s.selectedSegment]}
-          >
-            <Text
-              style={[
-                s.segmentLabel,
-                route.filter === filter && { color: '#ffffff' },
-              ]}
-            >
-              {label}
-            </Text>
-          </Pressable>
-        ))}
-      </View>
+      <Host
+        matchContents={{ vertical: true }}
+        colorScheme="dark"
+        style={{ marginBottom: 20 }}
+      >
+        <Picker
+          selection={route.filter ?? 'all'}
+          onSelectionChange={(filter: string) => {
+            setFeaturedIndex(0);
+            app.navigate({
+              name: 'home',
+              providerId: route.providerId,
+              filter:
+                filter === 'all' ? undefined : (filter as 'movie' | 'series'),
+            });
+          }}
+          modifiers={[pickerStyle('segmented')]}
+        >
+          <SwiftText modifiers={[tag('all')]}>{t.forYou}</SwiftText>
+          <SwiftText modifiers={[tag('movie')]}>{t.movies}</SwiftText>
+          <SwiftText modifiers={[tag('series')]}>{t.series}</SwiftText>
+        </Picker>
+      </Host>
       {route.providerId && (
         <Button variant="ghost" onPress={() => app.navigate({ name: 'home' })}>
           {t.allProviders}
@@ -132,7 +133,7 @@ export function IOSHomeScreen() {
             <View
               style={[
                 s.hero,
-                { minHeight: Math.min(460, Math.max(380, width * 0.85)) },
+                { minHeight: Math.min(420, Math.max(330, width * 0.85)) },
               ]}
             >
               <Image
@@ -161,54 +162,29 @@ export function IOSHomeScreen() {
                     .join(' · ')}
                 </Text>
                 <View style={s.heroActions}>
-                  <Pressable
-                    accessibilityRole="button"
-                    accessibilityLabel={t.play + ' ' + hero.title}
-                    accessibilityState={{ disabled: app.playingLoading }}
+                  <Button
+                    variant="primary"
+                    icon={Play}
+                    label={t.play + ' ' + hero.title}
                     disabled={app.playingLoading}
                     onPress={() =>
                       hero.type === 'series'
                         ? app.navigate({ name: 'item', item: hero })
                         : void app.play(hero)
                     }
-                    style={({ pressed }) => [
-                      s.play,
-                      (pressed || app.playingLoading) && { opacity: 0.6 },
-                    ]}
                   >
-                    <SymbolView
-                      name="play.fill"
-                      size={16}
-                      tintColor="#000000"
-                    />
-                    <Text style={s.playText}>{t.play}</Text>
-                  </Pressable>
-                  <Pressable
-                    accessibilityRole="button"
-                    accessibilityLabel={
-                      app.library.isSaved(hero) ? t.saved : t.save
-                    }
-                    accessibilityState={{ selected: app.library.isSaved(hero) }}
+                    {t.play}
+                  </Button>
+                  <Button
+                    icon={app.library.isSaved(hero) ? Check : Bookmark}
+                    label={app.library.isSaved(hero) ? t.saved : t.save}
                     onPress={() => app.toggleSave(hero)}
-                    style={({ pressed }) => [
-                      s.save,
-                      pressed && { opacity: 0.6 },
-                    ]}
-                  >
-                    <SymbolView
-                      name={app.library.isSaved(hero) ? 'checkmark' : 'plus'}
-                      size={21}
-                      tintColor="#ffffff"
-                    />
-                  </Pressable>
-                  <Pressable
-                    accessibilityRole="button"
-                    accessibilityLabel={t.details}
+                  />
+                  <Button
+                    icon={Info}
+                    label={t.details}
                     onPress={() => app.navigate({ name: 'item', item: hero })}
-                    style={s.save}
-                  >
-                    <SymbolView name="info" size={21} tintColor="#ffffff" />
-                  </Pressable>
+                  />
                 </View>
               </View>
             </View>
@@ -277,7 +253,7 @@ export function IOSHomeScreen() {
           ))}
           {!hero && !collections.length && (
             <Empty
-              title={t.noResults}
+              title={records.length ? t.noResults : t.welcomeProviders}
               description={t.welcomeProvidersDescription}
               action={
                 <Button onPress={() => app.navigate({ name: 'providers' })}>
@@ -298,7 +274,7 @@ export function IOSLibraryScreen() {
   const rows: {
     route: Route;
     label: string;
-    symbol: SymbolViewProps['name'];
+    symbol: SFSymbol;
     count: number;
   }[] = [
     {
@@ -329,103 +305,61 @@ export function IOSLibraryScreen() {
     .filter((entry) => visible(entry.item))
     .slice(0, 12);
   return (
-    <>
-      <View style={s.libraryGroup}>
-        {rows.map((row, index) => (
-          <Pressable
+    <AppleForm>
+      <Section>
+        {rows.map((row) => (
+          <SwiftButton
             key={row.label}
-            accessibilityRole="button"
-            accessibilityLabel={row.label + ', ' + row.count}
+            label={row.label + (row.count ? ` (${row.count})` : '')}
+            systemImage={row.symbol}
             onPress={() => app.navigate(row.route)}
-            style={({ pressed }) => [
-              s.libraryRow,
-              pressed && { backgroundColor: colors.raised },
-            ]}
-          >
-            <SymbolView
-              name={row.symbol}
-              size={23}
-              tintColor={colors.accent}
-              style={{ width: 28 }}
-            />
-            <View
-              style={[
-                s.libraryRowContent,
-                index < rows.length - 1 && s.separator,
-              ]}
-            >
-              <Text style={s.libraryLabel}>{row.label}</Text>
-              <Text style={s.count}>{row.count}</Text>
-              <SymbolView
-                name="chevron.right"
-                size={13}
-                weight="semibold"
-                tintColor={colors.subtle}
-              />
-            </View>
-          </Pressable>
-        ))}
-      </View>
-      <MediaRow
-        title={t.continue}
-        items={continuing.map((entry) => entry.item)}
-        landscape
-        progress={(item) => {
-          const entry = app.library.progress(item);
-          return entry && entry.position / entry.duration;
-        }}
-      />
-      <MediaRow
-        title={t.watchlist}
-        items={saved.map((entry) => entry.item)}
-        action={
-          <Button
-            compact
-            variant="ghost"
-            icon={ChevronRight}
-            label={t.watchlist}
-            onPress={() => app.navigate({ name: 'watchlist' })}
           />
-        }
-      />
-      {!saved.length && !continuing.length && (
-        <Empty
-          icon={Bookmark}
-          title={t.noResults}
-          description={t.welcomeOfflineDescription}
-          action={
-            <Button
-              icon={Play}
-              variant="primary"
-              onPress={() => app.navigate({ name: 'home' })}
-            >
-              {t.discover}
-            </Button>
-          }
-        />
+        ))}
+      </Section>
+      {!!continuing.length && (
+        <Section title={t.continue}>
+          {continuing.map((entry) => (
+            <SwiftButton
+              key={mediaKey(entry.item)}
+              label={entry.item.title}
+              systemImage="play.circle"
+              onPress={() => void app.play(entry.item)}
+            />
+          ))}
+        </Section>
       )}
-    </>
+      {!!saved.length && (
+        <Section title={t.watchlist}>
+          {saved.map((entry) => (
+            <SwiftButton
+              key={mediaKey(entry.item)}
+              label={entry.item.title}
+              systemImage="film"
+              onPress={() => app.navigate({ name: 'item', item: entry.item })}
+            />
+          ))}
+        </Section>
+      )}
+      {!saved.length && !continuing.length && (
+        <Section
+          footer={
+            <SwiftText>
+              Your saved titles, downloads, and playback history appear here.
+            </SwiftText>
+          }
+        >
+          <SwiftButton
+            label={t.discover}
+            systemImage="play.rectangle"
+            onPress={() => app.navigate({ name: 'home' })}
+          />
+        </Section>
+      )}
+    </AppleForm>
   );
 }
 
 const s = StyleSheet.create({
-  segmented: {
-    flexDirection: 'row',
-    padding: 3,
-    backgroundColor: colors.surface,
-    borderRadius: 11,
-    marginBottom: 24,
-  },
-  segment: {
-    flex: 1,
-    minHeight: 44,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 5,
-    borderRadius: 8,
-  },
-  selectedSegment: { backgroundColor: '#636366' },
-  segmentLabel: { color: colors.muted, fontSize: 15, fontWeight: '600' },
   hero: {
     borderRadius: 18,
     overflow: 'hidden',
@@ -454,27 +388,6 @@ const s = StyleSheet.create({
     gap: 10,
     marginTop: 24,
   },
-  play: {
-    minHeight: 48,
-    flexGrow: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 9,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: '#ffffff',
-    borderRadius: 12,
-  },
-  playText: { color: '#000000', fontSize: 17, fontWeight: '600' },
-  save: {
-    width: 48,
-    height: 48,
-    backgroundColor: '#ffffff29',
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   dots: { flexDirection: 'row', justifyContent: 'center', marginBottom: 16 },
   dotTarget: {
     width: 44,
@@ -484,31 +397,4 @@ const s = StyleSheet.create({
   },
   dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#48484a' },
   error: { color: colors.warning, fontSize: 15, marginBottom: 20 },
-  libraryGroup: {
-    borderRadius: 12,
-    overflow: 'hidden',
-    backgroundColor: colors.surface,
-    marginBottom: 32,
-  },
-  libraryRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingLeft: 16,
-    gap: 14,
-  },
-  libraryRowContent: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    minHeight: 60,
-    paddingVertical: 14,
-    paddingRight: 16,
-    gap: 12,
-  },
-  separator: {
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.separator,
-  },
-  libraryLabel: { flex: 1, color: colors.text, fontSize: 17 },
-  count: { color: colors.muted, fontSize: 17, fontVariant: ['tabular-nums'] },
 });

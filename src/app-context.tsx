@@ -26,7 +26,6 @@ import { platform } from './platform';
 import { MediaAgentService } from './agent/service';
 import { revokeAgentGrant } from './agent/settings';
 import { useTVBackHandling } from './ui/focus';
-import { openFilmsManifest, openFilmsProvider } from './providers/open-films';
 import {
   jsonLibraryManifest,
   jsonLibraryProvider,
@@ -73,11 +72,7 @@ const downloads = new DownloadManager(library, platform);
 const jellyfin = new JellyfinConnection(platform.storage, (url, options) =>
   platform.request(url, options),
 );
-const builtinManifests = [
-  openFilmsManifest,
-  jellyfinManifest,
-  jsonLibraryManifest,
-];
+const builtinManifests = [jellyfinManifest, jsonLibraryManifest];
 interface AppContextValue {
   state: LibraryState;
   library: LibraryStore;
@@ -137,7 +132,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       .catch(() => {})
       .then(async () => {
         const current = library.getSnapshot();
-        const enabled = (id: string) => !current.disabledProviders.includes(id);
+        const enabled = (id: string) => current.enabledProviders.includes(id);
         const wanted = new Set([
           ...builtinManifests.filter((m) => enabled(m.id)).map((m) => m.id),
           ...current.plugins
@@ -147,8 +142,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         for (const record of runtime.all())
           if (!wanted.has(record.manifest.id))
             await runtime.remove(record.manifest.id);
-        if (enabled(openFilmsManifest.id))
-          await runtime.register(openFilmsManifest, openFilmsProvider);
         if (enabled(jellyfinManifest.id)) {
           let settings: Record<string, SettingValue> = {};
           try {
@@ -415,10 +408,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       throw new Error('A plugin cannot replace a built-in provider.');
     agent.cancel(bundle.manifest.id);
     await revokeAgentGrant(platform.storage, bundle.manifest.id);
-    await runtime.install(bundle);
     library.install(bundle);
-    setRevision((r) => r + 1);
-    notify(bundle.manifest.name + ' installed');
+    await configureProviders();
+    notify(
+      bundle.manifest.name +
+        (library.isProviderEnabled(bundle.manifest.id)
+          ? ' updated'
+          : ' installed. Enable it in Providers when you are ready.'),
+    );
   }
   async function updateProviderSettings(
     id: string,

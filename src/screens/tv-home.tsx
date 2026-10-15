@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Image,
   ScrollView,
@@ -92,6 +92,8 @@ export function TVHomeScreen() {
   const hero = featured[featuredIndex % Math.max(1, featured.length)];
   const continuing = continueWatching(app.state.history).filter(
     (entry) =>
+      (entry.item.providerId === 'direct' ||
+        app.library.isProviderEnabled(entry.item.providerId)) &&
       visible(entry.item) &&
       (!route.providerId || route.providerId === entry.item.providerId),
   );
@@ -120,7 +122,7 @@ export function TVHomeScreen() {
         >
           <Image
             source={imageSource(hero.backdrop || hero.poster)}
-            style={StyleSheet.absoluteFill}
+            style={s.heroArtwork}
             resizeMode="cover"
           />
           <LinearGradient
@@ -134,13 +136,6 @@ export function TVHomeScreen() {
             locations={[0, 0.55, 1]}
             style={StyleSheet.absoluteFill}
           />
-          <Text style={s.homeTitle}>
-            {route.filter === 'movie'
-              ? t.movies
-              : route.filter === 'series'
-                ? t.series
-                : t.discover}
-          </Text>
           <View style={s.heroInfo}>
             <Text style={s.eyebrow}>
               {
@@ -315,7 +310,7 @@ export function TVHomeScreen() {
         {!query.loading && !query.error && !hero && !collections.length && (
           <Empty
             title={t.libraryTitle}
-            description="Connect a media provider to see your movies and shows here."
+            description={t.welcomeProvidersDescription}
             action={
               <Button onPress={() => app.navigate({ name: 'providers' })}>
                 {t.providers}
@@ -332,15 +327,22 @@ export function TVHomeScreen() {
 }
 const s = StyleSheet.create({
   hero: {
-    paddingLeft: 184,
+    paddingLeft: 80,
     paddingRight: 60,
     justifyContent: 'flex-end',
     paddingBottom: 65,
   },
+  heroArtwork: {
+    ...StyleSheet.absoluteFill,
+    // Ignore bundled asset dimensions so the absolute edges size the artwork
+    // to the whole banner, including the padding around its controls.
+    width: 'auto',
+    height: 'auto',
+  },
   homeTitle: {
     position: 'absolute',
     top: 55,
-    left: 184,
+    left: 80,
     color: '#fff',
     fontSize: 34,
     fontWeight: '700',
@@ -367,7 +369,7 @@ const s = StyleSheet.create({
     gap: 18,
   },
   pageNumber: { color: '#b8b8be', fontSize: 19, fontVariant: ['tabular-nums'] },
-  shelves: { paddingLeft: 184, paddingRight: 52 },
+  shelves: { paddingLeft: 80, paddingRight: 52 },
   filters: {
     gap: 16,
     paddingVertical: 14,
@@ -375,7 +377,7 @@ const s = StyleSheet.create({
     marginBottom: 20,
   },
   placeholder: {
-    paddingLeft: 184,
+    paddingLeft: 80,
     paddingRight: 52,
     paddingTop: 55,
     minHeight: 220,

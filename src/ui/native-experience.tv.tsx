@@ -1,4 +1,9 @@
-import React, { useCallback, useState, type ComponentType } from 'react';
+import {
+  NavigationStack,
+  NavigationDestination,
+  RNHostView,
+} from '@expo/ui/swift-ui';
+import React, { useCallback, useState } from 'react';
 import { View } from 'react-native';
 import { AppNavigationProvider, useApp, type Route } from '../app-context';
 import { TVHomeScreen } from '../screens/tv-home';
@@ -43,27 +48,59 @@ export function NativeApplication() {
       canGoBack={branch.length > 1}
       screenActive
     >
-      <TVShell root={navigation.root}>
-        {Object.values(navigation.branches).flatMap((frames) =>
-          frames!.map((frame, i) => (
-            <AppNavigationProvider
-              key={frame.key}
-              route={frame.route}
-              navigate={navigate}
-              back={back}
-              canGoBack={i > 0}
-              screenActive={frame.key === current.key}
+      <TVShell
+        root={navigation.root}
+        renderRoot={(root) => {
+          const frames = navigation.branches[root] ?? [];
+          const renderFrame = (frame: typeof current, index: number) => (
+            <RNHostView>
+              <View style={{ flex: 1 }}>
+                <AppNavigationProvider
+                  route={frame.route}
+                  navigate={navigate}
+                  back={back}
+                  canGoBack={index > 0}
+                  screenActive={frame.key === current.key}
+                >
+                  <TVScreenFrame
+                    active={frame.key === current.key}
+                    immersive={frame.route.name === 'home'}
+                    scrolls={
+                      !['settings', 'providers'].includes(frame.route.name)
+                    }
+                  >
+                    <TVScreen />
+                  </TVScreenFrame>
+                </AppNavigationProvider>
+              </View>
+            </RNHostView>
+          );
+          return (
+            <NavigationStack
+              path={frames.slice(1).map((frame) => String(frame.key))}
+              onPathChange={(path) => {
+                setNavigation((state) => ({
+                  ...state,
+                  branches: {
+                    ...state.branches,
+                    [root]: state.branches[root]?.slice(0, path.length + 1),
+                  },
+                }));
+              }}
             >
-              <TVScreenFrame
-                active={frame.key === current.key}
-                immersive={frame.route.name === 'home'}
-              >
-                <TVScreen />
-              </TVScreenFrame>
-            </AppNavigationProvider>
-          )),
-        )}
-      </TVShell>
+              {frames[0] && renderFrame(frames[0], 0)}
+              {frames.slice(1).map((frame, index) => (
+                <NavigationDestination
+                  key={frame.key}
+                  value={String(frame.key)}
+                >
+                  {renderFrame(frame, index + 1)}
+                </NavigationDestination>
+              ))}
+            </NavigationStack>
+          );
+        }}
+      />
       <Player />
     </AppNavigationProvider>
   );
@@ -117,4 +154,4 @@ function TVScreen() {
     </>
   );
 }
-export const NativeWelcome: ComponentType | null = null;
+export { TVWelcome as NativeWelcome } from './welcome.tv';

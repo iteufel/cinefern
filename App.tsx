@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {
   Image,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -60,7 +61,7 @@ class ErrorBoundary extends Component<
 export default function App() {
   return (
     <SafeAreaProvider>
-      {!isTV && <StatusBar style="light" />}
+      {Platform.OS !== 'ios' && !isTV && <StatusBar style="light" />}
       <ErrorBoundary>
         <AppProvider>
           <Application />

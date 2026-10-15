@@ -1,6 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Modal, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  AccessibilityInfo,
+  ActivityIndicator,
+  Animated,
+  Modal,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { VideoView } from 'expo-video';
 import { X } from 'lucide-react-native';
 import { PlayerMenus, type PlayerMenuGroup } from '@cinefern/apple-player';
@@ -10,12 +18,12 @@ import { NativeGlass } from '../ui/glass-view';
 import { isTV } from '../ui/theme';
 import { useNativePlayback } from './use-native-playback';
 
-export function Player() {
+export function Player({ embedded = false }: { embedded?: boolean }) {
   const { playback } = useApp();
-  return playback ? <ApplePlayback /> : null;
+  return playback ? <ApplePlayback embedded={embedded} /> : null;
 }
 
-function ApplePlayback() {
+function ApplePlayback({ embedded }: { embedded: boolean }) {
   const app = useApp();
   const playback = app.playback!;
   const state = useNativePlayback();
@@ -24,6 +32,82 @@ function ApplePlayback() {
   const pictureInPicture = useRef(false);
   const [shown, setShown] = useState(false);
   const [attached, setAttached] = useState(false);
+  const [idle, setIdle] = useState(false);
+  const [interaction, setInteraction] = useState(0);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [screenReader, setScreenReader] = useState(false);
+  const headerOpacity = useRef(new Animated.Value(1)).current;
+  const showControls = useCallback(() => {
+    setIdle(false);
+    setInteraction((value) => value + 1);
+  }, []);
+  const controlsVisible =
+    !idle ||
+    !state.isPlaying ||
+    state.loading ||
+    !!state.failure ||
+    menuOpen ||
+    screenReader;
+  useEffect(() => {
+    if (isTV) return;
+    let active = true;
+    void AccessibilityInfo.isScreenReaderEnabled().then((enabled) => {
+      if (active) setScreenReader(enabled);
+    });
+    const listener = AccessibilityInfo.addEventListener(
+      'screenReaderChanged',
+      setScreenReader,
+    );
+    return () => {
+      active = false;
+      listener.remove();
+    };
+  }, []);
+  useEffect(() => {
+    if (isTV) return;
+    setIdle(false);
+    if (
+      !state.isPlaying ||
+      state.loading ||
+      state.failure ||
+      menuOpen ||
+      screenReader
+    )
+      return;
+    // Progress and caption updates must not restart the inactivity timer.
+    const timer = setTimeout(() => setIdle(true), 3000);
+    return () => clearTimeout(timer);
+  }, [
+    state.isPlaying,
+    state.loading,
+    state.failure,
+    menuOpen,
+    screenReader,
+    interaction,
+  ]);
+  useEffect(() => {
+    if (isTV) return;
+    const animation = Animated.timing(headerOpacity, {
+      toValue: controlsVisible ? 1 : 0,
+      duration: 200,
+      useNativeDriver: true,
+    });
+    animation.start();
+    return () => animation.stop();
+  }, [controlsVisible, headerOpacity]);
+  const { setPlayback } = app;
+  // Keep VideoView's PureComponent stable during progress updates. Updating
+  // the native view while an AVKit menu is open can interrupt remote focus.
+  const fullscreenOptions = useMemo(() => ({ enable: isTV }), []);
+  const onFullscreenExit = useCallback(() => {
+    if (isTV && entered.current && !pictureInPicture.current) setPlayback(null);
+  }, [setPlayback]);
+  const onPictureInPictureStart = useCallback(() => {
+    pictureInPicture.current = true;
+  }, []);
+  const onPictureInPictureStop = useCallback(() => {
+    pictureInPicture.current = false;
+  }, []);
   useEffect(() => {
     if (!isTV || !shown || !attached || state.loading || entered.current)
       return;
@@ -39,28 +123,40 @@ function ApplePlayback() {
     {
       title: state.switchingAudio ? 'Changing audio…' : 'Audio language',
       symbol: 'waveform',
-      options: state.audioChoices.length
-        ? state.audioChoices.map((choice) => ({
-            ...choice,
-            id: 'audio:' + choice.id,
-            disabled: state.loading || state.switchingAudio,
-          }))
-        : [
-            {
-              id: 'audio:default',
-              label: 'Default audio',
-              selected: true,
-              disabled: true,
-            },
-          ],
+      // AVKit already provides native track menus on TV. Add our menu only
+      // for server renditions, which AVPlayer cannot discover in the stream.
+      options:
+        isTV &&
+        !state.audioChoices.some((choice) => choice.id.startsWith('server:'))
+          ? []
+          : state.audioChoices.length
+            ? state.audioChoices.map((choice) => ({
+                ...choice,
+                id: 'audio:' + choice.id,
+                disabled: state.loading || state.switchingAudio,
+              }))
+            : [
+                {
+                  id: 'audio:default',
+                  label: 'Default audio',
+                  selected: true,
+                  disabled: true,
+                },
+              ],
     },
     {
       title: 'Subtitles',
       symbol: 'captions.bubble',
-      options: state.subtitleChoices.map((choice) => ({
-        ...choice,
-        id: 'subtitle:' + choice.id,
-      })),
+      options:
+        isTV &&
+        !state.subtitleChoices.some((choice) =>
+          choice.id.startsWith('external:'),
+        )
+          ? []
+          : state.subtitleChoices.map((choice) => ({
+              ...choice,
+              id: 'subtitle:' + choice.id,
+            })),
     },
     {
       title: 'Playback speed',
@@ -74,12 +170,15 @@ function ApplePlayback() {
     {
       title: 'Source & quality',
       symbol: '4k.tv',
-      options: playback.sources.map((source) => ({
-        id: 'source:' + source.id,
-        label: source.label,
-        selected: source.id === playback.source.id,
-        disabled: state.loading || state.switchingAudio,
-      })),
+      options:
+        isTV && playback.sources.length < 2
+          ? []
+          : playback.sources.map((source) => ({
+              id: 'source:' + source.id,
+              label: source.label,
+              selected: source.id === playback.source.id,
+              disabled: state.loading || state.switchingAudio,
+            })),
     },
     {
       title: 'Up next',
@@ -103,6 +202,8 @@ function ApplePlayback() {
       ],
     },
   ];
+  const menuSignature = JSON.stringify(groups);
+  const menuGroups = useMemo(() => groups, [menuSignature]);
   function select(id: string) {
     if (id.startsWith('audio:')) void state.selectAudio(id.slice(6));
     if (id.startsWith('subtitle:')) state.selectSubtitle(id.slice(9));
@@ -130,38 +231,35 @@ function ApplePlayback() {
   }
   const menu = (
     <PlayerMenus
-      groups={groups}
+      groups={menuGroups}
       caption={state.caption}
       problem={state.failure}
       onReady={() => setAttached(true)}
+      onMenuVisibilityChange={(event) => setMenuOpen(event.nativeEvent.visible)}
       onSelect={(event) => select(event.nativeEvent.id)}
       style={isTV ? s.tvMenu : s.menu}
     />
   );
-  return (
-    <Modal
-      visible
-      presentationStyle="fullScreen"
-      animationType="fade"
-      supportedOrientations={['portrait', 'landscape']}
-      onShow={() => setShown(true)}
-      onRequestClose={() => app.setPlayback(null)}
-    >
+  const content = (
+    <SafeAreaProvider>
       <SafeAreaView
         style={s.root}
         edges={isTV ? [] : ['top', 'left', 'right', 'bottom']}
+        onTouchStart={isTV ? undefined : showControls}
       >
         {!isTV && (
-          <View style={s.header}>
-            <NativeGlass style={s.glassButton}>
-              <Button
-                variant="ghost"
-                icon={X}
-                label="Close player"
-                onPress={() => app.setPlayback(null)}
-                style={s.close}
-              />
-            </NativeGlass>
+          <Animated.View
+            style={[s.header, { opacity: headerOpacity }]}
+            pointerEvents={controlsVisible ? 'auto' : 'none'}
+            accessibilityElementsHidden={!controlsVisible}
+          >
+            <Button
+              variant="secondary"
+              icon={X}
+              label="Close player"
+              onPress={() => app.setPlayback(null)}
+              style={s.close}
+            />
             <View style={s.heading}>
               <Text style={s.title} numberOfLines={1}>
                 {playback.item.title}
@@ -171,7 +269,7 @@ function ApplePlayback() {
               )}
             </View>
             <NativeGlass style={s.glassButton}>{menu}</NativeGlass>
-          </View>
+          </Animated.View>
         )}
         <View style={s.stage}>
           <VideoView
@@ -179,17 +277,10 @@ function ApplePlayback() {
             player={state.player}
             style={StyleSheet.absoluteFill}
             nativeControls
-            fullscreenOptions={{ enable: isTV }}
-            onFullscreenExit={() => {
-              if (isTV && entered.current && !pictureInPicture.current)
-                app.setPlayback(null);
-            }}
-            onPictureInPictureStart={() => {
-              pictureInPicture.current = true;
-            }}
-            onPictureInPictureStop={() => {
-              pictureInPicture.current = false;
-            }}
+            fullscreenOptions={fullscreenOptions}
+            onFullscreenExit={onFullscreenExit}
+            onPictureInPictureStart={onPictureInPictureStart}
+            onPictureInPictureStop={onPictureInPictureStop}
             allowsPictureInPicture
             startsPictureInPictureAutomatically={!isTV}
             contentFit={
@@ -222,6 +313,21 @@ function ApplePlayback() {
           )}
         </View>
       </SafeAreaView>
+    </SafeAreaProvider>
+  );
+  // iOS uses the native navigation controller for fullscreen presentation and
+  // status-bar ownership. tvOS still presents AVKit from its React modal.
+  if (embedded) return content;
+  return (
+    <Modal
+      visible
+      presentationStyle="fullScreen"
+      animationType="fade"
+      supportedOrientations={['portrait', 'landscape']}
+      onShow={() => setShown(true)}
+      onRequestClose={() => app.setPlayback(null)}
+    >
+      {content}
     </Modal>
   );
 }

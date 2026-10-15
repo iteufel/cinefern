@@ -4,6 +4,10 @@ import {
   type ProviderBundle,
   type SettingValue,
 } from '@cinefern/provider-sdk';
+import {
+  JELLYFIN_PROVIDER_ID,
+  JSON_LIBRARY_PROVIDER_ID,
+} from '../providers/ids';
 
 export interface KeyValueStorage {
   get(key: string): Promise<string | null>;
@@ -67,7 +71,7 @@ export interface LibraryState {
   history: HistoryEntry[];
   plugins: InstalledPlugin[];
   downloads: DownloadEntry[];
-  disabledProviders: string[];
+  enabledProviders: string[];
   providerSettings: Record<string, Record<string, SettingValue>>;
   resolverOrder: string[];
   persistenceError?: string;
@@ -97,7 +101,7 @@ export function initialState(): LibraryState {
     history: [],
     plugins: [],
     downloads: [],
-    disabledProviders: [],
+    enabledProviders: [],
     providerSettings: {},
     resolverOrder: [],
   };
@@ -123,6 +127,26 @@ export function continueWatching(history: HistoryEntry[]): HistoryEntry[] {
     });
 }
 const STATE_KEY = 'cinefern.library.v1';
+type SavedLibraryState = LibraryState & { disabledProviders?: string[] };
+
+function restoreEnabledProviders(saved: SavedLibraryState): string[] {
+  if (Array.isArray(saved.enabledProviders)) return saved.enabledProviders;
+  // Older versions enabled built-ins implicitly. Preserve configured libraries
+  // and installed plugins, but do not carry over automatic demo providers.
+  const disabled = new Set(saved.disabledProviders ?? []);
+  return [
+    ...(saved.providerSettings?.[JELLYFIN_PROVIDER_ID]?.userId
+      ? [JELLYFIN_PROVIDER_ID]
+      : []),
+    ...(saved.providerSettings?.[JSON_LIBRARY_PROVIDER_ID]?.catalogUrl
+      ? [JSON_LIBRARY_PROVIDER_ID]
+      : []),
+    ...saved.plugins
+      .filter((plugin) => plugin.enabled)
+      .map((plugin) => plugin.bundle.manifest.id),
+  ].filter((id) => !disabled.has(id));
+}
+
 export class LibraryStore {
   private state = initialState();
   private listeners = new Set<() => void>();
@@ -141,7 +165,7 @@ export class LibraryStore {
     try {
       const raw = await this.storage.get(STATE_KEY);
       if (raw) {
-        const saved = JSON.parse(raw) as LibraryState;
+        const saved = JSON.parse(raw) as SavedLibraryState;
         if (
           saved.version !== 1 ||
           !Array.isArray(saved.watchlist) ||
@@ -150,10 +174,17 @@ export class LibraryStore {
           !Array.isArray(saved.downloads)
         )
           throw new Error('Invalid saved library.');
+        const enabledProviders = restoreEnabledProviders(saved);
+        const { disabledProviders: legacyDisabled, ...restored } = saved;
         this.state = {
           ...initialState(),
-          ...saved,
+          ...restored,
           ready: true,
+          enabledProviders,
+          plugins: saved.plugins.map((plugin) => ({
+            ...plugin,
+            enabled: enabledProviders.includes(plugin.bundle.manifest.id),
+          })),
           settings: { ...DEFAULT_SETTINGS, ...saved.settings },
           downloads: saved.downloads.map((d) =>
             d.status === 'downloading' || d.status === 'queued'
@@ -265,7 +296,7 @@ export class LibraryStore {
         ...this.state.plugins.filter((p) => p !== old),
         {
           bundle,
-          enabled: old?.enabled ?? true,
+          enabled: this.isProviderEnabled(bundle.manifest.id),
           installedAt: Date.now(),
           settings: old?.settings ?? {},
         },
@@ -276,15 +307,18 @@ export class LibraryStore {
     const { [id]: removed, ...providerSettings } = this.state.providerSettings;
     this.update({
       plugins: this.state.plugins.filter((p) => p.bundle.manifest.id !== id),
-      disabledProviders: this.state.disabledProviders.filter((p) => p !== id),
+      enabledProviders: this.state.enabledProviders.filter((p) => p !== id),
       providerSettings,
     });
   }
+  isProviderEnabled(id: string): boolean {
+    return this.state.enabledProviders.includes(id);
+  }
   setProviderEnabled(id: string, enabled: boolean) {
     this.update({
-      disabledProviders: enabled
-        ? this.state.disabledProviders.filter((p) => p !== id)
-        : [...new Set([...this.state.disabledProviders, id])],
+      enabledProviders: enabled
+        ? [...new Set([...this.state.enabledProviders, id])]
+        : this.state.enabledProviders.filter((p) => p !== id),
       plugins: this.state.plugins.map((p) =>
         p.bundle.manifest.id === id ? { ...p, enabled } : p,
       ),

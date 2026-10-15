@@ -13,22 +13,21 @@ import {
 } from 'react-native';
 import {
   AlertCircle,
-  ArrowRight,
   Bookmark,
   Check,
   Film,
   Play,
-  Search,
   type LucideIcon,
 } from 'lucide-react-native';
 import type { MediaItem } from '@cinefern/provider-sdk';
 import { useApp } from '../app-context';
-import { colors, radius, time, isTV, isIOS, textSize } from './theme';
+import { colors, radius, isTV, isIOS, textSize } from './theme';
 import { ScreenLayoutContext } from './screen-layout';
 import { Pressable, FocusRegion } from './focus';
 import { useT } from './i18n';
 import { imageSource } from './artwork';
 import { TVFocusMemory } from './focus-memory';
+import { SystemButton } from './system-button';
 
 export function Button({
   children,
@@ -52,6 +51,22 @@ export function Button({
   preferredFocus?: boolean;
 }) {
   const [hover, setHover] = useState(false);
+  if (SystemButton)
+    return (
+      <SystemButton
+        {...{
+          children,
+          onPress,
+          icon: Icon,
+          variant,
+          disabled,
+          compact,
+          style,
+          label,
+          preferredFocus,
+        }}
+      />
+    );
   const foreground =
     isTV && hover && !disabled && variant !== 'danger'
       ? '#111111'
@@ -120,6 +135,16 @@ export function Chip({
   selected?: boolean;
   onPress?: () => void;
 }) {
+  if (SystemButton)
+    return (
+      <SystemButton
+        compact
+        variant={selected ? 'primary' : 'secondary'}
+        onPress={onPress}
+      >
+        {children}
+      </SystemButton>
+    );
   return (
     <Pressable
       accessibilityRole="button"

@@ -2,7 +2,7 @@
 
 The original source was used as the feature inventory. Compatibility with its runtime, data format, and plugins is intentionally removed.
 
-| Original workflow               | Cinefern 5 implementation                                                                                    |
+| Original workflow               | Cinefern 5 implementation                                                                                  |
 | ------------------------------- | ---------------------------------------------------------------------------------------------------------- |
 | Setup and welcome               | Responsive onboarding with language choice and persistent completion                                       |
 | Provider home / featured media  | Provider-specific and combined feeds; movie/series filters                                                 |
@@ -48,4 +48,3 @@ The original person page and download screen were incomplete; Cinefern 5 impleme
 - Sidecar subtitles render in the native in-app player; native system fullscreen uses embedded tracks.
 - Episode notifications are in-app checks, not background scheduled/push notifications.
 - Localization covers app navigation and principal media actions; supplemental copy and provider-supplied metadata remain in their original language.
-- Built-in public media URLs can change. Open Cinema currently includes a DASH-only Sintel full-film source; iOS/tvOS can play its official trailer and the other compatible films.

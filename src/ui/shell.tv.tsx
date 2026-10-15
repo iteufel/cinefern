@@ -1,12 +1,7 @@
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { Host, TabView } from '@expo/ui/swift-ui';
+import { tabViewStyle } from '@expo/ui/swift-ui/modifiers';
+import React, { useCallback, useContext, useEffect, useRef } from 'react';
 import {
-  BackHandler,
   Image,
   ScrollView,
   StyleSheet,
@@ -15,11 +10,10 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
-import { SymbolView, type SFSymbol } from 'expo-symbols';
+import { type SFSymbol } from 'expo-symbols';
 import { useApp, type Route } from '../app-context';
 import { colors } from './theme';
 import { useT } from './i18n';
-import { Pressable, useTVBackHandling } from './focus';
 import { NativeGlass } from './glass-view';
 import { TVFocusMemory } from './focus-memory';
 import { ScreenLayoutContext } from './screen-layout';
@@ -39,23 +33,20 @@ export function Shell({ children }: { children: React.ReactNode }) {
 }
 
 export function TVShell({
-  children,
   root,
+  renderRoot,
 }: {
-  children: React.ReactNode;
   root: TVRoot;
+  renderRoot: (root: TVRoot) => React.ReactNode;
 }) {
   const app = useApp();
   const t = useT();
-  const [expanded, setExpanded] = useState(false);
-  const content = useRef<React.ElementRef<typeof TVFocusGuideView>>(null);
-  const selected = useRef<View | null>(null);
-  const tabs: Array<{
+  const tabs: {
     root: TVRoot;
     route: Route;
     title: string;
     symbol: SFSymbol;
-  }> = [
+  }[] = [
     {
       root: 'search',
       route: { name: 'search' },
@@ -87,86 +78,29 @@ export function TVShell({
       symbol: 'gearshape.fill',
     },
   ];
-  // At a root, Back opens navigation. Once navigation has focus, the next Back
-  // belongs to tvOS and returns to the system Home screen.
-  useTVBackHandling(!expanded || app.canGoBack);
-  useEffect(() => {
-    if (app.playback) return;
-    const listener = BackHandler.addEventListener('hardwareBackPress', () => {
-      if (app.canGoBack) {
-        app.back();
-        return true;
-      }
-      if (expanded) return false;
-      selected.current?.requestTVFocus();
-      setExpanded(true);
-      return true;
-    });
-    return () => listener.remove();
-  }, [app.playback, app.canGoBack, app.back, expanded]);
-  const enterContent = useCallback(() => setExpanded(false), []);
   return (
     <View style={s.root}>
-      <TVFocusMemory.Provider value={enterContent}>
-        <TVFocusGuideView ref={content} autoFocus style={s.content}>
-          {children}
-        </TVFocusGuideView>
-      </TVFocusMemory.Provider>
-      <TVFocusGuideView
-        autoFocus
-        trapFocusLeft
-        trapFocusUp
-        trapFocusDown
-        style={[s.sidebar, { width: expanded ? 282 : 82 }]}
-      >
-        <NativeGlass style={s.sidebarGlass}>
-          <View style={s.sidebarBrand}>
-            <Image
-              source={require('../../assets/icon.png')}
-              style={s.sidebarIcon}
-            />
-            {expanded && <Text style={s.sidebarTitle}>Cinefern</Text>}
-          </View>
-          <View style={s.navigation}>
-            {tabs.map((tab) => (
-              <Pressable
-                key={tab.root}
-                ref={(view) => {
-                  if (root === tab.root) selected.current = view;
-                }}
-                accessibilityRole="tab"
-                accessibilityLabel={tab.title}
-                accessibilityState={{ selected: root === tab.root }}
-                onFocus={() => setExpanded(true)}
-                onPress={() => {
-                  app.navigate(tab.route);
-                  setExpanded(false);
-                  requestAnimationFrame(() =>
-                    content.current?.requestTVFocus(),
-                  );
-                }}
-                style={[
-                  s.navItem,
-                  root === tab.root && s.navSelected,
-                  tab.root === 'settings' && { marginTop: 24 },
-                ]}
-              >
-                <SymbolView
-                  name={tab.symbol}
-                  size={27}
-                  tintColor="#fff"
-                  style={s.navSymbol}
-                />
-                {expanded && (
-                  <Text numberOfLines={1} style={s.navLabel}>
-                    {tab.title}
-                  </Text>
-                )}
-              </Pressable>
-            ))}
-          </View>
-        </NativeGlass>
-      </TVFocusGuideView>
+      <Host style={{ flex: 1 }} colorScheme="dark" ignoreSafeArea="container">
+        <TabView
+          selection={root}
+          onSelectionChange={(value) => {
+            const tab = tabs.find((tab) => tab.root === value);
+            if (tab && value !== root) app.navigate(tab.route);
+          }}
+          modifiers={[tabViewStyle({ type: 'sidebarAdaptable' })]}
+        >
+          {tabs.map((tab) => (
+            <TabView.Tab
+              key={tab.root}
+              value={tab.root}
+              label={tab.title}
+              systemImage={tab.symbol}
+            >
+              {renderRoot(tab.root)}
+            </TabView.Tab>
+          ))}
+        </TabView>
+      </Host>
       {!!app.toast && (
         <NativeGlass
           accessibilityLiveRegion="polite"
@@ -186,10 +120,12 @@ export function TVScreenFrame({
   children,
   active,
   immersive,
+  scrolls = true,
 }: {
   children: React.ReactNode;
   active: boolean;
   immersive?: boolean;
+  scrolls?: boolean;
 }) {
   const playing = !!useApp().playback;
   const parentRemember = useContext(TVFocusMemory);
@@ -210,7 +146,6 @@ export function TVScreenFrame({
     if (!active || playing) return;
     const frame = requestAnimationFrame(() => {
       if (lastFocus.current) lastFocus.current.requestTVFocus();
-      else guide.current?.requestTVFocus();
     });
     return () => cancelAnimationFrame(frame);
   }, [active, playing]);
@@ -226,17 +161,17 @@ export function TVScreenFrame({
           value={{ nativeHeader: false, contentWidth: width }}
         >
           <TVFocusGuideView ref={guide} autoFocus style={{ flex: 1 }}>
-            <ScrollView
-              removeClippedSubviews={false}
-              showsVerticalScrollIndicator={false}
-              onContentSizeChange={() => {
-                if (active && !lastFocus.current)
-                  guide.current?.requestTVFocus();
-              }}
-              contentContainerStyle={immersive ? s.immersive : s.page}
-            >
-              {children}
-            </ScrollView>
+            {!scrolls ? (
+              <View style={[s.page, { flex: 1 }]}>{children}</View>
+            ) : (
+              <ScrollView
+                removeClippedSubviews={false}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={immersive ? s.immersive : s.page}
+              >
+                {children}
+              </ScrollView>
+            )}
           </TVFocusGuideView>
         </ScreenLayoutContext.Provider>
       </TVFocusMemory.Provider>
@@ -250,56 +185,14 @@ export function useContentWidth() {
 }
 const s = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.background },
-  content: { flex: 1 },
   frame: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 },
   page: {
-    paddingLeft: 184,
-    paddingRight: 52,
-    paddingTop: 56,
+    paddingLeft: 80,
+    paddingRight: 80,
+    paddingTop: 140,
     paddingBottom: 90,
   },
   immersive: { paddingBottom: 80 },
-  sidebar: {
-    position: 'absolute',
-    top: 50,
-    bottom: 50,
-    left: 26,
-    zIndex: 10,
-    justifyContent: 'center',
-  },
-  sidebarGlass: {
-    borderRadius: 30,
-    paddingVertical: 22,
-    paddingHorizontal: 10,
-    overflow: 'hidden',
-  },
-  sidebarBrand: {
-    height: 62,
-    paddingHorizontal: 9,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 16,
-    marginBottom: 22,
-  },
-  sidebarIcon: { height: 42, width: 42, borderRadius: 12 },
-  sidebarTitle: {
-    color: '#fff',
-    fontSize: 27,
-    fontWeight: '700',
-    letterSpacing: -0.8,
-  },
-  navigation: { gap: 12 },
-  navItem: {
-    minHeight: 62,
-    borderRadius: 18,
-    paddingHorizontal: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 18,
-  },
-  navSelected: { backgroundColor: '#ffffff22' },
-  navSymbol: { width: 27, height: 27 },
-  navLabel: { color: '#fff', fontSize: 23, fontWeight: '600', flexShrink: 1 },
   brand: { flexDirection: 'row', alignItems: 'center', gap: 15 },
   icon: { width: 58, height: 58, borderRadius: 16 },
   wordmark: {

@@ -11,9 +11,10 @@ import {
   type ProviderManifest,
   type SettingValue,
 } from '@cinefern/provider-sdk';
+import { JELLYFIN_PROVIDER_ID } from './ids';
 
 export const jellyfinManifest: ProviderManifest = {
-  id: 'io.github.iteufel.cinefern.jellyfin',
+  id: JELLYFIN_PROVIDER_ID,
   name: 'Jellyfin',
   version: '1.0.0',
   apiVersion: 1,
@@ -156,7 +157,7 @@ function authorization(deviceId: string, token?: string) {
   return (
     'MediaBrowser Client="Cinefern", Device="Cinefern", DeviceId="' +
     quote(deviceId) +
-    '", Version="5.1.0"' +
+    '", Version="5.1.1"' +
     (token ? ', Token="' + quote(token) + '"' : '')
   );
 }

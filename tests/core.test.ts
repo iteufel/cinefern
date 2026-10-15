@@ -15,6 +15,7 @@ import {
 } from '@cinefern/provider-sdk';
 import {
   continueWatching,
+  initialState,
   LibraryStore,
   type KeyValueStorage,
 } from '../src/core/library';
@@ -25,6 +26,10 @@ import {
   openFilmsProvider,
 } from '../src/providers/open-films';
 import { parseSubtitles, subtitleAt } from '../src/player/subtitles';
+import {
+  JELLYFIN_PROVIDER_ID,
+  JSON_LIBRARY_PROVIDER_ID,
+} from '../src/providers/ids';
 import type { PlatformServices } from '../src/platform/types';
 
 function storage(): KeyValueStorage {
@@ -85,6 +90,110 @@ test('watchlist toggles without duplicates and persists', async () => {
   await restored.initialize();
   assert.equal(restored.getSnapshot().watchlist.length, 1);
   assert.equal(restored.isSaved(item), true);
+});
+test('providers start disabled and only explicit selections survive restart', async () => {
+  const disk = storage();
+  const library = new LibraryStore(disk);
+  await library.initialize();
+  assert.deepEqual(library.getSnapshot().enabledProviders, []);
+  for (const id of [
+    JELLYFIN_PROVIDER_ID,
+    JSON_LIBRARY_PROVIDER_ID,
+    openFilmsManifest.id,
+    'org.example.future-provider',
+  ])
+    assert.equal(library.isProviderEnabled(id), false);
+
+  library.setProviderEnabled(JELLYFIN_PROVIDER_ID, true);
+  await library.flush();
+  const restored = new LibraryStore(disk);
+  await restored.initialize();
+  assert.deepEqual(restored.getSnapshot().enabledProviders, [
+    JELLYFIN_PROVIDER_ID,
+  ]);
+});
+test('new provider bundles stay disabled and updates preserve their activation choice', async () => {
+  const disk = storage();
+  const library = new LibraryStore(disk);
+  await library.initialize();
+  const bundle = {
+    format: 'cinefern-provider' as const,
+    manifest,
+    code: 'var CinefernProvider = {};',
+  };
+  library.install(bundle);
+  assert.equal(library.isProviderEnabled(manifest.id), false);
+  assert.equal(library.getSnapshot().plugins[0]?.enabled, false);
+
+  library.setProviderEnabled(manifest.id, true);
+  library.install({ ...bundle, manifest: { ...manifest, version: '2.0.0' } });
+  assert.equal(library.isProviderEnabled(manifest.id), true);
+  assert.equal(library.getSnapshot().plugins[0]?.enabled, true);
+
+  library.setProviderEnabled(manifest.id, false);
+  library.install({ ...bundle, manifest: { ...manifest, version: '3.0.0' } });
+  await library.flush();
+  const restored = new LibraryStore(disk);
+  await restored.initialize();
+  assert.equal(restored.isProviderEnabled(manifest.id), false);
+  assert.equal(restored.getSnapshot().plugins[0]?.enabled, false);
+});
+test('legacy automatic providers are disabled without erasing the saved library', async () => {
+  const disk = storage();
+  const { enabledProviders, ...legacy } = initialState();
+  const history = [{ item, position: 20, duration: 100, updatedAt: 1 }];
+  await disk.set(
+    'cinefern.library.v1',
+    JSON.stringify({ ...legacy, disabledProviders: [], history }),
+  );
+  const library = new LibraryStore(disk);
+  await library.initialize();
+  assert.deepEqual(library.getSnapshot().enabledProviders, []);
+  assert.deepEqual(library.getSnapshot().history, history);
+});
+test('legacy configured providers migrate without re-enabling disabled choices', async () => {
+  const disk = storage();
+  const { enabledProviders, ...legacy } = initialState();
+  const activeId = 'org.example.active';
+  const disabledId = 'org.example.disabled';
+  await disk.set(
+    'cinefern.library.v1',
+    JSON.stringify({
+      ...legacy,
+      disabledProviders: [JSON_LIBRARY_PROVIDER_ID, disabledId],
+      providerSettings: {
+        [JELLYFIN_PROVIDER_ID]: {
+          userId: 'user',
+          serverUrl: 'https://example.com',
+        },
+        [JSON_LIBRARY_PROVIDER_ID]: {
+          catalogUrl: 'https://example.com/catalog.json',
+        },
+      },
+      plugins: [activeId, disabledId].map((id) => ({
+        bundle: {
+          format: 'cinefern-provider',
+          manifest: { ...manifest, id },
+          code: 'var CinefernProvider = {};',
+        },
+        enabled: true,
+        installedAt: 1,
+        settings: {},
+      })),
+    }),
+  );
+  const library = new LibraryStore(disk);
+  await library.initialize();
+  assert.deepEqual(library.getSnapshot().enabledProviders, [
+    JELLYFIN_PROVIDER_ID,
+    activeId,
+  ]);
+  assert.equal(library.getSnapshot().plugins[1]?.enabled, false);
+  library.setProviderEnabled(JELLYFIN_PROVIDER_ID, false);
+  await library.flush();
+  const restored = new LibraryStore(disk);
+  await restored.initialize();
+  assert.deepEqual(restored.getSnapshot().enabledProviders, [activeId]);
 });
 test('serialized writes preserve the latest settings', async () => {
   const disk = storage();
@@ -186,7 +295,7 @@ test('uninstalling a disabled plugin clears its enablement and settings', async 
   library.removePlugin(manifest.id);
   library.install(bundle);
   assert.equal(
-    library.getSnapshot().disabledProviders.includes(manifest.id),
+    library.getSnapshot().enabledProviders.includes(manifest.id),
     false,
   );
   assert.equal(library.getSnapshot().providerSettings[manifest.id], undefined);

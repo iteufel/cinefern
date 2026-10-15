@@ -108,6 +108,8 @@ export function HomeScreen() {
       .filter((c) => c.items.length) ?? [];
   const continuing = continueWatching(app.state.history).filter(
     (entry) =>
+      (entry.item.providerId === 'direct' ||
+        app.library.isProviderEnabled(entry.item.providerId)) &&
       (!route.providerId || entry.item.providerId === route.providerId) &&
       filter(entry.item),
   );
@@ -396,7 +398,7 @@ export function HomeScreen() {
               description={
                 records.length
                   ? 'This provider has no titles in this view. Connect a catalog or explore another provider.'
-                  : 'Install a TypeScript media provider to start exploring.'
+                  : 'Connect Jellyfin or enable a provider to start exploring.'
               }
               action={
                 <Button

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   AccessibilityInfo,
   Pressable,
@@ -40,7 +40,7 @@ import {
 } from '../screens/library';
 import { ProvidersScreen } from '../screens/providers';
 import { SettingsScreen } from '../screens/settings';
-import { Player } from '../player';
+import { Player } from '../player/apple';
 import { IOSHomeScreen, IOSLibraryScreen } from '../screens/apple';
 import { ScreenLayoutContext } from './screen-layout';
 import { colors } from './theme';
@@ -59,6 +59,7 @@ type StackParams = {
   Tabs: NavigatorScreenParams<TabParams> | undefined;
   Page: { route: Route };
   Sheet: { route: Route };
+  Player: undefined;
 };
 const Stack = createNativeStackNavigator<StackParams>();
 const Tabs = createNativeBottomTabNavigator<TabParams>();
@@ -194,6 +195,10 @@ function Page({
   return <RouteContent route={route.params.route} />;
 }
 
+function PlaybackScreen() {
+  return <Player embedded />;
+}
+
 function Screen({ route, library }: { route: Route; library?: boolean }) {
   if (library) return <IOSLibraryScreen />;
   switch (route.name) {
@@ -252,23 +257,29 @@ function RouteContent({
         value={{ nativeHeader: true, contentWidth }}
       >
         <View style={s.screen}>
-          <ScrollView
-            ref={scroll}
-            contentInsetAdjustmentBehavior="automatic"
-            automaticallyAdjustKeyboardInsets
-            keyboardDismissMode="interactive"
-            keyboardShouldPersistTaps="handled"
-            contentContainerStyle={s.content}
-          >
-            <View
-              style={s.column}
-              onLayout={(event) =>
-                setContentWidth(event.nativeEvent.layout.width)
-              }
+          {route.name === 'settings' ||
+          route.name === 'providers' ||
+          library ? (
+            <Screen route={route} library={library} />
+          ) : (
+            <ScrollView
+              ref={scroll}
+              contentInsetAdjustmentBehavior="automatic"
+              automaticallyAdjustKeyboardInsets
+              keyboardDismissMode="interactive"
+              keyboardShouldPersistTaps="handled"
+              contentContainerStyle={s.content}
             >
-              <Screen route={route} library={library} />
-            </View>
-          </ScrollView>
+              <View
+                style={s.column}
+                onLayout={(event) =>
+                  setContentWidth(event.nativeEvent.layout.width)
+                }
+              >
+                <Screen route={route} library={library} />
+              </View>
+            </ScrollView>
+          )}
           {!!app.toast && (
             <Pressable
               accessibilityRole="button"
@@ -288,6 +299,13 @@ function RouteContent({
 export function NativeApplication() {
   const app = useApp();
   const t = useT();
+  const playing = !!app.playback;
+  useEffect(() => {
+    if (!navigation.isReady()) return;
+    const playerVisible = navigation.getCurrentRoute()?.name === 'Player';
+    if (playing && !playerVisible) navigation.navigate('Player');
+    else if (!playing && playerVisible) navigation.goBack();
+  }, [playing]);
   useEffect(() => {
     if (app.toast) AccessibilityInfo.announceForAccessibility(app.toast);
   }, [app.toast]);
@@ -303,6 +321,8 @@ export function NativeApplication() {
             headerBackButtonDisplayMode: 'minimal',
             headerShadowVisible: false,
             gestureEnabled: true,
+            statusBarStyle: 'light',
+            statusBarHidden: false,
           }}
         >
           <Stack.Screen
@@ -335,9 +355,21 @@ export function NativeApplication() {
               ),
             })}
           />
+          <Stack.Screen
+            name="Player"
+            component={PlaybackScreen}
+            options={{
+              presentation: 'fullScreenModal',
+              animation: 'fade',
+              headerShown: false,
+              gestureEnabled: false,
+              statusBarHidden: true,
+              autoHideHomeIndicator: true,
+            }}
+            listeners={{ beforeRemove: () => app.setPlayback(null) }}
+          />
         </Stack.Navigator>
       </NavigationContainer>
-      <Player />
     </>
   );
 }

@@ -1,6 +1,6 @@
 {
   "name": "@cinefern/apple-player",
-  "version": "5.1.0",
+  "version": "5.1.1",
   "private": true,
   "main": "index.tsx",
   "description": "Native AVKit menus for Cinefern",

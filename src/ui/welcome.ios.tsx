@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Image,
   Pressable,
@@ -12,6 +11,7 @@ import { SymbolView, type SymbolViewProps } from 'expo-symbols';
 import { useApp } from '../app-context';
 import { colors } from './theme';
 import { useT } from './i18n';
+import { Button } from './components';
 
 export function IOSWelcome() {
   const app = useApp();
@@ -77,13 +77,13 @@ export function IOSWelcome() {
           </View>
         </View>
         <View style={s.bottom}>
-          <Pressable
-            accessibilityRole="button"
+          <Button
+            variant="primary"
             onPress={() => app.library.update({ setupComplete: true })}
-            style={({ pressed }) => [s.continue, pressed && { opacity: 0.7 }]}
+            style={{ alignSelf: 'center' }}
           >
-            <Text style={s.continueText}>{t.getStarted}</Text>
-          </Pressable>
+            {t.getStarted}
+          </Button>
           <Text style={s.footer}>Cinefern · Open source</Text>
           {!!app.state.persistenceError && (
             <Text style={s.error}>{app.state.persistenceError}</Text>
@@ -136,15 +136,6 @@ const s = StyleSheet.create({
   featureTitle: { color: colors.text, fontSize: 17, fontWeight: '600' },
   description: { color: colors.muted, fontSize: 15, lineHeight: 21 },
   bottom: { width: '100%', maxWidth: 440, gap: 18 },
-  continue: {
-    minHeight: 54,
-    borderRadius: 14,
-    backgroundColor: colors.accent,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 16,
-  },
-  continueText: { color: '#ffffff', fontSize: 17, fontWeight: '600' },
   footer: { color: colors.muted, fontSize: 13, textAlign: 'center' },
   error: { color: colors.warning, fontSize: 15 },
 });

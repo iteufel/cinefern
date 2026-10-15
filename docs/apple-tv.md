@@ -51,7 +51,7 @@ See [TestFlight account and CI setup](testflight.md).
 
 ## Providers and library
 
-Build providers with `npm run plugin:build -- path/to/provider.ts path/to/manifest.json` as on the other platforms. Host the resulting `.cfprovider` file on your server. In **Providers → Install provider**, enter its URL, review the manifest and requested network access, and install. Merely downloading a bundle for review does not execute it.
+All providers start disabled, and no demo catalog is loaded. Build providers with `npm run plugin:build -- path/to/provider.ts path/to/manifest.json` as on the other platforms. Host the resulting `.cfprovider` file on your server. In **Providers → Install provider**, enter its URL, review the manifest and requested network access, and install. Enable the installed provider when you want to use it; downloading or installing a disabled bundle does not execute it.
 
 The included **Your Library** provider also accepts a hosted JSON catalog URL. Use HTTPS for public servers; local HTTP servers need to satisfy Apple's local-network transport rules. Catalogs and media are fetched directly by the TV app, without browser CORS restrictions.
 
@@ -59,7 +59,7 @@ Watchlists, history, installed providers, and settings are stored on the Apple T
 
 ## Playback and storage limits
 
-Use HLS or files in formats supported by AVPlayer. DASH-only sources cannot play on tvOS; resolvers and providers must supply a compatible alternative. Open Cinema's current full Sintel source is DASH-only; its trailer and the other compatible films can play on Apple TV.
+Use HLS or files in formats supported by AVPlayer. DASH-only sources cannot play on tvOS; resolvers and providers must supply a compatible alternative.
 
 Downloads cache progressive files, not HLS/DASH segments. tvOS can purge cached files and application caches when storage is needed. Missing downloaded files are reported and can be downloaded again; local storage is not a durable cloud backup. External VTT/SRT subtitles render in the TV player's overlay; picture in picture uses embedded subtitles.
 
