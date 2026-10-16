@@ -3,7 +3,7 @@
     "name": "Cinefern TV",
     "slug": "cinefern-tv",
     "scheme": "cinefern-tv",
-    "version": "5.1.1",
+    "version": "5.1.2",
     "orientation": "landscape",
     "icon": "../../assets/icon.png",
     "userInterfaceStyle": "dark",

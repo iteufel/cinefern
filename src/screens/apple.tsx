@@ -7,8 +7,15 @@ import {
 } from '@expo/ui/swift-ui';
 import { pickerStyle, tag } from '@expo/ui/swift-ui/modifiers';
 import { AppleForm } from '../ui/apple-controls';
-import { useState } from 'react';
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useRef, useState } from 'react';
+import {
+  FlatList,
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import type { SFSymbol } from 'sf-symbols-typescript';
 import { Bookmark, Check, Info, ChevronRight, Play } from 'lucide-react-native';
@@ -29,10 +36,8 @@ import { useContentWidth } from '../ui/shell';
 export function IOSHomeScreen() {
   const app = useApp();
   const t = useT();
-  const width = useContentWidth();
   const route =
     app.route.name === 'home' ? app.route : { name: 'home' as const };
-  const [featuredIndex, setFeaturedIndex] = useState(0);
   const records = app.runtime
     .all()
     .filter(
@@ -73,12 +78,11 @@ export function IOSHomeScreen() {
     },
   );
   const visible = (item: MediaItem) =>
+    (item.providerId === 'direct' ||
+      app.library.isProviderEnabled(item.providerId)) &&
     (app.state.settings.showAdult || !item.adult) &&
     (!route.filter || item.type === route.filter);
   const featured = query.data?.featured.filter(visible) ?? [];
-  const index = featuredIndex % Math.max(1, featured.length);
-  const firstDot = Math.max(0, Math.min(index - 2, featured.length - 5));
-  const hero = featured[index];
   const collections =
     query.data?.collections
       .map((collection) => ({
@@ -88,8 +92,6 @@ export function IOSHomeScreen() {
       .filter((collection) => collection.items.length) ?? [];
   const continuing = continueWatching(app.state.history).filter(
     (entry) =>
-      (entry.item.providerId === 'direct' ||
-        app.library.isProviderEnabled(entry.item.providerId)) &&
       visible(entry.item) &&
       (!route.providerId || entry.item.providerId === route.providerId),
   );
@@ -103,7 +105,6 @@ export function IOSHomeScreen() {
         <Picker
           selection={route.filter ?? 'all'}
           onSelectionChange={(filter: string) => {
-            setFeaturedIndex(0);
             app.navigate({
               name: 'home',
               providerId: route.providerId,
@@ -129,88 +130,11 @@ export function IOSHomeScreen() {
         <Failure error={query.error} retry={query.retry} />
       ) : (
         <>
-          {hero && (
-            <View
-              style={[
-                s.hero,
-                { minHeight: Math.min(420, Math.max(330, width * 0.85)) },
-              ]}
-            >
-              <Image
-                source={imageSource(hero.backdrop || hero.poster)}
-                style={StyleSheet.absoluteFill}
-                resizeMode="cover"
-                accessibilityIgnoresInvertColors
-              />
-              <LinearGradient
-                colors={['#00000000', '#00000030', '#000000eb']}
-                locations={[0, 0.3, 1]}
-                style={StyleSheet.absoluteFill}
-              />
-              <View style={s.heroContent}>
-                <Text style={s.featured}>{t.featured}</Text>
-                <Text style={s.heroTitle} accessibilityRole="header">
-                  {hero.title}
-                </Text>
-                <Text style={s.heroMeta}>
-                  {[
-                    hero.year,
-                    hero.genres?.[0],
-                    hero.duration && Math.round(hero.duration / 60) + ' min',
-                  ]
-                    .filter(Boolean)
-                    .join(' · ')}
-                </Text>
-                <View style={s.heroActions}>
-                  <Button
-                    variant="primary"
-                    icon={Play}
-                    label={t.play + ' ' + hero.title}
-                    disabled={app.playingLoading}
-                    onPress={() =>
-                      hero.type === 'series'
-                        ? app.navigate({ name: 'item', item: hero })
-                        : void app.play(hero)
-                    }
-                  >
-                    {t.play}
-                  </Button>
-                  <Button
-                    icon={app.library.isSaved(hero) ? Check : Bookmark}
-                    label={app.library.isSaved(hero) ? t.saved : t.save}
-                    onPress={() => app.toggleSave(hero)}
-                  />
-                  <Button
-                    icon={Info}
-                    label={t.details}
-                    onPress={() => app.navigate({ name: 'item', item: hero })}
-                  />
-                </View>
-              </View>
-            </View>
-          )}
-          {featured.length > 1 && (
-            <View style={s.dots}>
-              {featured.slice(firstDot, firstDot + 5).map((item, offset) => (
-                <Pressable
-                  key={mediaKey(item)}
-                  accessibilityRole="button"
-                  accessibilityLabel={t.featured + ': ' + item.title}
-                  accessibilityState={{ selected: index === firstDot + offset }}
-                  onPress={() => setFeaturedIndex(firstDot + offset)}
-                  style={s.dotTarget}
-                >
-                  <View
-                    style={[
-                      s.dot,
-                      index === firstDot + offset && {
-                        backgroundColor: colors.text,
-                      },
-                    ]}
-                  />
-                </Pressable>
-              ))}
-            </View>
+          {!!featured.length && (
+            <IOSFeaturedCarousel
+              key={JSON.stringify(featured.map(mediaKey))}
+              items={featured}
+            />
           )}
           <MediaRow
             title={t.continue}
@@ -230,9 +154,11 @@ export function IOSHomeScreen() {
               title={collection.title}
               items={collection.items}
               action={
-                app.runtime
-                  .get(collection.providerId)
-                  .manifest.capabilities.includes('collections') ? (
+                records.some(
+                  ({ manifest }) =>
+                    manifest.id === collection.providerId &&
+                    manifest.capabilities.includes('collections'),
+                ) ? (
                   <Button
                     icon={ChevronRight}
                     label={t.seeAll + ': ' + collection.title}
@@ -251,7 +177,7 @@ export function IOSHomeScreen() {
               }
             />
           ))}
-          {!hero && !collections.length && (
+          {!featured.length && !collections.length && (
             <Empty
               title={records.length ? t.noResults : t.welcomeProviders}
               description={t.welcomeProvidersDescription}
@@ -263,6 +189,145 @@ export function IOSHomeScreen() {
             />
           )}
         </>
+      )}
+    </>
+  );
+}
+
+function IOSFeaturedCarousel({ items }: { items: MediaItem[] }) {
+  const app = useApp();
+  const t = useT();
+  const width = useContentWidth();
+  const carousel = useRef<FlatList<MediaItem>>(null);
+  const [index, setIndex] = useState(0);
+  const firstDot = Math.max(0, Math.min(index - 2, items.length - 5));
+  const heroHeight =
+    width >= 600
+      ? Math.min(560, (width * 9) / 16)
+      : Math.min(420, Math.max(330, width * 0.85));
+  function selectPage(next: number) {
+    setIndex(next);
+    carousel.current?.scrollToIndex({ index: next, animated: true });
+  }
+  return (
+    <>
+      <FlatList
+        // Recreate the native pager at its new width, retaining the selected page
+        // when the iPad rotates, its window resizes, or the sidebar changes.
+        key={width}
+        ref={carousel}
+        data={items}
+        keyExtractor={mediaKey}
+        horizontal
+        pagingEnabled
+        directionalLockEnabled
+        showsHorizontalScrollIndicator={false}
+        contentInsetAdjustmentBehavior="never"
+        automaticallyAdjustContentInsets={false}
+        scrollEnabled={items.length > 1}
+        bounces={items.length > 1}
+        initialScrollIndex={index}
+        initialNumToRender={2}
+        windowSize={3}
+        getItemLayout={(_, page) => ({
+          length: width,
+          offset: page * width,
+          index: page,
+        })}
+        onMomentumScrollEnd={({ nativeEvent }) =>
+          setIndex(
+            Math.max(
+              0,
+              Math.min(
+                items.length - 1,
+                Math.round(nativeEvent.contentOffset.x / width),
+              ),
+            ),
+          )
+        }
+        style={s.carousel}
+        renderItem={({ item: hero }) => (
+          <View style={[s.hero, { width, minHeight: heroHeight }]}>
+            <Image
+              source={imageSource(hero.backdrop || hero.poster)}
+              style={s.heroArtwork}
+              resizeMode="cover"
+              accessibilityIgnoresInvertColors
+            />
+            <LinearGradient
+              colors={['#00000000', '#00000030', '#000000eb']}
+              locations={[0, 0.3, 1]}
+              style={StyleSheet.absoluteFill}
+            />
+            <View style={s.heroContent}>
+              <Text style={s.featured}>{t.featured}</Text>
+              <Text
+                style={s.heroTitle}
+                accessibilityRole="header"
+                numberOfLines={2}
+              >
+                {hero.title}
+              </Text>
+              <Text style={s.heroMeta}>
+                {[
+                  hero.year,
+                  hero.genres?.[0],
+                  hero.duration && Math.round(hero.duration / 60) + ' min',
+                ]
+                  .filter(Boolean)
+                  .join(' · ')}
+              </Text>
+              <View style={s.heroActions}>
+                <Button
+                  variant="primary"
+                  icon={Play}
+                  label={t.play + ' ' + hero.title}
+                  disabled={app.playingLoading}
+                  onPress={() =>
+                    hero.type === 'series'
+                      ? app.navigate({ name: 'item', item: hero })
+                      : void app.play(hero)
+                  }
+                >
+                  {t.play}
+                </Button>
+                <Button
+                  icon={app.library.isSaved(hero) ? Check : Bookmark}
+                  label={app.library.isSaved(hero) ? t.saved : t.save}
+                  onPress={() => app.toggleSave(hero)}
+                />
+                <Button
+                  icon={Info}
+                  label={t.details}
+                  onPress={() => app.navigate({ name: 'item', item: hero })}
+                />
+              </View>
+            </View>
+          </View>
+        )}
+      />
+      {items.length > 1 && (
+        <View style={s.dots}>
+          {items.slice(firstDot, firstDot + 5).map((item, offset) => (
+            <Pressable
+              key={mediaKey(item)}
+              accessibilityRole="button"
+              accessibilityLabel={t.featured + ': ' + item.title}
+              accessibilityState={{ selected: index === firstDot + offset }}
+              onPress={() => selectPage(firstDot + offset)}
+              style={s.dotTarget}
+            >
+              <View
+                style={[
+                  s.dot,
+                  index === firstDot + offset && {
+                    backgroundColor: colors.text,
+                  },
+                ]}
+              />
+            </Pressable>
+          ))}
+        </View>
       )}
     </>
   );
@@ -360,13 +425,14 @@ export function IOSLibraryScreen() {
 }
 
 const s = StyleSheet.create({
+  carousel: { flexGrow: 0, marginBottom: 12 },
   hero: {
     borderRadius: 18,
     overflow: 'hidden',
     justifyContent: 'flex-end',
     backgroundColor: colors.surface,
-    marginBottom: 12,
   },
+  heroArtwork: { ...StyleSheet.absoluteFill, width: 'auto', height: 'auto' },
   heroContent: { padding: 22, paddingTop: 80 },
   featured: {
     color: '#ffffffcc',

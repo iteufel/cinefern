@@ -157,7 +157,7 @@ function authorization(deviceId: string, token?: string) {
   return (
     'MediaBrowser Client="Cinefern", Device="Cinefern", DeviceId="' +
     quote(deviceId) +
-    '", Version="5.1.1"' +
+    '", Version="5.1.2"' +
     (token ? ', Token="' + quote(token) + '"' : '')
   );
 }

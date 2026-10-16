@@ -26,6 +26,7 @@ import {
 } from '@react-navigation/bottom-tabs/unstable';
 import { SymbolView } from 'expo-symbols';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView as NativeSafeAreaView } from 'react-native-screens/experimental';
 import { AppNavigationProvider, useApp, type Route } from '../app-context';
 import {
   SearchScreen,
@@ -262,23 +263,25 @@ function RouteContent({
           library ? (
             <Screen route={route} library={library} />
           ) : (
-            <ScrollView
-              ref={scroll}
-              contentInsetAdjustmentBehavior="automatic"
-              automaticallyAdjustKeyboardInsets
-              keyboardDismissMode="interactive"
-              keyboardShouldPersistTaps="handled"
-              contentContainerStyle={s.content}
-            >
-              <View
-                style={s.column}
-                onLayout={(event) =>
-                  setContentWidth(event.nativeEvent.layout.width)
-                }
+            <NativeSafeAreaView edges={{ top: true, left: true, right: true }}>
+              <ScrollView
+                ref={scroll}
+                contentInsetAdjustmentBehavior="automatic"
+                automaticallyAdjustKeyboardInsets
+                keyboardDismissMode="interactive"
+                keyboardShouldPersistTaps="handled"
+                contentContainerStyle={s.content}
               >
-                <Screen route={route} library={library} />
-              </View>
-            </ScrollView>
+                <View
+                  style={s.column}
+                  onLayout={(event) =>
+                    setContentWidth(event.nativeEvent.layout.width)
+                  }
+                >
+                  <Screen route={route} library={library} />
+                </View>
+              </ScrollView>
+            </NativeSafeAreaView>
           )}
           {!!app.toast && (
             <Pressable
@@ -382,7 +385,7 @@ const s = StyleSheet.create({
     paddingBottom: 36,
     flexGrow: 1,
   },
-  column: { width: '100%', maxWidth: 1000, alignSelf: 'center' },
+  column: { width: '100%' },
   headerButton: {
     minWidth: 44,
     minHeight: 44,

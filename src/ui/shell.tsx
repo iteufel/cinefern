@@ -325,7 +325,7 @@ export function useContentWidth() {
   const { width } = useWindowDimensions();
   const layout = useContext(ScreenLayoutContext);
   if (layout.contentWidth) return layout.contentWidth;
-  if (isIOS) return Math.min(1000, width - 40);
+  if (isIOS) return Math.max(0, width - 40);
   return Math.min(1400, width - (width >= 820 ? 296 : 40));
 }
 const s = StyleSheet.create({

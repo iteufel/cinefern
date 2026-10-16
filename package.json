@@ -1,6 +1,6 @@
 {
   "name": "cinefern",
-  "version": "5.1.1",
+  "version": "5.1.2",
   "private": true,
   "description": "An open, universal media player built with React Native",
   "license": "AGPL-3.0-or-later",
@@ -55,8 +55,8 @@
     "test:agent-desktop": "electron scripts/smoke-agent.cjs"
   },
   "dependencies": {
-    "@cinefern/apple-player": "5.1.1",
-    "@cinefern/provider-sdk": "5.1.1",
+    "@cinefern/apple-player": "5.1.2",
+    "@cinefern/provider-sdk": "5.1.2",
     "@expo/metro-runtime": "~57.0.16",
     "@expo/ui": "57.0.23",
     "@langchain/core": "^1.2.17",
