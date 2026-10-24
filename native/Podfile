@@ -9,7 +9,6 @@ end
 post_integrate do |installer|
   # CocoaPods declares only the framework binary, but rsync also reads its plist,
   # signatures and resources. Declare that exact framework directory as input.
-  # Keep Xcode's user-script sandbox enabled.
   installer.aggregate_targets.map(&:user_project).uniq.each do |project|
     project.native_targets.each do |target|
       target.shell_script_build_phases.each do |phase|

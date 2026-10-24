@@ -20,7 +20,9 @@ privacy=project.main_group.new_file('Resources/PrivacyInfo.xcprivacy')
       'PRODUCT_NAME'=>'Cinefern', 'SWIFT_VERSION'=>'5.0',
       'GENERATE_INFOPLIST_FILE'=>'YES', 'INFOPLIST_FILE'=>'Info.plist',
       'MARKETING_VERSION'=>'0.1.0', 'CURRENT_PROJECT_VERSION'=>'1',
-      'CODE_SIGN_STYLE'=>'Automatic', 'ENABLE_USER_SCRIPT_SANDBOXING'=>'YES',
+      # CocoaPods embeds complete framework trees; Xcode models clean output
+      # frameworks as literal files and denies their children in script sandboxes.
+      'CODE_SIGN_STYLE'=>'Automatic', 'ENABLE_USER_SCRIPT_SANDBOXING'=>(ARGV.include?('--vlc') ? 'NO' : 'YES'),
       'SDKROOT'=>sdk,
       'SWIFT_EMIT_LOC_STRINGS'=>'YES', 'CLANG_ENABLE_MODULES'=>'YES',
       'ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS'=>'YES',
