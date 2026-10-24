@@ -14,7 +14,6 @@ project = Xcodeproj::Project.open(File.join(root, 'CinefernVLC.xcodeproj'))
 target = project.native_targets.find { |item| item.name == 'Cinefern-iOS' }
 release = target.build_configurations.find { |config| config.name == 'Release' }
 release.build_settings.merge!({
-  'INFOPLIST_KEY_CinefernSourceRevision' => ENV.fetch('GITHUB_SHA', 'local-verification'),
   'PRODUCT_BUNDLE_IDENTIFIER' => 'io.github.iteufel.cinefern',
   'MARKETING_VERSION' => version, 'CURRENT_PROJECT_VERSION' => build,
   'CODE_SIGN_STYLE' => 'Manual', 'DEVELOPMENT_TEAM' => team,

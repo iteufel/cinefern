@@ -114,8 +114,8 @@ The native path uses the Xcode 27 runner, generates the native runtime/assets,
 runs Core tests, and validates the real App Store app/bundle before allocating a
 build number above the recent iOS build numbers. It sets production identity,
 version and manual Distribution signing only on the native iOS Release target.
-Local development identifiers are unchanged. Source revision is embedded in the
-app's Info.plist and recorded in `testflight-result.json`.
+Local development identifiers are unchanged. The source revision is recorded in `testflight-result.json` and tied to the
+immutable GitHub Actions run/checkout.
 
 After upload, CI polls the exact version/build until Apple's processing state is
 `VALID` (up to 30 minutes). IPA, archive/export logs and the processing result are
@@ -123,3 +123,19 @@ retained together. A successful archive alone is not a successful TestFlight rel
 No public App Store submission, external beta review or new tester invitations
 are performed by this path. Existing beta acceptance limitations are listed in
 `docs/native-test-handoff.md`.
+
+### Delivered native beta
+
+**5.2.0 (6.1)** was uploaded and processed on 24 October 2026:
+
+- [Successful release run](https://github.com/iteufel/cinefern/actions/runs/40130798020).
+- [Cinefern in App Store Connect](https://appstoreconnect.apple.com/apps/6822936078/testflight/ios).
+- Source: `f371c10ccdfe9c144f36919bb522dedab434f6ee`.
+- Apple build: `70572eca-3323-411c-a4f4-75163b586a7d`.
+- Processing: **VALID**; internal state: **READY_FOR_BETA_TESTING**.
+- Exported IPA's Apple Distribution signature and App Store profile were verified;
+  iOS 17+, arm64, iPhone/iPad, AVKit and MobileVLCKit 3.7.4.
+
+The build is ready for internal beta assignment; no new tester invitations or
+external Beta App Review submission were performed. IPA SHA-256:
+`7e4f0055dc6f1f4f2f5022f0e768a399f4b92194f13dccc89cb5aad49a7fa613`.

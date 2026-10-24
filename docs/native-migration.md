@@ -95,11 +95,13 @@ See the exact evidence and limits in [the handoff](native-test-handoff.md).
 - **Downloads/transport**: real download/cancel/offline, local-network privacy prompts,
   native redirect/size controls and actual model endpoints need integration/device
   tests. Host tests inject HTTP replies and do not certify the URLSession implementation.
-- **Distribution/assets**: final native app icons/top-shelf assets, broader sandboxed
+- **Distribution/assets**: Mac/tvOS icons/top-shelf assets, broader sandboxed
   Keychain acceptance, privacy metadata, optional VLC LGPL distribution obligations,
-  store archives and TestFlight are not completed. Six Apple Development signed
-  application builds and deep signature verification now pass; the signed Duo simulator
-  successfully uses encrypted/Keychain storage. No native binary was uploaded.
+  public release acceptance remain incomplete. Six Apple Development signed builds
+  and deep verification pass; the Duo simulator successfully uses encrypted/Keychain
+  storage. The authorized native iOS beta **5.2.0 (6.1)** now has an App Store archive,
+  verified Distribution IPA, icon/privacy manifest and **VALID** TestFlight processing.
+  Mac/tvOS store archives/assets and physical acceptance remain open.
 - **Data migration**: explicit backup portability is available; automatic legacy
   credential/plugin/download migration is intentionally not performed. Add and test
   a reviewed migration path before making native the sole application.

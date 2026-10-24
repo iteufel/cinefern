@@ -1,8 +1,23 @@
 # Native Apple: test evidence and handoff
 
-Status: **draft / no native release acceptance**, 24 October 2026.
+Status: **native iOS beta delivered / production acceptance pending**, 24 October 2026.
 Baseline: `aaf38e11d91b828c7d3aa2b5fd600271b18393f1`.
 Branch: `codex/native-apple-migration`; draft PR: https://github.com/iteufel/cinefern/pull/1.
+
+## Native iOS TestFlight delivery
+
+At the owner's explicit release request, **5.2.0 (6.1)** was uploaded to the existing
+Cinefern iOS app record. Apple processing returned **VALID**, internal state
+**READY_FOR_BETA_TESTING**, at 2026-10-24 20:48 UTC. The exported production IPA's
+deep strict Apple Distribution signature, App Store profile, bundle/version,
+iPhone/iPad icons, runtime and real VLC framework were verified. No physical
+installation or new tester invitation is implied by this delivery.
+
+[Release run](https://github.com/iteufel/cinefern/actions/runs/40130798020),
+source `f371c10ccdfe9c144f36919bb522dedab434f6ee`, Apple build
+`70572eca-3323-411c-a4f4-75163b586a7d`. See [TestFlight instructions](testflight.md)
+for the manual native release path. The earlier six development builds and UI
+acceptance limitations below are separate evidence; they remain relevant.
 
 ## Confirmed local evidence
 
@@ -156,9 +171,10 @@ These cases are **NOT RUN / unaccepted** unless explicitly listed above:
   and selection on macOS/tvOS; VLC PiP/AirPlay/system media-command parity.
 - Real progressive download/cancel/retry/offline/purge, model endpoints and privacy
   prompts, deliberately authorized paid-service smoke test, complete backup/migration.
-- Native store icons/top-shelf/privacy metadata, store archives, VLC distribution
-  obligations, TestFlight and explicit release acceptance.
+- Mac/tvOS store icons/top-shelf/privacy metadata, their store archives, ongoing VLC
+  distribution obligations and public release acceptance. The iOS icon/privacy
+  manifest, store archive and processed TestFlight beta are now delivered.
 
 The parity ledger lists remaining preferences/desktop features. Legacy clients and
-release entry points remain the rollback path. No merge, release or TestFlight
-upload is implied by the signed builds or simulator results.
+release entry points remain the rollback path. Public release acceptance is not implied by local builds or simulator results;
+the separately authorized TestFlight delivery is recorded above.
