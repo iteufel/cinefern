@@ -1,0 +1,10 @@
+/Runtime/node_modules/
+/.build/
+/.swiftpm/
+/Pods/
+/Cinefern.xcworkspace/
+/Sources/Core/Resources/runtime.js
+/Sources/Core/Resources/runtime.js.LEGAL.txt
+/Tests/CoreTests/Fixtures/*.cfprovider
+/CinefernVLC.xcodeproj/
+/CinefernVLC.xcworkspace/

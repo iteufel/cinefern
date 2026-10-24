@@ -1,5 +1,8 @@
 # Cinefern
 
+> Native Apple migration is being developed in parallel under [`native/`](native/README.md).
+> It is a draft, with [feature parity](docs/native-migration.md) and [test handoff](docs/native-test-handoff.md); the released client remains available.
+
 Your cinema. Everywhere.
 
 An open-source media player rebuilt with React Native and TypeScript.

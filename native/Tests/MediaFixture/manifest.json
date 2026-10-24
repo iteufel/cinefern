@@ -1,0 +1,18 @@
+{
+  "id": "org.cinefern.transport-fixture",
+  "name": "Local media fixture",
+  "description": "Synthetic local streams for native authentication, track and layout validation.",
+  "author": "Cinefern tests",
+  "version": "1.0.0",
+  "apiVersion": 1,
+  "capabilities": ["browse", "sources"],
+  "permissions": { "network": [] },
+  "settings": [
+    {
+      "id": "root",
+      "label": "Fixture server URL",
+      "type": "text",
+      "default": "http://127.0.0.1:42187"
+    }
+  ]
+}
