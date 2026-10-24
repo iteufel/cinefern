@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "77C611E837F793B10DFB9FAF"
+               BlueprintIdentifier = "277CE7803ECF3DB651002C9C"
                BuildableName = "Cinefern-tvOS.app"
                BlueprintName = "Cinefern-tvOS"
                ReferencedContainer = "container:Cinefern.xcodeproj">
@@ -30,7 +30,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "77C611E837F793B10DFB9FAF"
+            BlueprintIdentifier = "277CE7803ECF3DB651002C9C"
             BuildableName = "Cinefern-tvOS.app"
             BlueprintName = "Cinefern-tvOS"
             ReferencedContainer = "container:Cinefern.xcodeproj">
@@ -53,7 +53,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "77C611E837F793B10DFB9FAF"
+            BlueprintIdentifier = "277CE7803ECF3DB651002C9C"
             BuildableName = "Cinefern-tvOS.app"
             BlueprintName = "Cinefern-tvOS"
             ReferencedContainer = "container:Cinefern.xcodeproj">
@@ -70,7 +70,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "77C611E837F793B10DFB9FAF"
+            BlueprintIdentifier = "277CE7803ECF3DB651002C9C"
             BuildableName = "Cinefern-tvOS.app"
             BlueprintName = "Cinefern-tvOS"
             ReferencedContainer = "container:Cinefern.xcodeproj">

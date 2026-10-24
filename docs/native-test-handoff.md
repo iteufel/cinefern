@@ -1,56 +1,53 @@
-# Native Apple: test evidence and agent handoff
+# Native Apple: test evidence and handoff
 
 Status: **draft / no native release acceptance**, 24 October 2026.
-Repository baseline: `aaf38e11d91b828c7d3aa2b5fd600271b18393f1`.
-Branch: `codex/native-apple-migration`.
+Baseline: `aaf38e11d91b828c7d3aa2b5fd600271b18393f1`.
+Branch: `codex/native-apple-migration`; draft PR: https://github.com/iteufel/cinefern/pull/1.
 
 ## Confirmed local evidence
 
-Environment: Xcode 27.1 (`27A9275`), Swift 6.4, arm64 Mac,
-macOS 27 SDK, iOS/tvOS 27.1 SDKs. CocoaPods 1.17.0.
+Xcode 27.1 (`27A9275`), Swift 6.4, arm64 Mac, macOS 27 SDK,
+iOS/tvOS 27.1 SDKs; CocoaPods 1.17.0. Optional MobileVLCKit/TVVLCKit 3.7.4,
+macOS VLCKit 3.7.3, pinned by Podfile.lock.
 
-- **PASS** `npm run check`: root TypeScript typecheck and **64 existing tests**.
-- **PASS** `npm run apple:typecheck`: separate strict typecheck of the native
-  TypeScript entry point/browser declarations and its shared-core imports.
-- **PASS** both unchanged example provider build commands via the existing builder.
-- **PASS** **8 XCTest tests in macOS JavaScriptCore**, covering:
-  - startup and library/settings persistence across two contexts;
-  - backup merge/history/progress and unsafe direct-source rejection;
-  - native bridge invisibility to interpreted providers and AVKit/DASH/VLC eligibility;
-  - provider initialization, disposal, disable/re-enable and settings reconfiguration;
-  - unchanged catalog example browse/search/sources and exact-origin denial;
-  - storage permission and actual separate provider namespaces;
-  - interpreter execution-quota termination and subsequent queue recovery;
-  - unchanged research example default denial, full Deep Agents/tool execution
-    with scripted model HTTP, observed-source citations and grant revocation.
-- **PASS** unsigned generic iOS device build (one target includes iPhone **and iPad**), AVKit.
-- **PASS** unsigned native macOS build (arm64/x86_64), AVKit.
-- **PASS** unsigned generic tvOS device build, AVKit.
-- **PASS** corresponding iOS, native macOS, tvOS builds linked against the real,
-  pinned **MobileVLCKit/TVVLCKit/VLCKit** frameworks. These compile the VLC adapter,
-  not only its `#if canImport` fallback.
-- **PASS** AVKit iOS simulator compilation (before the final small navigation refinements).
-- **PASS** Git diff check: SDK, core, providers, agent sources, builder and original
-  example providers have no tracked modifications.
+- **PASS** root TypeScript typecheck and **64 existing tests** (`npm run check`).
+- **PASS** separate strict native TypeScript typecheck (`npm run apple:typecheck`).
+- **PASS** both unchanged example providers built by the original compiler.
+- **PASS** **17 Swift XCTest tests**: the original eight JavaScriptCore tests,
+  eight media transport/track tests, and a fixed-thread completion regression test. JavaScriptCore coverage includes unchanged
+  catalog/research bundles, persistence/backup/progress, lifecycle/settings,
+  native bridge isolation, origin/storage/quota boundaries, a full scripted
+  Deep Agents/tool/citation path, grants and source eligibility.
+- **PASS** actual loopback HTTP tests for authenticated binary Range/HEAD; HLS
+  playlist/key/segment rewriting; DASH templates including actual segment HTTP;
+  cross-origin credential stripping; redirect denial; capability revocation;
+  injection/transport-header rejection; XML safety; actual VLC track IDs/locale matching.
+- **PASS** all **six Apple Development signed Debug device builds**: iOS/iPadOS,
+  native macOS (verified universal arm64/x86_64 executables), tvOS, each with AVKit and actual
+  platform VLCKit. Deep strict signature verification passed for every app,
+  with Apple Development authority and the configured development team, not ad-hoc.
+- **PASS** signed iPhone Duo simulator startup and native encrypted/Keychain storage.
+- **PASS** actual AVKit AES-128 HLS decode and authenticated key/segment requests;
+  protected MP4 decode and source change while paused on the Duo simulator.
+- **PASS** actual VLC MKV track discovery (two audio tracks), audio selection,
+  embedded subtitle selection/off, pause and rotation retaining pause/clock in
+  complete successful runs. Repeatability is not accepted; see limitations below.
+- **PASS** AVKit Duo outer/inner transitions with options open, Book beside-controls
+  layout, tabletop video-above-controls layout, pause/rotate/resume and fully open.
+  See task output `Cinefern-Duo-AVKit.mp4` and [Duo evidence](native-duo.md).
+  The recording precedes the executor hardening; the arrangement implementation
+  is the same, and the later VLC automation is recorded separately in test logs.
+- **PASS** SDK, original core/providers/agent implementations, provider builder and
+  original examples have no tracked changes relative to the repository baseline.
 
-The 8 Swift tests include actual interpreter/plugin and scripted agent execution;
-they are not a count of TypeScript tests, media playback tests or physical tests.
-HTTP is injected in provider/agent tests. Keychain uses MemoryStorage in these
-unit tests. No paid vendor request, LAN Jellyfin request, actual stream decode,
-URLSession integration, real download or physical-device operation is certified.
+The 17 Core tests are separate from the iOS UI test. Plugin/agent HTTP is scripted
+and storage uses MemoryStorage in those original tests; the added relay tests use
+actual URLSession/NWListener. Simulator playback uses native Keychain storage,
+real AVKit/VLC decoders and generated synthetic media. It proves no paid model,
+LAN Jellyfin or real third-party service compatibility. No physical device was
+installed or tested in this follow-up; the requested runtime was the Duo simulator.
 
-## Attempted but not accepted
-
-An iOS 27.1 iPhone Duo simulator was available and booted. The unsigned client
-launched, then correctly failed closed because Keychain access returned `-34018`.
-A manual ad-hoc-signing attempt failed to relaunch. Device Hub accessibility was
-unavailable to the automation. Neither attempt counts as a UI, playback, pose or
-continuity pass. No failing screenshot is delivered as success evidence.
-
-No usable tvOS simulator runtime was installed. Device enumeration/building for a
-generic tvOS destination is not a Siri Remote/focus test.
-
-## Reproduce local checks
+## Reproduce builds and tests
 
 ```sh
 npm ci --ignore-scripts
@@ -58,13 +55,22 @@ npm run apple:prepare
 npm run check
 npm run apple:typecheck
 npm run apple:test
-npm run apple:build -- avkit
+CINEFERN_TEAM=YOUR_TEAM npm run apple:build -- avkit
 npm run apple:vlc
-npm run apple:build -- vlc
+CINEFERN_TEAM=YOUR_TEAM npm run apple:build -- vlc
 ```
 
-If working in a restricted filesystem sandbox, Swift needs a writable module
-cache. The local XCTest run used:
+Without `CINEFERN_TEAM`, the script builds unsigned generic-device applications.
+Use an existing valid team/certificate/provisioning setup. Simulator apps use
+Xcode simulator signing; the six device-build signatures above use the real certificate. No secrets or signing
+files belong in this repository. Verify each built app with:
+
+```sh
+codesign --verify --deep --strict PATH_TO_APP
+codesign -dv --verbose=4 PATH_TO_APP
+```
+
+For a restricted host sandbox, the Core test command used was:
 
 ```sh
 CLANG_MODULE_CACHE_PATH=/tmp/cinefern-module-cache \
@@ -72,77 +78,83 @@ CLANG_MODULE_CACHE_PATH=/tmp/cinefern-module-cache \
   --scratch-path /tmp/cinefern-native-swift-build
 ```
 
-Xcode macro/plugin processes and Simulator services also required execution outside
-that sandbox. Do not interpret a sandbox process-launch failure as a source compile
-failure. Native builds use public SDK symbols, not stubbed framework declarations.
+Xcode plugin processes, signing/keychain, local HTTP listeners and Simulator services
+needed execution outside that sandbox. A sandbox restriction is not a source failure.
+Build logs default to `native/.build/xcode-{avkit,vlc}/{iOS,macOS,tvOS}.log`;
+`CINEFERN_BUILD_ROOT` overrides the output root. The workflow builds unsigned and
+requires Xcode 27.1. Remote CI is a separate check, not established by local signing.
 
-Build logs are written by the script to
-`native/.build/xcode-avkit/{iOS,macOS,tvOS}.log` and
-`native/.build/xcode-vlc/{iOS,macOS,tvOS}.log`; set `CINEFERN_BUILD_ROOT` to override.
-The added native GitHub workflow runs these checks and uploads logs, requires
-Xcode 27.1, and does not release anything. **Remote CI is unverified here.**
+## Synthetic media / Duo UI reproduction
 
-## Next agent: signed builds first
+Requirements: ffmpeg on PATH, prepared runtime/Pods and a booted iOS 27.1 Duo simulator.
+The local fixture server generates its own five-minute H.264/AAC test pattern,
+AES-128 HLS, DASH and two-audio/subtitle MKV/MP4. All `/media/` requests require
+both fixed **test-only** Authorization and custom headers; logs record only a boolean
+and Range/path/method. The fixture does not accept a real credential.
 
-1. Read `native/README.md`, `docs/native-migration.md` and `docs/native-duo.md`.
-2. Run preparation and tests above. Open the AVKit project or optional VLC workspace.
-3. Select the owner's real development team in Xcode and valid signing configuration.
-   Do not add a plaintext storage fallback to hide a Keychain/signing failure.
-4. Run iOS on a signed simulator/device and Mac/tvOS in the intended sandbox/signing
-   configuration. Verify encrypted storage across relaunch and revoked/unavailable
-   Keychain behavior. Test secrets, reset and bundle-ID separation from the legacy app.
-5. For each following scenario record: hardware/runtime, OS, signing/build/commit,
-   player engine, provider/source codec, result, screenshot/short recording, and logs
-   with credentials redacted. Mark an unrun case **NOT RUN**, not pass.
+```sh
+python3 native/scripts/serve-media-fixture.py
+```
 
-## Required device/UI matrix (all NOT RUN / not accepted)
+In the signed simulator app: finish setup, import
+`http://127.0.0.1:42187/fixture.cfprovider` under Providers, install and **enable** it.
+Use the optional VLC workspace and select the VLC engine in Settings. Keep the
+server running. The UI test selects VLC with the standard UserDefaults launch
+argument, opens the local fixture via Explore, exercises tracks and pause/rotation.
+It has no production test backdoor or mock player:
 
-- **iPhone**: compact portrait/landscape; source/track/menu access; dynamic type,
-  VoiceOver, reduce motion/transparency; interrupted/background playback; PiP and AirPlay.
-- **iPad**: portrait/landscape, Split View narrow/half/wide, continuous window resize,
-  keyboard visible, large dynamic type. Reach options, close/back, source list,
-  subtitle/audio selection and last Form row at every size.
-- **Mac**: arm64 and Intel where supported, minimum/large windows, fullscreen, keyboard,
-  track controls, system media keys, signed sandbox permissions and multiple windows.
-- **Apple TV**: real remote focus, Back/Menu and play/pause behavior, scrolling long
-  provider/settings/control forms, source selection, dismissal focus restoration,
-  overscan/safe areas and purgeable download recovery.
-- **iPhone Duo**: signed outer→inner→outer while media plays and while paused;
-  both orientations, Book, tabletop/half-open, Tent and fully flat; fold/unfold with
-  advanced menu already open; app switch/PiP during a transition. Check position,
-  pause state, sound, no duplicate player, correct reserved-region avoidance,
-  safe-area/vertical toolbar overflow and reachable playback options.
-- **Fallback OS**: iOS/tvOS 17 and macOS 14; OS 26 glass; iOS 27.1 Duo APIs.
-  Build availability guards alone do not prove runtime or accessibility behavior.
+```sh
+xcodebuild -workspace native/CinefernVLC.xcworkspace -scheme Cinefern-iOS \
+  -configuration Debug -destination 'platform=iOS Simulator,id=YOUR_DUO_UDID' \
+  DEVELOPMENT_TEAM=YOUR_TEAM CODE_SIGNING_ALLOWED=YES 'CODE_SIGN_IDENTITY=Apple Development' \
+  -only-testing:Cinefern-UITests/PlayerUITests test
+```
 
-## Required provider/player matrix (NOT RUN against real services)
+The simulator's native UI automation screenshots can select a cropped/wrong Duo
+display; those are not supplied as visual acceptance. Capture the active display
+explicitly with `simctl io ... screenshot --display=...` / `recordVideo` after
+checking the simulator's display IDs. Earlier unsigned Keychain errors are superseded by the working Xcode-signed app.
+The additional end-to-end DASH automation was not accepted: it encountered missing/
+clipped menu elements. Earlier runs also crashed with a JavaScriptCore JIT
+execute-permission fault. The host now confines all JS execution to one background
+OS thread, including timer/native completions, with timer coalescing preserved.
+A regression test verifies thread identity across twelve asynchronous native replies.
+No JIT configuration or protection was disabled, and no SDK root cause is asserted.
+DASH manifest/segment HTTP passes; native DASH decoder continuity remains unaccepted.
+The successful MKV track/paused-rotation scenario is separate from these failing attempts.
+After the fixed-thread change, the first three-repeat MKV run completed twice
+and timed out once at pause; no JavaScriptCore crash occurred in that run. The
+final repeat run still failed on clipped/invalid button activation points and a
+pause timeout. This is **not a green repeated UI suite**. Audio/subtitle assertions
+passed before those failures. The Mac had locked and Device Hub interaction was
+unavailable; that is an observation, not an established cause of the XCTest failures.
+Repeat interactive Duo pause/rotation acceptance after restoring the host session.
+Longer runtime stress and conclusive JavaScriptCore stability remain release gates.
 
-Run every relevant source through **both engines on each platform**:
+## Remaining acceptance matrix
 
-- Unchanged catalog example and real existing third-party `.cfprovider` bundles.
-- Jellyfin sign-in/logout/relaunch, reverse-proxy path, LAN privacy prompt,
-  direct-play H.264/AAC, HLS transcode, multiple/commentary audio, VTT subtitles.
-- JSON catalog browse/search/pagination and local network/HTTPS errors.
-- HLS/file/DASH, live streams, seek/resume, source change while paused,
-  episode autoplay, timeout/error/retry, source-specific audio negotiation.
-- Sources with no headers; VLC User-Agent/Referer; **known unsupported** arbitrary
-  authentication headers. Implement and test public authenticated transport before
-  claiming the latter are compatible.
-- Embedded and sidecar subtitles, locale matching, fullscreen/PiP/AirPlay differences.
-- Progressive download/cancel/retry/remove, offline restart, missing/purged file,
-  invalid/out-of-root local path and interrupted application lifetime.
-- Bad/oversized bundle, settings types, initialize failure/dispose, disabled calls,
-  storage isolation, origin/redirect/response-size boundaries and quota recovery.
-- Agent disabled/no key/no provider grant/tool revoked/version changed, in-flight
-  disable, cancellation, limits, citation grounding and one explicitly authorized
-  paid-service smoke test. Do not infer paid-service behavior from scripted HTTP.
-- Import a populated v5 export, merge without data loss, restart, resume; ensure
-  provider credentials/API keys never enter a portable backup or log.
+These cases are **NOT RUN / unaccepted** unless explicitly listed above:
 
-## Acceptance and rollback
+- iPhone/iPad accessibility extremes, split-window sizes, interruptions/background
+  audio, PiP, AirPlay; physical Duo and Tent, app switching/PiP across fold transitions.
+- Mac runtime on arm64/Intel, minimum/large windows, fullscreen, keyboard/media keys,
+  sandbox permissions, window ownership; signed compilation is not runtime acceptance.
+- Apple TV physical remote/focus/Back/Menu, long forms, dismissal focus restoration,
+  overscan and purgeable-download recovery; no usable tvOS simulator was installed.
+- Older supported OS runtimes (iOS/tvOS 17, macOS 14), OS 26 materials.
+- Real external provider bundles/services, Jellyfin LAN/login/proxy/transcode, JSON
+  catalogs, actual live streams and broad codec/platform coverage.
+- Header-authenticated cross-origin CDNs needing different credentials, redirect or
+  cookie negotiation, DRM/FairPlay and advanced live HLS/DASH extensions. The relay
+  deliberately strips source credentials outside the original origin and denies redirects.
+  Authenticated AVKit relay URLs disable AirPlay because remote receivers cannot reach them.
+- Sidecar subtitles in AVKit system fullscreen/PiP/external playback; track defaults
+  and selection on macOS/tvOS; VLC PiP/AirPlay/system media-command parity.
+- Real progressive download/cancel/retry/offline/purge, model endpoints and privacy
+  prompts, deliberately authorized paid-service smoke test, complete backup/migration.
+- Native store icons/top-shelf/privacy metadata, store archives, VLC distribution
+  obligations, TestFlight and explicit release acceptance.
 
-Use the parity ledger's open gates; several feature preferences/desktop behaviors
-and VLC track controls still need implementation. No native release, TestFlight
-upload, default-entry switch or deletion of the legacy client is authorized by the
-local test results. A later release needs explicit acceptance after these checks.
-The working v5 client remains available as the rollback path.
+The parity ledger lists remaining preferences/desktop features. Legacy clients and
+release entry points remain the rollback path. No merge, release or TestFlight
+upload is implied by the signed builds or simulator results.

@@ -67,7 +67,7 @@ struct PlayerScreen: View {
         }
         .onDisappear { session.stop() }
         #if os(tvOS)
-          .onPlayPauseCommand { session.setPlaying(!session.isPlaying) }
+          .onPlayPauseCommand { session.setPlaying(!session.playbackRequested) }
           .onExitCommand {
             session.stop()
             dismiss()
@@ -95,11 +95,13 @@ struct PlayerScreen: View {
             Label("−15", systemImage: "gobackward.15")
           }
           Button {
-            session.setPlaying(!session.isPlaying)
+            session.setPlaying(!session.playbackRequested)
           } label: {
             Label(
-              model.text("Play / pause", "Wiedergabe / Pause"),
-              systemImage: session.isPlaying ? "pause.fill" : "play.fill")
+              model.text(
+                session.playbackRequested ? "Pause" : "Play",
+                session.playbackRequested ? "Pause" : "Wiedergabe"),
+              systemImage: session.playbackRequested ? "pause.fill" : "play.fill")
           }
           Button {
             session.seek(session.position + 15)
@@ -120,18 +122,22 @@ struct PlayerScreen: View {
       Section(model.text("Playback", "Wiedergabe")) {
         Text(session.item["title"].string).font(.headline)
         Button {
-          session.setPlaying(!session.isPlaying)
+          session.setPlaying(!session.playbackRequested)
         } label: {
           Label(
-            model.text("Play / pause", "Wiedergabe / Pause"),
-            systemImage: session.isPlaying ? "pause" : "play")
-        }
+            model.text(
+              session.playbackRequested ? "Pause" : "Play",
+              session.playbackRequested ? "Pause" : "Wiedergabe"),
+            systemImage: session.playbackRequested ? "pause" : "play")
+        }.accessibilityIdentifier("player.toggle")
+          .accessibilityValue(session.isPlaying ? "playing" : "paused")
         HStack {
           Button("−15 s") { session.seek(session.position - 15) }
           Spacer()
           Button("+15 s") { session.seek(session.position + 15) }
         }
         Text("\(Int(session.position)) / \(Int(session.duration)) s").monospacedDigit()
+          .accessibilityIdentifier("player.position")
         #if !os(tvOS)
           Slider(
             value: Binding(get: { session.position }, set: { session.seek($0) }),
@@ -161,7 +167,8 @@ struct PlayerScreen: View {
               source["label"].string,
               systemImage: source["id"] == session.source["id"] ? "checkmark.circle.fill" : "circle"
             )
-          }
+          }.accessibilityValue(
+            source["id"] == session.source["id"] ? "selected" : "not selected")
         }
       }
       if !session.source["audioTracks"].array.isEmpty {
@@ -174,28 +181,78 @@ struct PlayerScreen: View {
           }
         }
       }
+      if session.engine == .vlc {
+        Section(model.text("Embedded audio", "Eingebetteter Ton")) {
+          ForEach(session.embeddedAudioTracks) { track in
+            Button {
+              session.selectAudioTrack(track.id)
+            } label: {
+              Label(
+                track.label,
+                systemImage: session.selectedAudioTrack == track.id
+                  ? "checkmark.circle.fill" : "circle")
+            }.accessibilityIdentifier("player.audio.\(track.id)")
+              .accessibilityValue(
+                session.selectedAudioTrack == track.id ? "selected" : "not selected")
+          }
+        }
+        Section(model.text("Embedded subtitles", "Eingebettete Untertitel")) {
+          Button {
+            session.selectEmbeddedSubtitle(-1)
+          } label: {
+            Label(
+              model.text("Off", "Aus"),
+              systemImage: session.selectedEmbeddedSubtitle == -1
+                ? "checkmark.circle.fill" : "circle")
+          }.accessibilityIdentifier("player.subtitle.off")
+            .accessibilityValue(
+              session.selectedEmbeddedSubtitle == -1 ? "selected" : "not selected")
+          ForEach(session.embeddedSubtitleTracks) { track in
+            Button {
+              session.selectEmbeddedSubtitle(track.id)
+            } label: {
+              Label(
+                track.label,
+                systemImage: session.selectedEmbeddedSubtitle == track.id
+                  ? "checkmark.circle.fill" : "circle")
+            }.accessibilityIdentifier("player.subtitle.\(track.id)")
+              .accessibilityValue(
+                session.selectedEmbeddedSubtitle == track.id ? "selected" : "not selected")
+          }
+        }
+      }
       Section(model.text("Subtitles", "Untertitel")) {
         Button(model.text("Off", "Aus")) {
-          session.subtitleCues = []
-          session.selectedSubtitle = ""
+          session.selectEmbeddedSubtitle(-1)
         }
         ForEach(Array(session.source["subtitles"].array.enumerated()), id: \.offset) {
           _, subtitle in
           Button(subtitle["label"].string) {
             Task {
               do {
-                let result = try await model.call("subtitles", subtitle)
+                var request = subtitle
+                request["sourceURL"] = session.source["url"]
+                request["headers"] = session.source["headers"]
+                let result = try await model.call("subtitles", request)
+                session.selectEmbeddedSubtitle(-1)
                 session.subtitleCues = result.array
                 session.selectedSubtitle = subtitle["id"].string
               } catch { model.error = error.localizedDescription }
             }
           }
         }
-        Text(
-          model.text(
-            "Embedded tracks and AirPlay are available in the AVKit system controls.",
-            "Eingebettete Spuren und AirPlay findest du in den AVKit-Systemsteuerelementen.")
-        ).font(.caption).foregroundStyle(.secondary)
+        if session.engine == .avkit {
+          Text(
+            model.text(
+              session.apple.allowsExternalPlayback
+                ? "Embedded tracks and AirPlay are available in the AVKit system controls."
+                : "Embedded tracks are available in the AVKit controls. AirPlay is unavailable for this authenticated source.",
+              session.apple.allowsExternalPlayback
+                ? "Eingebettete Spuren und AirPlay findest du in den AVKit-Systemsteuerelementen."
+                : "Eingebettete Spuren findest du in den AVKit-Steuerelementen. AirPlay ist für diese authentifizierte Quelle nicht verfügbar."
+            )
+          ).font(.caption).foregroundStyle(.secondary)
+        }
       }
     }
   }
@@ -234,7 +291,7 @@ struct PlayerGlass: ViewModifier {
     func updateNSView(_ view: NSView, context: Context) { attach(view) }
     func attach(_ view: NSView) {
       #if canImport(VLCKit)
-        session.vlc?.drawable = view
+        if (session.vlc?.drawable as AnyObject?) !== view { session.vlc?.drawable = view }
       #endif
     }
   }
@@ -262,7 +319,7 @@ struct PlayerGlass: ViewModifier {
     func updateUIView(_ view: UIView, context: Context) { attach(view) }
     func attach(_ view: UIView) {
       #if canImport(MobileVLCKit) || canImport(TVVLCKit)
-        session.vlc?.drawable = view
+        if (session.vlc?.drawable as AnyObject?) !== view { session.vlc?.drawable = view }
       #endif
     }
   }

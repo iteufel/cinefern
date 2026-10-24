@@ -9,12 +9,16 @@ case "$player" in
 esac
 build_root="${CINEFERN_BUILD_ROOT:-$PWD/native/.build/xcode-$player}"
 mkdir -p "$build_root"
+signing=(CODE_SIGNING_ALLOWED=NO)
+if [[ -n "${CINEFERN_TEAM:-}" ]]; then
+  signing=(CODE_SIGNING_ALLOWED=YES "DEVELOPMENT_TEAM=$CINEFERN_TEAM" "CODE_SIGN_IDENTITY=Apple Development" -allowProvisioningUpdates)
+fi
 for entry in 'iOS|iOS' 'macOS|macOS' 'tvOS|tvOS'; do
   scheme="Cinefern-${entry%%|*}"
   platform="${entry##*|}"
   xcodebuild "${container[@]}" -scheme "$scheme" -configuration Debug \
     -destination "generic/platform=$platform" -derivedDataPath "$build_root/$platform" \
-    CODE_SIGNING_ALLOWED=NO build > "$build_root/$platform.log" 2>&1 || {
+    "${signing[@]}" build > "$build_root/$platform.log" 2>&1 || {
       tail -n 70 "$build_root/$platform.log" >&2
       exit 1
     }

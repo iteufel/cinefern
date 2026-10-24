@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "89EE103F8599D213560D1D66"
+               BlueprintIdentifier = "E0E380BA2E20BFDDA0C9694C"
                BuildableName = "Cinefern-macOS.app"
                BlueprintName = "Cinefern-macOS"
                ReferencedContainer = "container:Cinefern.xcodeproj">
@@ -30,7 +30,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "89EE103F8599D213560D1D66"
+            BlueprintIdentifier = "E0E380BA2E20BFDDA0C9694C"
             BuildableName = "Cinefern-macOS.app"
             BlueprintName = "Cinefern-macOS"
             ReferencedContainer = "container:Cinefern.xcodeproj">
@@ -53,7 +53,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "89EE103F8599D213560D1D66"
+            BlueprintIdentifier = "E0E380BA2E20BFDDA0C9694C"
             BuildableName = "Cinefern-macOS.app"
             BlueprintName = "Cinefern-macOS"
             ReferencedContainer = "container:Cinefern.xcodeproj">
@@ -70,7 +70,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "89EE103F8599D213560D1D66"
+            BlueprintIdentifier = "E0E380BA2E20BFDDA0C9694C"
             BuildableName = "Cinefern-macOS.app"
             BlueprintName = "Cinefern-macOS"
             ReferencedContainer = "container:Cinefern.xcodeproj">

@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "4D099FFBE7366D2BA623123F"
+               BlueprintIdentifier = "F186DF6E1D53B255E7010865"
                BuildableName = "Cinefern-iOS.app"
                BlueprintName = "Cinefern-iOS"
                ReferencedContainer = "container:Cinefern.xcodeproj">
@@ -30,13 +30,23 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "4D099FFBE7366D2BA623123F"
+            BlueprintIdentifier = "F186DF6E1D53B255E7010865"
             BuildableName = "Cinefern-iOS.app"
             BlueprintName = "Cinefern-iOS"
             ReferencedContainer = "container:Cinefern.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "CBB0891DC1C475CC0EE85D82"
+               BuildableName = "Cinefern-UITests.xctest"
+               BlueprintName = "Cinefern-UITests"
+               ReferencedContainer = "container:Cinefern.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
@@ -53,7 +63,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "4D099FFBE7366D2BA623123F"
+            BlueprintIdentifier = "F186DF6E1D53B255E7010865"
             BuildableName = "Cinefern-iOS.app"
             BlueprintName = "Cinefern-iOS"
             ReferencedContainer = "container:Cinefern.xcodeproj">
@@ -70,7 +80,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "4D099FFBE7366D2BA623123F"
+            BlueprintIdentifier = "F186DF6E1D53B255E7010865"
             BuildableName = "Cinefern-iOS.app"
             BlueprintName = "Cinefern-iOS"
             ReferencedContainer = "container:Cinefern.xcodeproj">

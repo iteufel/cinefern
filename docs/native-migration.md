@@ -29,7 +29,9 @@ subset; builds and host tests are not full functional parity or Apple acceptance
   update tracking and badges. These are in-app checks, not push notifications.
 - Playback through native AVKit or optional platform VLCKit, source/quality choice,
   source-specific provider audio re-request, speed, seek, volume, resume and
-  previous/next/autoplay queue. Live behavior/codecs remain to be tested.
+  previous/next/autoplay queue. Header-authenticated HLS/files use a bounded native
+  media relay; VLC also supports authenticated DASH. Synthetic iOS playback passes;
+  real services and the broader codec/platform matrix remain to be tested.
 - In-app sidecar SRT/VTT parsing; native AVKit embedded track controls and system
   PiP/fullscreen/AirPlay availability. No tested end-to-end claim for these routes.
 - Review/import `.cfprovider` by file (iOS/Mac) or URL (including TV), install,
@@ -63,20 +65,26 @@ is not a reimplementation of the SDK or a substitute JavaScript plugin format.
 Tests cover boot/restart persistence, merge/progress semantics, example browse/search/
 sources, foreign-origin denial, disabled-provider calls, storage permissions and
 namespaces, native bridge invisibility, interpreter quota recovery, default-deny
-agent access, grant revocation, tool-derived citations, and AVKit/VLC source eligibility.
+agent access, grant revocation, tool-derived citations, AVKit/VLC source eligibility,
+authenticated media transport and fixed runtime thread ownership.
 See the exact evidence and limits in [the handoff](native-test-handoff.md).
 
 ## Open parity/release gates
 
-- **Physical playback and adaptive UI**: no approved iPhone/iPad/Mac/Apple TV hardware
-  pass, no signed Duo pose/continuity test, no tvOS remote/focus restoration acceptance,
-  no actual PiP/AirPlay/background-audio/system-media-key acceptance.
-- **Header-authenticated playback**: AVKit rejects arbitrary source headers; VLC 3
-  supports only User-Agent/Referer in this adapter. Other custom headers need a public,
-  bounded authenticated-media transport before those plugins meet playback parity.
-- **Track controls**: native VLC embedded audio/subtitle track menus and remembered
-  locale matching are not implemented. AVKit exposes embedded tracks in system controls.
-  Sidecar captions in AVKit fullscreen/PiP/external playback require validation.
+- **Physical playback and adaptive UI**: signed Duo simulator playback/layout checks
+  now cover outer/inner, Book/tabletop, menu reachability, pause/rotation and source
+  changes in successful runs. Repeated VLC pause/menu automation remains unstable.
+  Physical iPhone/iPad/Mac/Apple TV acceptance, tvOS remote/focus restoration,
+  PiP/AirPlay/background audio/system media keys remain open. Tent is NOT RUN.
+- **Authenticated-service coverage**: arbitrary safe source headers are implemented
+  through public loopback HTTP APIs for both engines, with real loopback HTTP tests.
+  HLS keys/segments, DASH templates and Range/HEAD are covered. Actual third-party
+  services, cross-origin authentication negotiation, DRM/FairPlay and advanced live
+  manifest extensions remain unaccepted. Authenticated AVKit sources disable AirPlay.
+- **Track acceptance**: VLC embedded audio/subtitle selection, off and language matching
+  are implemented; the Duo simulator exercises actual track IDs in a two-audio MKV.
+  AVKit exposes embedded tracks in system controls. Other platforms/codecs and sidecar
+  captions in fullscreen/PiP/external playback still need validation.
 - **Presentation preferences**: baseline trailer autoplay/crop, detail page-versus-modal,
   vibrancy preference and desktop mouse-wheel volume behavior are not yet implemented
   in native UI. Native system material responds to OS accessibility settings.
@@ -87,9 +95,11 @@ See the exact evidence and limits in [the handoff](native-test-handoff.md).
 - **Downloads/transport**: real download/cancel/offline, local-network privacy prompts,
   native redirect/size controls and actual model endpoints need integration/device
   tests. Host tests inject HTTP replies and do not certify the URLSession implementation.
-- **Distribution/assets**: final native app icons/top-shelf assets, signing, sandboxed
+- **Distribution/assets**: final native app icons/top-shelf assets, broader sandboxed
   Keychain acceptance, privacy metadata, optional VLC LGPL distribution obligations,
-  store archives and TestFlight are not completed. No native binary was uploaded.
+  store archives and TestFlight are not completed. Six Apple Development signed
+  application builds and deep signature verification now pass; the signed Duo simulator
+  successfully uses encrypted/Keychain storage. No native binary was uploaded.
 - **Data migration**: explicit backup portability is available; automatic legacy
   credential/plugin/download migration is intentionally not performed. Add and test
   a reviewed migration path before making native the sole application.

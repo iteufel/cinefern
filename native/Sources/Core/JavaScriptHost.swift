@@ -2,10 +2,11 @@ import Foundation
 import JavaScriptCore
 import Security
 
-/// All JSContext/JSValue access is confined to this background serial queue.
+/// All JSContext/JSValue access is confined to one dedicated background thread.
 /// Only JSON crosses the UI boundary; third-party code stays inside the existing interpreter.
 public final class JavaScriptHost: @unchecked Sendable {
-  private let queue = DispatchQueue(label: "org.cinefern.provider-runtime", qos: .userInitiated)
+  private let queue = JavaScriptExecutor()
+  private let timerQueue = DispatchQueue(label: "org.cinefern.provider-timers")
   private var context: JSContext?
   private var callbacks: [String: CheckedContinuation<JSONValue, Error>] = [:]
   private var timeouts: [String: DispatchWorkItem] = [:]
@@ -133,7 +134,7 @@ public final class JavaScriptHost: @unchecked Sendable {
       complete(id, .success(.null))
     case "timer":
       let number = Int(value["id"].double)
-      let timer = DispatchSource.makeTimerSource(queue: queue)
+      let timer = DispatchSource.makeTimerSource(queue: timerQueue)
       let delay = max(0.001, value["milliseconds"].double / 1000)
       if value["repeating"].bool {
         timer.schedule(deadline: .now() + delay, repeating: delay)
@@ -141,9 +142,12 @@ public final class JavaScriptHost: @unchecked Sendable {
         timer.schedule(deadline: .now() + delay)
       }
       timer.setEventHandler { [weak self] in
-        guard let self else { return }
-        if !value["repeating"].bool { self.timers.removeValue(forKey: number)?.cancel() }
-        self.context?.objectForKeyedSubscript("__nativeTimer")?.call(withArguments: [number])
+        // Wait for this delivery so DispatchSource keeps coalescing a busy timer.
+        self?.queue.sync { [weak self] in
+          guard let self, !self.closed else { return }
+          if !value["repeating"].bool { self.timers.removeValue(forKey: number)?.cancel() }
+          self.context?.objectForKeyedSubscript("__nativeTimer")?.call(withArguments: [number])
+        }
       }
       timers[number] = timer
       timer.resume()
@@ -201,5 +205,59 @@ public final class JavaScriptHost: @unchecked Sendable {
         continuation.resume()
       }
     }
+  }
+}
+
+/// Serial ownership also preserves OS-thread identity across native completions/timers.
+/// No JS value leaves this executor and no JIT/security configuration is changed.
+private final class JavaScriptExecutor: @unchecked Sendable {
+  private final class State: @unchecked Sendable {
+    let condition = NSCondition()
+    var jobs: [() -> Void] = []
+    var closed = false
+    func next() -> (() -> Void)? {
+      condition.lock()
+      defer { condition.unlock() }
+      while jobs.isEmpty && !closed { condition.wait() }
+      guard !closed else { return nil }
+      return jobs.removeFirst()
+    }
+  }
+  private let state = State()
+  private let thread: Thread
+  init() {
+    let state = self.state
+    thread = Thread {
+      while let job = state.next() { autoreleasepool(invoking: job) }
+    }
+    thread.name = "org.cinefern.provider-runtime"
+    thread.qualityOfService = .userInitiated
+    thread.start()
+  }
+  func async(execute job: @escaping () -> Void) {
+    state.condition.lock()
+    if !state.closed { state.jobs.append(job) }
+    state.condition.signal()
+    state.condition.unlock()
+  }
+  func sync(execute job: @escaping () -> Void) {
+    let finished = DispatchSemaphore(value: 0)
+    async {
+      job()
+      finished.signal()
+    }
+    finished.wait()
+  }
+  func asyncAfter(deadline: DispatchTime, execute work: DispatchWorkItem) {
+    DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: deadline) { [weak self] in
+      self?.async { if !work.isCancelled { work.perform() } }
+    }
+  }
+  deinit {
+    state.condition.lock()
+    state.closed = true
+    state.jobs.removeAll()
+    state.condition.signal()
+    state.condition.unlock()
   }
 }

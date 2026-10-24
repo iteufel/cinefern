@@ -45,24 +45,36 @@ Liquid Glass is availability-gated at OS 26 with a material fallback.
 identity, or device pose.** No hardcoded inner/outer dimensions, private API,
 accelerometer-based pose guessing, or synthetic fold-state API is used.
 
-## Modes and remaining evidence
+## Simulator evidence and remaining acceptance
 
-- Closed / outer display: native containers adapt to the space the system provides.
-- Open / inner display: native containers can expose more content. Exact behavior
-  must be checked in the signed application on the device.
-- Partially open / Book: system division information drives arrangement; no guessed
-  vertical half-window boundary.
-- Partially open / tabletop: the same arrangement supports a horizontal system
-  division; video/control order and comfort need a real playback test.
-- Tent: the system decides which display/scene is active. This application does not
-  claim to detect Tent independently or to force display switching.
-- Opening/closing while playing: the retained player is designed to preserve the
-  session; presentation and OS lifecycle behavior are **not yet accepted on hardware**.
+The **iPhone Duo simulator, iOS 27.1 (24A94425)** ran the Xcode-signed
+application with native Keychain/encrypted storage and a local synthetic provider.
+The fixture requires both Authorization and a custom source header on every media
+request; it uses no real account or service credential.
 
-The Duo simulator/runtime was present locally. Its unsigned app initially launched
-but Keychain returned `-34018`. A manual ad-hoc-signing experiment did not produce a
-successful relaunch. No Book/Tent/tabletop test is counted as passed. Do not treat
-SDK compilation, device enumeration or an app launch PID as evidence of posture,
-continuity, playback or right-menu reachability.
+- **PASS, AVKit**: AES-128 HLS decode, including authenticated key and segment requests;
+  protected MP4 decode and source change while paused.
+- **PASS, AVKit outer/inner**: opening with playback options already open retains the
+  session and menu; playback clock continues through inner/outer transitions.
+- **PASS, AVKit Book**: partial opening in landscape places video beside the scrollable
+  controls, clear of the system division. Options and source controls remain reachable.
+- **PASS, AVKit tabletop**: rotation moves the video above the division and controls
+  below. A pause at 124 seconds stays paused across rotation, then resumes; fully
+  opening retains playback. This sequence is recorded in `Cinefern-Duo-AVKit.mp4`
+  in the task outputs.
+- **PASS, VLC UI automation**: actual two-audio MKV track discovery and selection,
+  embedded subtitle selection/off, and paused clock/state retained after rotation.
+  The playback-intent state is independent of VLC's transient buffering state.
+  Complete successful runs exist, but later repeat suites still fail on pause/menu
+  activation; repeatability remains unaccepted, as detailed in the handoff.
+- **NOT RUN**: Tent, PiP/app switching across transitions, accessibility extremes,
+  physical hardware, and third-party services. Simulator results are not physical
+  device acceptance. No physical device installation was performed in this follow-up.
 
-Use the signed-device scenario list in [the handoff](native-test-handoff.md).
+The earlier unsigned Keychain failure is superseded by the successful signed
+simulator run. No security fallback was added. Some Xcode app screenshots target
+an incorrect/cropped Duo display; those captures are not delivered as visual proof.
+The AVKit recording explicitly targets the inner simulator display.
+
+See [the handoff](native-test-handoff.md) for commands, fixture setup, exact test
+coverage and the remaining platform acceptance matrix.

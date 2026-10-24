@@ -59,8 +59,9 @@ import SwiftUI
       let result = try await call(
         "play",
         .object(["item": item, "engine": .string(engine.rawValue), "trailer": .bool(trailer)]))
-      let session = try PlaybackSession(
-        item: item, selection: result, queue: queue ?? [item], engine: engine, trailer: trailer)
+      let session = try await PlaybackSession(
+        item: item, selection: result, queue: queue ?? [item], engine: engine, trailer: trailer,
+        preferences: settings)
       session.onProgress = { [weak self, weak session] position, duration in
         guard let self, let session, !session.trailer else { return }
         Task {
@@ -89,8 +90,10 @@ import SwiftUI
     await play(session.queue[index + offset], queue: session.queue)
   }
   func changeSource(_ source: JSONValue, session: PlaybackSession) {
-    do { try session.load(source, at: session.position, playing: session.isPlaying) } catch {
-      self.error = error.localizedDescription
+    Task {
+      do {
+        try await session.load(source, at: session.position, playing: session.playbackRequested)
+      } catch { session.failure = error.localizedDescription }
     }
   }
   func changeAudio(_ track: String, session: PlaybackSession) async {
@@ -102,7 +105,8 @@ import SwiftUI
           "preferences": .object(["audioTrackId": .string(track)]),
         ]))
       session.sources = selected["sources"].array
-      try session.load(selected["source"], at: session.position, playing: session.isPlaying)
+      try await session.load(
+        selected["source"], at: session.position, playing: session.playbackRequested)
     } catch { self.error = error.localizedDescription }
   }
 }

@@ -26,10 +26,18 @@ Open `native/Cinefern.xcodeproj`. Shared schemes:
 - `Cinefern-macOS`: macOS 14+, arm64 and x86_64.
 - `Cinefern-tvOS`: tvOS 17+.
 
-The build script builds **unsigned** generic-device applications. For an installed
-app, select your development team and valid signing configuration in Xcode.
-An unsigned simulator build may launch but fail Keychain access with `-34018`;
-that does not establish that the signed application works.
+The build script defaults to unsigned generic-device applications. Set
+`CINEFERN_TEAM` to your existing development team for actual Apple Development
+signing (automatic provisioning must already be configured):
+
+```sh
+CINEFERN_TEAM=YOUR_TEAM npm run apple:build -- avkit
+CINEFERN_TEAM=YOUR_TEAM npm run apple:build -- vlc
+```
+
+The signed Duo simulator app successfully uses the native Keychain/encrypted store.
+An unsigned simulator app may fail Keychain access with `-34018`; keep signing
+configured rather than replacing secure storage with a plaintext fallback.
 
 Optional VLC:
 
@@ -67,7 +75,7 @@ The committed AVKit Xcode project can be regenerated using
   execution quota. They are never evaluated directly with JavaScriptCore.
 - The SDK, `.cfprovider` format, API version, and provider compiler are unchanged.
   The provider receives only its existing context, not the native bridge.
-- A background serial DispatchQueue owns the context, promises, and timers.
+- One dedicated background thread owns the context, promises, and timer deliveries.
   SwiftUI exchanges Codable JSON values over asynchronous calls.
 - Browser primitives (URL including IDN handling, encoding, fetch response objects,
   streams, cancellation, structured clone, secure random bytes) are installed before
@@ -92,18 +100,33 @@ establish arbitrary plugin, native transport, codec, or physical-device compatib
 
 AVKit uses public AVPlayer/AVPlayerViewController/AVPlayerView APIs, including
 system controls, PiP, fullscreen and AirPlay where offered by the platform.
-It accepts HLS/files; DASH needs VLC. AVKit does not receive arbitrary source HTTP
-headers through private `AVURLAsset` keys. VLC 3 supports the public User-Agent
-and Referer options; other custom headers are explicitly rejected by both adapters.
-Sources using query-token authentication (including Jellyfin's sources) remain eligible.
-A public authenticated-media transport is a release gate for other header-based sources.
+It accepts HLS/files; DASH needs VLC. Header-authenticated sources use the same
+public, per-session loopback HTTP relay with either engine. The relay forwards source
+headers only to the exact original origin, streams binary media with Range/HEAD,
+and rewrites HLS playlists/keys/maps and DASH BaseURL/segment templates. It uses
+random capability routes, bounded manifests/connections/headers and no shared
+cookies, credentials or cache. Redirects are denied. Transport-managed headers
+such as Host, Range and Connection cannot be overridden by provider headers.
+Cross-origin children receive no source credentials; authenticated cross-origin
+CDNs therefore need a provider source at the appropriate origin. No private
+`AVURLAsset` header key or unsupported VLC header option is used.
+
+Authenticated AVKit relay sources disable AirPlay because the receiver cannot
+reach the device-local URL. Direct sources keep system external-playback support.
+This transport does not implement DRM/FairPlay, cookie negotiation, arbitrary DASH
+extensions, or HLS variable substitution/content steering. AES-128 HLS is covered
+by the synthetic playback fixture, not a DRM compatibility claim.
 
 The advanced controls are in a system toolbar and scrollable Form/sheet, not a
 fixed panel positioned beyond the right edge. A retained PlaybackSession owns the
 player independently of layout; source changes preserve position and pause state.
 Sidecar SRT/VTT subtitles overlay the in-app surface; test their behavior in AVKit
-system fullscreen/PiP/AirPlay before promising them there. VLC embedded track menus,
-PiP/AirPlay and system media-command parity still need work and device validation.
+system fullscreen/PiP/AirPlay before promising them there. VLC embedded audio/subtitle menus use actual VLC track IDs, language preferences,
+and an explicit subtitle-off choice; embedded and sidecar subtitles are mutually
+exclusive. Requested playback state is retained independently of transient buffering,
+and existing drawables are not reassigned on every SwiftUI update. VLC PiP/AirPlay
+and system media-command parity remain open. See the handoff for the synthetic
+media fixture and the signed Duo simulator test.
 
 ## Documentation
 

@@ -247,7 +247,12 @@ async function dispatch(op: string, value: any): Promise<any> {
     case 'snapshot':
       return snapshot();
     case 'subtitles': {
-      const response = await request(value.url);
+      const headers =
+        value.sourceURL &&
+        new URL(value.url).origin === new URL(value.sourceURL).origin
+          ? (value.headers ?? {})
+          : {};
+      const response = await request(value.url, { headers });
       if (!response.ok) throw new Error('Subtitle request failed.');
       return parseSubtitles(response.body);
     }
@@ -350,24 +355,14 @@ async function dispatch(op: string, value: any): Promise<any> {
               },
             ]
           : await sources(value.item, settings, value.trailer);
-      const vlcHeaders = (s: MediaSource) =>
-        Object.keys(s.headers ?? {}).every((h) =>
-          ['user-agent', 'referer'].includes(h.toLowerCase()),
-        );
+      // The native media relay supplies arbitrary source headers through public HTTP APIs.
       const playable =
         value.engine === 'vlc'
-          ? available.filter((s) => vlcHeaders(s as MediaSource))
-          : available.filter(
-              (s) =>
-                s.type !== 'dash' &&
-                (!s.headers || Object.keys(s.headers).length === 0),
-            );
-      // AVURLAsset has no public arbitrary HTTP-header API. Never silently drop authentication.
-      const source = chooseSource(playable as MediaSource[], settings);
+          ? available
+          : available.filter((s) => s.type !== 'dash');
+      const source = chooseSource(playable, settings);
       if (!source)
-        throw new Error(
-          'No compatible source. AVKit needs HLS/file media without custom headers. VLC 3 supports User-Agent and Referer; other authenticated headers require a different source.',
-        );
+        throw new Error('No compatible source. Choose VLC for DASH media.');
       const history = library.progress(value.item);
       return {
         sources: playable,
