@@ -17,7 +17,8 @@ permissions:
   contents: read
 jobs:
   native:
-    runs-on: macos-26
+    # Public Xcode 27 preview image; macos-26 defaults to Xcode 26.x.
+    runs-on: xcode-27
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v7

@@ -103,8 +103,9 @@ See the exact evidence and limits in [the handoff](native-test-handoff.md).
 - **Data migration**: explicit backup portability is available; automatic legacy
   credential/plugin/download migration is intentionally not performed. Add and test
   a reviewed migration path before making native the sole application.
-- **CI**: native CI is added but no remote result was available at local implementation
-  time. It deliberately requires Xcode 27.1 rather than compiling out Duo support.
+- **CI**: the first follow-up native CI run failed at the SDK prerequisite because
+  `macos-26` selected Xcode 26.6. It now uses the documented `xcode-27` preview image
+  and still requires 27.1; a successful complete remote native run remains unverified.
 
 Chromecast, UPnP/DLNA and Dropbox sync were already unimplemented in the baseline;
 no imaginary backend has been added for them.

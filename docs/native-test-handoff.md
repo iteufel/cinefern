@@ -81,8 +81,12 @@ CLANG_MODULE_CACHE_PATH=/tmp/cinefern-module-cache \
 Xcode plugin processes, signing/keychain, local HTTP listeners and Simulator services
 needed execution outside that sandbox. A sandbox restriction is not a source failure.
 Build logs default to `native/.build/xcode-{avkit,vlc}/{iOS,macOS,tvOS}.log`;
-`CINEFERN_BUILD_ROOT` overrides the output root. The workflow builds unsigned and
-requires Xcode 27.1. Remote CI is a separate check, not established by local signing.
+`CINEFERN_BUILD_ROOT` overrides the output root. The workflow builds unsigned and requires Xcode 27.1. The first follow-up CI run
+[failed before compilation](https://github.com/iteufel/cinefern/actions/runs/40125721458)
+because `macos-26` selected Xcode 26.6. The workflow now uses GitHub's documented
+[`xcode-27` preview image](https://github.com/actions/runner-images/issues/14404),
+retaining the 27.1 requirement. Remote success is a separate check, not established
+by local signing.
 
 ## Synthetic media / Duo UI reproduction
 
