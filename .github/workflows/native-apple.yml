@@ -1,0 +1,44 @@
+name: Native Apple migration
+on:
+  pull_request:
+    paths:
+      [
+        'native/**',
+        'src/core/**',
+        'src/providers/**',
+        'src/agent/**',
+        'src/player/subtitles.ts',
+        'packages/provider-sdk/**',
+        'package*.json',
+        '.github/workflows/native-apple.yml',
+      ]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native:
+    runs-on: macos-26
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - name: Require Xcode 27.1 for public Duo APIs
+        run: |
+          xcodebuild -version
+          xcodebuild -version | head -1 | awk '{if ($2 + 0 < 27.1) exit 1}'
+      - run: npm ci --ignore-scripts
+      - run: npm run apple:prepare
+      - run: npm run apple:typecheck
+      - run: npm run check
+      - run: npm run apple:test
+      - run: npm run apple:build -- avkit
+      - run: npm run apple:vlc
+      - run: npm run apple:build -- vlc
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-apple-build-logs
+          path: native/.build/xcode-*/*.log

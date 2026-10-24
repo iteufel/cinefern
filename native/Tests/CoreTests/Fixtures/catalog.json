@@ -1,0 +1,21 @@
+{
+  "items": [
+    {
+      "id": "my-film",
+      "type": "movie",
+      "title": "My film",
+      "overview": "Replace this with media you host.",
+      "year": 2026,
+      "sources": [
+        {
+          "id": "hd",
+          "label": "1080p",
+          "quality": 1080,
+          "type": "http",
+          "url": "https://example.com/media/film.mp4",
+          "downloadable": true
+        }
+      ]
+    }
+  ]
+}

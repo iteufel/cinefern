@@ -52,7 +52,12 @@
     "plugin:example": "npm run plugin:build -- providers/example/provider.ts providers/example/manifest.json",
     "format": "prettier --write src packages providers scripts tests apps/desktop apps/tv/*.ts apps/tv/*.json apps/tv/*.cjs App.tsx index.ts *.json *.cjs README.md docs website assets/ATTRIBUTION.md .github/workflows",
     "plugin:agent-example": "node scripts/build-provider.mjs providers/agent-example/provider.ts providers/agent-example/manifest.json",
-    "test:agent-desktop": "electron scripts/smoke-agent.cjs"
+    "test:agent-desktop": "electron scripts/smoke-agent.cjs",
+    "apple:prepare": "node native/scripts/prepare.mjs",
+    "apple:test": "swift test --package-path native",
+    "apple:build": "bash native/scripts/build-apple.sh",
+    "apple:vlc": "ruby native/scripts/generate-project.rb --vlc && cd native && pod install",
+    "apple:typecheck": "tsc -p native/Runtime/tsconfig.json"
   },
   "dependencies": {
     "@cinefern/apple-player": "5.1.2",
