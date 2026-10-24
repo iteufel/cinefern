@@ -96,3 +96,30 @@ on the iPhone/iPad or Apple TV and accept the invitation. An external testing gr
 requires beta app information and may require Apple's Beta App Review. CI uploads
 the builds; it does not automatically invite testers or submit a public App Store release.
 See Apple's [build upload guide](https://developer.apple.com/help/app-store-connect/manage-builds/upload-builds/).
+
+## Native SwiftUI iOS beta
+
+The manually selected `client=native` release path archives the native SwiftUI
+client with **both AVKit and MobileVLCKit**, using the existing iOS app record and
+`io.github.iteufel.cinefern` App Store profile. It supports `platform=ios` only.
+The legacy client remains the default for existing tags/manual runs; tvOS is not
+uploaded by the native iOS path.
+
+```sh
+gh workflow run testflight.yml --repo iteufel/cinefern --ref YOUR_RELEASE_BRANCH \
+  -f client=native -f platform=ios -f version=5.2.0
+```
+
+The native path uses the Xcode 27 runner, generates the native runtime/assets,
+runs Core tests, and validates the real App Store app/bundle before allocating a
+build number above the recent iOS build numbers. It sets production identity,
+version and manual Distribution signing only on the native iOS Release target.
+Local development identifiers are unchanged. Source revision is embedded in the
+app's Info.plist and recorded in `testflight-result.json`.
+
+After upload, CI polls the exact version/build until Apple's processing state is
+`VALID` (up to 30 minutes). IPA, archive/export logs and the processing result are
+retained together. A successful archive alone is not a successful TestFlight release.
+No public App Store submission, external beta review or new tester invitations
+are performed by this path. Existing beta acceptance limitations are listed in
+`docs/native-test-handoff.md`.

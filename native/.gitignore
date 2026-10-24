@@ -8,3 +8,5 @@
 /Tests/CoreTests/Fixtures/*.cfprovider
 /CinefernVLC.xcodeproj/
 /CinefernVLC.xcworkspace/
+/Resources/Assets.xcassets/AppIcon.appiconset/icon.png
+/Sources/Core/Resources/Acknowledgements.txt

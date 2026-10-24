@@ -5,6 +5,15 @@ on:
     tags: ['v*']
   workflow_dispatch:
     inputs:
+      client:
+        description: Client to release (native supports iOS only)
+        type: choice
+        options: [legacy, native]
+        default: legacy
+      version:
+        description: Native iOS marketing version
+        type: string
+        default: '5.2.0'
       platform:
         description: Apps to upload to TestFlight
         type: choice
@@ -30,8 +39,12 @@ jobs:
       - run: npm ci
       - run: npm run check
       - run: python3 -m unittest discover -s tests -p 'apple_ci_test.py'
+      - name: Native release API safeguards
+        if: inputs.client == 'native'
+        run: node --test native/Tests/ReleaseTests/*.test.mjs
 
   upload:
+    if: inputs.client != 'native'
     needs: validate
     runs-on: macos-26
     timeout-minutes: 90
@@ -174,3 +187,107 @@ jobs:
       - name: Remove signing keychain
         if: always() && steps.certificate.outputs.keychain-password != ''
         run: security delete-keychain cinefern-testflight.keychain
+
+  native-ios:
+    if: inputs.client == 'native'
+    needs: validate
+    runs-on: xcode-27
+    timeout-minutes: 90
+    environment: testflight
+    env:
+      APPLE_TEAM_ID: ${{ vars.APPLE_TEAM_ID }}
+      APP_BUNDLE_ID: io.github.iteufel.cinefern
+      MARKETING_VERSION: ${{ inputs.version }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Check release target and SDK
+        env:
+          REQUESTED_PLATFORM: ${{ inputs.platform }}
+        run: |
+          test "$REQUESTED_PLATFORM" = ios
+          echo "BUILD_DIR=$RUNNER_TEMP/testflight-native-ios" >> "$GITHUB_ENV"
+          mkdir -p "$RUNNER_TEMP/testflight-native-ios"
+          xcodebuild -version
+          xcodebuild -version | head -1 | awk '{if ($2 + 0 < 27.1) exit 1}'
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm run apple:prepare
+      - run: npm run apple:typecheck
+      - run: npm run apple:test
+      - run: npm run apple:vlc
+      - name: Confirm App Store app and allocate build number
+        id: metadata
+        env:
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_PRIVATE_KEY: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
+        run: node native/scripts/testflight-status.mjs prepare
+      - name: Import Apple Distribution certificate
+        id: certificate
+        uses: apple-actions/import-codesign-certs@v3
+        with:
+          keychain: cinefern-native-testflight
+          p12-file-base64: ${{ secrets.APPLE_DISTRIBUTION_P12_BASE64 }}
+          p12-password: ${{ secrets.APPLE_DISTRIBUTION_P12_PASSWORD }}
+      - name: Install and validate iOS App Store profile
+        id: profile
+        env:
+          PROFILE_BASE64: ${{ secrets.IOS_APP_STORE_PROFILE_BASE64 }}
+          APP_PLATFORM: ios
+        run: python3 scripts/apple-profile.py
+      - name: Configure native production signing
+        env:
+          BUILD_NUMBER: ${{ steps.metadata.outputs.build_number }}
+          PROFILE_UUID: ${{ steps.profile.outputs.uuid }}
+        run: ruby native/scripts/configure-release.rb
+      - name: Archive native iOS release
+        run: |
+          set -o pipefail
+          xcodebuild archive -workspace native/CinefernVLC.xcworkspace -scheme Cinefern-iOS \
+            -configuration Release -destination 'generic/platform=iOS' \
+            -archivePath "$BUILD_DIR/Cinefern.xcarchive" \
+            -derivedDataPath "$BUILD_DIR/DerivedData" | tee "$BUILD_DIR/archive.log"
+      - name: Export App Store IPA
+        run: |
+          set -o pipefail
+          xcodebuild -exportArchive -archivePath "$BUILD_DIR/Cinefern.xcarchive" \
+            -exportOptionsPlist "$BUILD_DIR/ExportOptions.plist" \
+            -exportPath "$BUILD_DIR/export" | tee "$BUILD_DIR/export.log"
+          codesign --verify --deep --strict "$BUILD_DIR/Cinefern.xcarchive/Products/Applications/Cinefern.app"
+      - name: Upload native iOS build to TestFlight
+        uses: apple-actions/upload-testflight-build@v3
+        with:
+          app-path: ${{ env.BUILD_DIR }}/export/Cinefern.ipa
+          app-type: ios
+          issuer-id: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          api-key-id: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          api-private-key: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
+      - name: Verify Apple processing
+        env:
+          BUILD_NUMBER: ${{ steps.metadata.outputs.build_number }}
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_PRIVATE_KEY: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
+        run: node native/scripts/testflight-status.mjs wait
+      - name: Save IPA and release evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: testflight-native-ios-${{ github.run_number }}-${{ github.run_attempt }}
+          path: |
+            ${{ env.BUILD_DIR }}/export/*.ipa
+            ${{ env.BUILD_DIR }}/*.log
+            ${{ env.BUILD_DIR }}/testflight-result.json
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Remove provisioning profile
+        if: always() && steps.profile.outputs.path != ''
+        env:
+          PROFILE_PATH: ${{ steps.profile.outputs.path }}
+        run: rm -f "$PROFILE_PATH"
+      - name: Remove signing keychain
+        if: always() && steps.certificate.outputs.keychain-password != ''
+        run: security delete-keychain cinefern-native-testflight.keychain

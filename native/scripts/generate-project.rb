@@ -6,10 +6,14 @@ project.root_object.attributes['LastUpgradeCheck']='2710'
 group=project.main_group.new_group('Sources')
 files=Dir[File.join(root,'Sources/{Core,App}/**/*.swift')].sort.map { |path| group.new_file(path.delete_prefix(root+'/')) }
 resources=Dir[File.join(root,'Sources/Core/Resources/*')].sort.map { |path| group.new_file(path.delete_prefix(root+'/')) }
+icons=project.main_group.new_file('Resources/Assets.xcassets')
+privacy=project.main_group.new_file('Resources/PrivacyInfo.xcprivacy')
 [['Cinefern-iOS',:ios,'17.0','iphoneos'],['Cinefern-macOS',:osx,'14.0','macosx'],['Cinefern-tvOS',:tvos,'17.0','appletvos']].each do |name,platform,version,sdk|
   target=project.new_target(:application,name,platform,version)
   target.add_file_references(files)
   resources.each { |ref| target.resources_build_phase.add_file_reference(ref) }
+  target.resources_build_phase.add_file_reference(privacy)
+  target.resources_build_phase.add_file_reference(icons) if platform==:ios
   target.build_configurations.each do |config|
     config.build_settings.merge!({
       'PRODUCT_BUNDLE_IDENTIFIER'=>"org.cinefern.native.#{platform}",
@@ -22,6 +26,7 @@ resources=Dir[File.join(root,'Sources/Core/Resources/*')].sort.map { |path| grou
       'ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS'=>'YES',
     })
     if platform==:ios
+      config.build_settings['ASSETCATALOG_COMPILER_APPICON_NAME']='AppIcon'
       config.build_settings['TARGETED_DEVICE_FAMILY']='1,2'
       config.build_settings['SUPPORTED_PLATFORMS']='iphoneos iphonesimulator'
       config.build_settings['SUPPORTS_MACCATALYST']='NO'
