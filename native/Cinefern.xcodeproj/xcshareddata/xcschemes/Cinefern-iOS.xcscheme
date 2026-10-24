@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "F186DF6E1D53B255E7010865"
+               BlueprintIdentifier = "56CF58153595E76F0EB3B581"
                BuildableName = "Cinefern-iOS.app"
                BlueprintName = "Cinefern-iOS"
                ReferencedContainer = "container:Cinefern.xcodeproj">
@@ -30,7 +30,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "F186DF6E1D53B255E7010865"
+            BlueprintIdentifier = "56CF58153595E76F0EB3B581"
             BuildableName = "Cinefern-iOS.app"
             BlueprintName = "Cinefern-iOS"
             ReferencedContainer = "container:Cinefern.xcodeproj">
@@ -41,7 +41,7 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "CBB0891DC1C475CC0EE85D82"
+               BlueprintIdentifier = "2166C7949FB4F1BF2D0C73FE"
                BuildableName = "Cinefern-UITests.xctest"
                BlueprintName = "Cinefern-UITests"
                ReferencedContainer = "container:Cinefern.xcodeproj">
@@ -63,7 +63,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "F186DF6E1D53B255E7010865"
+            BlueprintIdentifier = "56CF58153595E76F0EB3B581"
             BuildableName = "Cinefern-iOS.app"
             BlueprintName = "Cinefern-iOS"
             ReferencedContainer = "container:Cinefern.xcodeproj">
@@ -80,7 +80,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "F186DF6E1D53B255E7010865"
+            BlueprintIdentifier = "56CF58153595E76F0EB3B581"
             BuildableName = "Cinefern-iOS.app"
             BlueprintName = "Cinefern-iOS"
             ReferencedContainer = "container:Cinefern.xcodeproj">

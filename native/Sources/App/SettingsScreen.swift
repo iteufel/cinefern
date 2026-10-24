@@ -84,6 +84,18 @@ struct SettingsScreen: View {
           }
         }
       }
+      Section(model.text("About", "Über Cinefern")) {
+        NavigationLink(model.text("Open-source notices", "Open-Source-Hinweise")) {
+          ScrollView {
+            Text(
+              Bundle.main.url(forResource: "Acknowledgements", withExtension: "txt").flatMap {
+                try? String(contentsOf: $0, encoding: .utf8)
+              } ?? "https://github.com/iteufel/cinefern"
+            )
+            .font(.footnote).frame(maxWidth: .infinity, alignment: .leading).padding()
+          }.navigationTitle(model.text("Open-source notices", "Open-Source-Hinweise"))
+        }
+      }
       Section(model.text("Maintenance", "Verwaltung")) {
         Button(model.text("Clear provider cache", "Anbieter-Cache leeren")) {
           Task { await model.action("clearCache") }

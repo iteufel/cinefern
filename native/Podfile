@@ -6,6 +6,19 @@ target 'Cinefern-iOS' do
   platform :ios, '17.0'
   pod 'MobileVLCKit', '3.7.4'
 end
+post_integrate do |installer|
+  # CocoaPods declares only the framework binary, but rsync also reads its plist,
+  # signatures and resources. Declare that exact framework directory as input.
+  installer.aggregate_targets.map(&:user_project).uniq.each do |project|
+    project.native_targets.each do |target|
+      target.shell_script_build_phases.each do |phase|
+        next unless phase.name == '[CP] Embed Pods Frameworks'
+        phase.input_paths = phase.input_paths.map { |path| path.sub(%r{(\.framework)/.*\z}, '\1') }
+      end
+    end
+    project.save
+  end
+end
 target 'Cinefern-tvOS' do
   platform :tvos, '17.0'
   pod 'TVVLCKit', '3.7.4'

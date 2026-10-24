@@ -5,7 +5,7 @@ let package = Package(
     platforms: [.macOS(.v14), .iOS(.v17), .tvOS(.v17)],
     products: [.library(name: "CinefernCore", targets: ["CinefernCore"])],
     targets: [
-        .target(name: "CinefernCore", path: "Sources/Core", resources: [.copy("Resources/runtime.js"), .copy("Resources/runtime.js.LEGAL.txt")]),
+        .target(name: "CinefernCore", path: "Sources/Core", resources: [.copy("Resources/runtime.js"), .copy("Resources/runtime.js.LEGAL.txt"), .copy("Resources/Acknowledgements.txt")]),
         .testTarget(name: "CinefernCoreTests", dependencies: ["CinefernCore"], path: "Tests/CoreTests", resources: [.copy("Fixtures")]),
     ]
 )

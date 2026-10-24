@@ -133,3 +133,15 @@ media fixture and the signed Duo simulator test.
 - [Migration and feature parity](../docs/native-migration.md)
 - [Build evidence and test handoff](../docs/native-test-handoff.md)
 - [Public iPhone Duo APIs and limits](../docs/native-duo.md)
+
+## TestFlight
+
+The existing TestFlight workflow now accepts `client=native`, `platform=ios`, and
+an explicit marketing `version` (initial native beta: `5.2.0`). It uploads the
+SwiftUI client with both playback engines to the existing Cinefern iOS app record.
+See [release instructions](../docs/testflight.md). Production identity/profile
+settings apply only to the generated iOS Release target. The CocoaPods integration
+tracks each complete framework directory as an input. The optional VLC project
+uses CocoaPods-compatible unsandboxed build-script phases because Xcode treats
+clean framework outputs as literal files and denies resource/signature writes.
+This setting concerns build scripts; the AVKit-only project retains script sandboxing.

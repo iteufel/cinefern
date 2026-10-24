@@ -7,124 +7,134 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		00AAFE1E4E9187AF4E3AF2E2C5C7CAC0 /* NativeStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5E9EB8F9257438040DFDA9BBBADBC5 /* NativeStorage.swift */; };
-		01AFEC1AB861724CC3FFE92468E3C3B7 /* NativeStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5E9EB8F9257438040DFDA9BBBADBC5 /* NativeStorage.swift */; };
-		02147E255E300CC75365B087B43D5FB2 /* runtime.js in Resources */ = {isa = PBXBuildFile; fileRef = 9866FF358717F624844F06B9E9C0A599 /* runtime.js */; };
-		07C118C14F2F5A262C9EE842F8DD9728 /* LibraryScreens.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6D4D6CE1AB9006776A3CD3311FD4BDC /* LibraryScreens.swift */; };
-		0E49B31460A4D240BDE276D427A8126D /* NativeHTTP.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3377DD7BB4FCBCA365CB1F4F640A82C /* NativeHTTP.swift */; };
-		0F711797F934A54461E04FF249AC90E3 /* JavaScriptHost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5254CE202462252938C038AFBC0E672E /* JavaScriptHost.swift */; };
-		131C0BD2BA78B61348204855BB9843C1 /* NativeStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5E9EB8F9257438040DFDA9BBBADBC5 /* NativeStorage.swift */; };
-		14BA9A6E214463A814D4DB8D253AF180 /* PlaybackSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE2B0A613893F8DBD69B6A1F36BD34C3 /* PlaybackSession.swift */; };
-		152EE626EACC72A860B3E1AE10DAF332 /* CinefernApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAAB9D11B3169092B2A08C7B73992F6 /* CinefernApp.swift */; };
-		1F8ED1239AD76C2ED429DBC6C0FAAE5B /* SettingsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3CCD60E0B060813D742FF43B5EC5F5 /* SettingsScreen.swift */; };
-		20B1EDEF19C33CE6BAFB5EAB9B5A34F7 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FB264EF4026736C07DA7BE6CC59A83DF /* Cocoa.framework */; };
-		2F38E5A4C3013084116A92379F9B623A /* NativeHTTP.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3377DD7BB4FCBCA365CB1F4F640A82C /* NativeHTTP.swift */; };
-		3C131F2450AD23790310A1A8771BE24C /* PlayerTrack.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACD745C77ADD56A76BDD0200733AB2E4 /* PlayerTrack.swift */; };
-		3E5C190BD9D3D5B94415F7562FD8CD4F /* PlayerTrack.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACD745C77ADD56A76BDD0200733AB2E4 /* PlayerTrack.swift */; };
-		434020A34325949895E6653B5E6FF680 /* JavaScriptHost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5254CE202462252938C038AFBC0E672E /* JavaScriptHost.swift */; };
-		4CB82EF46DFBAC8006B11281AE7A5468 /* runtime.js.LEGAL.txt in Resources */ = {isa = PBXBuildFile; fileRef = B637C817CCFF720F7A118846552CA933 /* runtime.js.LEGAL.txt */; };
-		4DD293FA7FD97F63AD8A757B2B492CF2 /* PlayerScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E62005435C4FB6A3BB9B19088E53B68 /* PlayerScreen.swift */; };
-		5008E4BB0C0EF6C686A3439456218958 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A59E361192BD8BA714B577684BC687F5 /* Foundation.framework */; };
-		51AB3D3B06D2C7FFB905C6F38B3C52C8 /* NativeDownloads.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FFA5CD0BE51B24E3B0F875744D3FECA /* NativeDownloads.swift */; };
-		5491A2DEBF3B86F235D201A6DE250FC4 /* MediaRelay.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6A19DE0351812FD5252778B88EB481 /* MediaRelay.swift */; };
-		66DB7518921FEC0275CE980623A0536A /* ProviderScreens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76CC91262EF4744C899F4AD3AC5CA3DF /* ProviderScreens.swift */; };
-		6969A1E25A8AF82B2E2547EF710D88AD /* CinefernApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAAB9D11B3169092B2A08C7B73992F6 /* CinefernApp.swift */; };
-		6D403704E33B4CB47D6DCAF5FEE26FFE /* JSONValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB2B449898ED20B37EF87A61794FB86 /* JSONValue.swift */; };
-		6D8AA930982533F3186243CF5D3E756B /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A30EF9DB31B5A66BDBC2A09C01FF64E /* AppModel.swift */; };
-		6E14B29E1B0CD57604B915BEBBACBC57 /* SettingsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3CCD60E0B060813D742FF43B5EC5F5 /* SettingsScreen.swift */; };
-		743924B9830C96F58C9B02E6BE65E8D3 /* SettingsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3CCD60E0B060813D742FF43B5EC5F5 /* SettingsScreen.swift */; };
+		013C25656CD049E0CAF6386331CC75C3 /* NativeHTTP.swift in Sources */ = {isa = PBXBuildFile; fileRef = F24C8BB31EA7CB98583D7CCD5F0A0CDB /* NativeHTTP.swift */; };
+		0542A590F43B200A562A67FE68B9814A /* PlayerTrack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D4D1A69CF56BB831A3BD3A2C088B56F /* PlayerTrack.swift */; };
+		05C4BF633E54019DFA806A17DE81F48A /* NativeDownloads.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74E38D75659B08956F678C155704A1A3 /* NativeDownloads.swift */; };
+		0C5F10FCA05C79C3C2A86551874AD515 /* LibraryScreens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45D92EF9B8438FFD2E0C5E36C2416784 /* LibraryScreens.swift */; };
+		0D0129F42ECD77BABD79839644703EE7 /* JSONValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8DBABE548074486525896B62A1D9471 /* JSONValue.swift */; };
+		137D45BBCBED3FED9BBF6F31E95887AB /* NativeHTTP.swift in Sources */ = {isa = PBXBuildFile; fileRef = F24C8BB31EA7CB98583D7CCD5F0A0CDB /* NativeHTTP.swift */; };
+		14CA5B05B0CFAAA94761280FEFA88862 /* Acknowledgements.txt in Resources */ = {isa = PBXBuildFile; fileRef = 84925EA7E23F6DB0B24D91759C6D2184 /* Acknowledgements.txt */; };
+		1EC8D847968FDD7A64F11DFE58B4AC04 /* LibraryScreens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45D92EF9B8438FFD2E0C5E36C2416784 /* LibraryScreens.swift */; };
+		21CDA9AF6D9C418B4E86153A2CBC4F13 /* runtime.js in Resources */ = {isa = PBXBuildFile; fileRef = 782E2B7757477264A5D9C86D871A7D9E /* runtime.js */; };
+		229CA46CB4D21437FFA04461AFC07559 /* NativeDownloads.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74E38D75659B08956F678C155704A1A3 /* NativeDownloads.swift */; };
+		24C318AA10A787BF87B009D0795E5F5E /* JavaScriptHost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F0AFCAAE50F6DB6707DB5D2D49E7A4 /* JavaScriptHost.swift */; };
+		267E9E97F1A84630EC4AE9186BA3B591 /* JavaScriptHost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F0AFCAAE50F6DB6707DB5D2D49E7A4 /* JavaScriptHost.swift */; };
+		3BCE9D0E0E7EFDD1B7BD9089948D5EA7 /* MediaRelay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37CBD07B587233E2313168F48182A875 /* MediaRelay.swift */; };
+		3F23A70E24D6BB88FD7EC21B8B668A72 /* ManifestRewriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57835A0F9F9641B42C32CC5F846A00AE /* ManifestRewriter.swift */; };
+		43363E60DFF4D40ECD1BD729E231AB4B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = C8E9B5DFF0AA8548EEFB164F9B7EFB41 /* PrivacyInfo.xcprivacy */; };
+		49C84AE7FAB78D93D69F8A9A82C90530 /* SettingsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F5B09F4B1D277FC030216A8B3BF0D0 /* SettingsScreen.swift */; };
+		4CA9F0178CA7A4B64A5B7DE22697D312 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3427E59D362BB285972591AE0866B017 /* AppModel.swift */; };
+		4D62038418E85AFC858BBFF50D96D83E /* SettingsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F5B09F4B1D277FC030216A8B3BF0D0 /* SettingsScreen.swift */; };
+		507C68A37E28EA0AA0F5C4346FA6A16A /* PlayerScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D506A4768348798BFD8B2ED981285547 /* PlayerScreen.swift */; };
+		54DB231DFF25F88F22DBE8FC80658840 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = C8E9B5DFF0AA8548EEFB164F9B7EFB41 /* PrivacyInfo.xcprivacy */; };
+		56FBB4A523B5AB39DF421BA4EF855B84 /* NativeHTTP.swift in Sources */ = {isa = PBXBuildFile; fileRef = F24C8BB31EA7CB98583D7CCD5F0A0CDB /* NativeHTTP.swift */; };
+		5783A4C315F9CA2026B8F78BD6B7BC6F /* Acknowledgements.txt in Resources */ = {isa = PBXBuildFile; fileRef = 84925EA7E23F6DB0B24D91759C6D2184 /* Acknowledgements.txt */; };
+		58765BED214D252A435E40BD3560F207 /* NativeStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A1A5DDFA9E1644685D5FC4A2296FD80 /* NativeStorage.swift */; };
+		599E9FE3F85190C3AE612F69404C949B /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FB264EF4026736C07DA7BE6CC59A83DF /* Cocoa.framework */; };
+		5BECA45A59DE85E44A46D94666E6CC04 /* ManifestRewriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57835A0F9F9641B42C32CC5F846A00AE /* ManifestRewriter.swift */; };
+		5D90C5F0985B7873EA972D727F423D54 /* PlayerScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D506A4768348798BFD8B2ED981285547 /* PlayerScreen.swift */; };
+		615E6E9BC908F63EAE952CC9CB719F5C /* JSONValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8DBABE548074486525896B62A1D9471 /* JSONValue.swift */; };
+		66813E2CA521E0A713F5CB1C75082C4F /* PlaybackSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBA0878709D469CBDA8B45F851F8F3C3 /* PlaybackSession.swift */; };
+		6E316A76846A4B9CAC83E6BDD1A81167 /* runtime.js in Resources */ = {isa = PBXBuildFile; fileRef = 782E2B7757477264A5D9C86D871A7D9E /* runtime.js */; };
 		794F4F93E9BA78C80389580DBB8A2425 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A59E361192BD8BA714B577684BC687F5 /* Foundation.framework */; };
-		7AD1DB7F709B8C9432A8C20777B58B0B /* CinefernApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAAB9D11B3169092B2A08C7B73992F6 /* CinefernApp.swift */; };
-		7C7C64C4ED4B9E55BB2411A30B47B050 /* PlaybackSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE2B0A613893F8DBD69B6A1F36BD34C3 /* PlaybackSession.swift */; };
-		84820F28C307082DFF294927610E397D /* NativeDownloads.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FFA5CD0BE51B24E3B0F875744D3FECA /* NativeDownloads.swift */; };
-		85FF3A19B45326FE4BF099B28D358758 /* runtime.js.LEGAL.txt in Resources */ = {isa = PBXBuildFile; fileRef = B637C817CCFF720F7A118846552CA933 /* runtime.js.LEGAL.txt */; };
-		9812F8B0B47BE4DB5CD3922C84BF2BDF /* LibraryScreens.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6D4D6CE1AB9006776A3CD3311FD4BDC /* LibraryScreens.swift */; };
-		A8A5BBC0E163CADA274E45643E953DBF /* MediaRelay.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6A19DE0351812FD5252778B88EB481 /* MediaRelay.swift */; };
-		B1E2864569958C1C7DA63DD1C96CC754 /* runtime.js in Resources */ = {isa = PBXBuildFile; fileRef = 9866FF358717F624844F06B9E9C0A599 /* runtime.js */; };
-		B592C8C53F133EC975AEBB0BB1BAB23A /* LibraryScreens.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6D4D6CE1AB9006776A3CD3311FD4BDC /* LibraryScreens.swift */; };
-		B9EE66919384B749FCA304E6C0054FFE /* PlayerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD798F4713E0D82616FCA6E33D3BC440 /* PlayerUITests.swift */; };
-		BDA0AC4F7FA0D54056A5EC5DED4E8659 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4EEBD7EFBEE41299E68BDA0DDE2716A2 /* Foundation.framework */; };
-		C2C81FA083A27C2A0D58F05E5F073987 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A30EF9DB31B5A66BDBC2A09C01FF64E /* AppModel.swift */; };
-		C7045FF900B32B8A4D7C083D672EE102 /* MediaRelay.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6A19DE0351812FD5252778B88EB481 /* MediaRelay.swift */; };
-		C7828E585A9A83F9CCF853612D73E3CE /* ProviderScreens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76CC91262EF4744C899F4AD3AC5CA3DF /* ProviderScreens.swift */; };
-		CC6458110F71F0AA5EA656C0EB45DF0A /* runtime.js in Resources */ = {isa = PBXBuildFile; fileRef = 9866FF358717F624844F06B9E9C0A599 /* runtime.js */; };
-		D00829BEC1F4AF106FDCD6F09E0E7D3D /* JSONValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB2B449898ED20B37EF87A61794FB86 /* JSONValue.swift */; };
-		D16C50B31CA8B2B846B50EBA9193040A /* ProviderScreens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76CC91262EF4744C899F4AD3AC5CA3DF /* ProviderScreens.swift */; };
-		D5A7D833FD943DC848B4EDD4F5B11D6D /* ManifestRewriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEB7B5E10D8C903E30BB6066DD2E7018 /* ManifestRewriter.swift */; };
-		D6FDC693EA2E68F8EE1C567F34B4E763 /* ManifestRewriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEB7B5E10D8C903E30BB6066DD2E7018 /* ManifestRewriter.swift */; };
-		D8A190DFA1FB87E55EF40B00CFBA666D /* NativeDownloads.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FFA5CD0BE51B24E3B0F875744D3FECA /* NativeDownloads.swift */; };
-		DACD9D17B0FE7E1C3AAD634FDE5530A4 /* PlayerScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E62005435C4FB6A3BB9B19088E53B68 /* PlayerScreen.swift */; };
-		DDF32D054130C355450BD5FF60D44497 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A30EF9DB31B5A66BDBC2A09C01FF64E /* AppModel.swift */; };
-		E0578D314B3D773486140D4B86340E98 /* runtime.js.LEGAL.txt in Resources */ = {isa = PBXBuildFile; fileRef = B637C817CCFF720F7A118846552CA933 /* runtime.js.LEGAL.txt */; };
-		E4C99D71425381B4A070129803A37FA5 /* JavaScriptHost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5254CE202462252938C038AFBC0E672E /* JavaScriptHost.swift */; };
-		E6CC5FC51E374B53CC4864C1DE8C489E /* PlayerScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E62005435C4FB6A3BB9B19088E53B68 /* PlayerScreen.swift */; };
-		E96734D053AE0CDB1D7B8E69EF329AF9 /* PlaybackSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE2B0A613893F8DBD69B6A1F36BD34C3 /* PlaybackSession.swift */; };
-		F190AB9C3377791C7562720296396F3D /* NativeHTTP.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3377DD7BB4FCBCA365CB1F4F640A82C /* NativeHTTP.swift */; };
-		F8C40B0647B179D8E662B39C12C86DCF /* ManifestRewriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEB7B5E10D8C903E30BB6066DD2E7018 /* ManifestRewriter.swift */; };
-		FACD44B9F109790EEE1672DBC5E1AC39 /* PlayerTrack.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACD745C77ADD56A76BDD0200733AB2E4 /* PlayerTrack.swift */; };
-		FE56384898B545123953F105F06AD946 /* JSONValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB2B449898ED20B37EF87A61794FB86 /* JSONValue.swift */; };
+		8501576DB829D8DD20F273C85C14C320 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = C8E9B5DFF0AA8548EEFB164F9B7EFB41 /* PrivacyInfo.xcprivacy */; };
+		91D31207296466EC51EFB49332AAF034 /* PlayerTrack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D4D1A69CF56BB831A3BD3A2C088B56F /* PlayerTrack.swift */; };
+		9A6FAE7BD2C520BE284EECFC38939D23 /* PlayerScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D506A4768348798BFD8B2ED981285547 /* PlayerScreen.swift */; };
+		9AC89FF1CFA0340B9CF523B6BAE5B86F /* runtime.js in Resources */ = {isa = PBXBuildFile; fileRef = 782E2B7757477264A5D9C86D871A7D9E /* runtime.js */; };
+		9D75E45FDDD36959D50A497808527E41 /* PlaybackSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBA0878709D469CBDA8B45F851F8F3C3 /* PlaybackSession.swift */; };
+		A0130BA86D6A669942E554980CA03FB8 /* runtime.js.LEGAL.txt in Resources */ = {isa = PBXBuildFile; fileRef = FD73BBBDBF0F65F7631B26E1B9E5B6E3 /* runtime.js.LEGAL.txt */; };
+		A1FE3B1D1694C0EDE3A6374EB8345AE8 /* NativeStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A1A5DDFA9E1644685D5FC4A2296FD80 /* NativeStorage.swift */; };
+		A4F0AC07714E60E543E3EAD35110C17D /* runtime.js.LEGAL.txt in Resources */ = {isa = PBXBuildFile; fileRef = FD73BBBDBF0F65F7631B26E1B9E5B6E3 /* runtime.js.LEGAL.txt */; };
+		AB103568C63ABBF8EEEAD4B03C34A5B0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4EEBD7EFBEE41299E68BDA0DDE2716A2 /* Foundation.framework */; };
+		AC2FCA38D12A2A0C180C56294418CAB4 /* CinefernApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B91F29ABBC19B2F54EC14F71A33D8B5 /* CinefernApp.swift */; };
+		AD67036CA4507D47B5D70B6015A2C6DF /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3427E59D362BB285972591AE0866B017 /* AppModel.swift */; };
+		AED70FBCEDD26945A056FFDF0FD100F6 /* PlaybackSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBA0878709D469CBDA8B45F851F8F3C3 /* PlaybackSession.swift */; };
+		B428AD7CF56FF8CB1B572C01AB7E9350 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 89E5C4A516A2A40BCE16366499C1AC1E /* Assets.xcassets */; };
+		B941664C091CB10AE9F1597D8E10E6B8 /* JSONValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8DBABE548074486525896B62A1D9471 /* JSONValue.swift */; };
+		B96A749E0E8D875C50DFDAEA8D3B8F66 /* CinefernApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B91F29ABBC19B2F54EC14F71A33D8B5 /* CinefernApp.swift */; };
+		B9EE66919384B749FCA304E6C0054FFE /* PlayerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80EE3D846B3956EF460CAAE2726EAD03 /* PlayerUITests.swift */; };
+		C0BD3D26094C6830F17F808B83E4322A /* ManifestRewriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57835A0F9F9641B42C32CC5F846A00AE /* ManifestRewriter.swift */; };
+		C47AB09786F5518EB87C5973830F2F48 /* runtime.js.LEGAL.txt in Resources */ = {isa = PBXBuildFile; fileRef = FD73BBBDBF0F65F7631B26E1B9E5B6E3 /* runtime.js.LEGAL.txt */; };
+		C78C82BA48C14B4586DBD74A239E5EFB /* LibraryScreens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45D92EF9B8438FFD2E0C5E36C2416784 /* LibraryScreens.swift */; };
+		CBC0C628C1E2E93CB9A8FC4AF7CE0FB0 /* MediaRelay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37CBD07B587233E2313168F48182A875 /* MediaRelay.swift */; };
+		CE121D361BAF7008608B965041A36BED /* NativeDownloads.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74E38D75659B08956F678C155704A1A3 /* NativeDownloads.swift */; };
+		D4EF51134D71DA75423418048B8AFDAF /* SettingsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F5B09F4B1D277FC030216A8B3BF0D0 /* SettingsScreen.swift */; };
+		DC3FA8D85A481A440825E0D9CE17A233 /* PlayerTrack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D4D1A69CF56BB831A3BD3A2C088B56F /* PlayerTrack.swift */; };
+		DFAF9E88E8699278C7E53193BABADC0A /* ProviderScreens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56B2F860E05E1469C934A3A21B311774 /* ProviderScreens.swift */; };
+		E34E6853B5ACF3B9FB8F60C90F8A34F2 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A59E361192BD8BA714B577684BC687F5 /* Foundation.framework */; };
+		E6CF75EDD9F3A2D65295FF8651D1B576 /* Acknowledgements.txt in Resources */ = {isa = PBXBuildFile; fileRef = 84925EA7E23F6DB0B24D91759C6D2184 /* Acknowledgements.txt */; };
+		EA52D21F5C5986DEC59DF502A49B079B /* ProviderScreens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56B2F860E05E1469C934A3A21B311774 /* ProviderScreens.swift */; };
+		ECF00C13716F52B43D8FEB7442C52AB6 /* MediaRelay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37CBD07B587233E2313168F48182A875 /* MediaRelay.swift */; };
+		F7A34DAF34114C2C092A110820EA9833 /* CinefernApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B91F29ABBC19B2F54EC14F71A33D8B5 /* CinefernApp.swift */; };
+		F9AC4B23FE7969CE2E337524096396DB /* ProviderScreens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56B2F860E05E1469C934A3A21B311774 /* ProviderScreens.swift */; };
+		FAA9C01AD0955B26DEDCBAAA73376D93 /* NativeStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A1A5DDFA9E1644685D5FC4A2296FD80 /* NativeStorage.swift */; };
+		FD98B797D72758776612985C9177E723 /* JavaScriptHost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F0AFCAAE50F6DB6707DB5D2D49E7A4 /* JavaScriptHost.swift */; };
+		FF83CA5B2DF804FE8563A36F733CDECD /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3427E59D362BB285972591AE0866B017 /* AppModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		1BAB763F805AEFE4A3BF4CC038AB5E88 /* PBXContainerItemProxy */ = {
+		C023358BBF56EDC29E216CD86F5D64C1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 53F2D056BFC44EB63E20866DFAD5F5B0 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 1BF339F215CC5F47477A0851B268B046;
+			remoteGlobalIDString = 26A3CBCC91998407D54692C7033A36F0;
 			remoteInfo = "Cinefern-iOS";
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		0DDACA069F3E080D15415C107294E282 /* Cinefern-macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Cinefern-macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		0FFA5CD0BE51B24E3B0F875744D3FECA /* NativeDownloads.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = NativeDownloads.swift; path = Sources/Core/NativeDownloads.swift; sourceTree = "<group>"; };
-		4A30EF9DB31B5A66BDBC2A09C01FF64E /* AppModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AppModel.swift; path = Sources/App/AppModel.swift; sourceTree = "<group>"; };
+		3427E59D362BB285972591AE0866B017 /* AppModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AppModel.swift; path = Sources/App/AppModel.swift; sourceTree = "<group>"; };
+		37CBD07B587233E2313168F48182A875 /* MediaRelay.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MediaRelay.swift; path = Sources/Core/MediaRelay.swift; sourceTree = "<group>"; };
+		45D92EF9B8438FFD2E0C5E36C2416784 /* LibraryScreens.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = LibraryScreens.swift; path = Sources/App/LibraryScreens.swift; sourceTree = "<group>"; };
 		4EEBD7EFBEE41299E68BDA0DDE2716A2 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
-		5254CE202462252938C038AFBC0E672E /* JavaScriptHost.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = JavaScriptHost.swift; path = Sources/Core/JavaScriptHost.swift; sourceTree = "<group>"; };
-		5E3CCD60E0B060813D742FF43B5EC5F5 /* SettingsScreen.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SettingsScreen.swift; path = Sources/App/SettingsScreen.swift; sourceTree = "<group>"; };
-		6E5E9EB8F9257438040DFDA9BBBADBC5 /* NativeStorage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = NativeStorage.swift; path = Sources/Core/NativeStorage.swift; sourceTree = "<group>"; };
-		76CC91262EF4744C899F4AD3AC5CA3DF /* ProviderScreens.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ProviderScreens.swift; path = Sources/App/ProviderScreens.swift; sourceTree = "<group>"; };
-		7E62005435C4FB6A3BB9B19088E53B68 /* PlayerScreen.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PlayerScreen.swift; path = Sources/App/PlayerScreen.swift; sourceTree = "<group>"; };
+		56B2F860E05E1469C934A3A21B311774 /* ProviderScreens.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ProviderScreens.swift; path = Sources/App/ProviderScreens.swift; sourceTree = "<group>"; };
+		57835A0F9F9641B42C32CC5F846A00AE /* ManifestRewriter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ManifestRewriter.swift; path = Sources/Core/ManifestRewriter.swift; sourceTree = "<group>"; };
+		6A1A5DDFA9E1644685D5FC4A2296FD80 /* NativeStorage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = NativeStorage.swift; path = Sources/Core/NativeStorage.swift; sourceTree = "<group>"; };
+		74E38D75659B08956F678C155704A1A3 /* NativeDownloads.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = NativeDownloads.swift; path = Sources/Core/NativeDownloads.swift; sourceTree = "<group>"; };
+		782E2B7757477264A5D9C86D871A7D9E /* runtime.js */ = {isa = PBXFileReference; includeInIndex = 1; name = runtime.js; path = Sources/Core/Resources/runtime.js; sourceTree = "<group>"; };
+		7B91F29ABBC19B2F54EC14F71A33D8B5 /* CinefernApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CinefernApp.swift; path = Sources/App/CinefernApp.swift; sourceTree = "<group>"; };
+		80EE3D846B3956EF460CAAE2726EAD03 /* PlayerUITests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PlayerUITests.swift; path = Tests/UITests/PlayerUITests.swift; sourceTree = "<group>"; };
+		84925EA7E23F6DB0B24D91759C6D2184 /* Acknowledgements.txt */ = {isa = PBXFileReference; includeInIndex = 1; name = Acknowledgements.txt; path = Sources/Core/Resources/Acknowledgements.txt; sourceTree = "<group>"; };
+		84F0AFCAAE50F6DB6707DB5D2D49E7A4 /* JavaScriptHost.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = JavaScriptHost.swift; path = Sources/Core/JavaScriptHost.swift; sourceTree = "<group>"; };
+		89E5C4A516A2A40BCE16366499C1AC1E /* Assets.xcassets */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = Resources/Assets.xcassets; sourceTree = "<group>"; };
 		8D7EF79771AC4FCAC4887AD08EA40783 /* Cinefern-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Cinefern-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		94C4CAE062A55A4AF108C2B5D294CAAE /* Cinefern-UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Cinefern-UITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		9866FF358717F624844F06B9E9C0A599 /* runtime.js */ = {isa = PBXFileReference; includeInIndex = 1; name = runtime.js; path = Sources/Core/Resources/runtime.js; sourceTree = "<group>"; };
+		9D4D1A69CF56BB831A3BD3A2C088B56F /* PlayerTrack.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PlayerTrack.swift; path = Sources/Core/PlayerTrack.swift; sourceTree = "<group>"; };
 		A59E361192BD8BA714B577684BC687F5 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
-		AAAAB9D11B3169092B2A08C7B73992F6 /* CinefernApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CinefernApp.swift; path = Sources/App/CinefernApp.swift; sourceTree = "<group>"; };
-		AAB2B449898ED20B37EF87A61794FB86 /* JSONValue.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = JSONValue.swift; path = Sources/Core/JSONValue.swift; sourceTree = "<group>"; };
-		ACD745C77ADD56A76BDD0200733AB2E4 /* PlayerTrack.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PlayerTrack.swift; path = Sources/Core/PlayerTrack.swift; sourceTree = "<group>"; };
-		AD798F4713E0D82616FCA6E33D3BC440 /* PlayerUITests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PlayerUITests.swift; path = Tests/UITests/PlayerUITests.swift; sourceTree = "<group>"; };
-		AEB7B5E10D8C903E30BB6066DD2E7018 /* ManifestRewriter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ManifestRewriter.swift; path = Sources/Core/ManifestRewriter.swift; sourceTree = "<group>"; };
-		B3377DD7BB4FCBCA365CB1F4F640A82C /* NativeHTTP.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = NativeHTTP.swift; path = Sources/Core/NativeHTTP.swift; sourceTree = "<group>"; };
-		B637C817CCFF720F7A118846552CA933 /* runtime.js.LEGAL.txt */ = {isa = PBXFileReference; includeInIndex = 1; name = runtime.js.LEGAL.txt; path = Sources/Core/Resources/runtime.js.LEGAL.txt; sourceTree = "<group>"; };
-		CB6A19DE0351812FD5252778B88EB481 /* MediaRelay.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MediaRelay.swift; path = Sources/Core/MediaRelay.swift; sourceTree = "<group>"; };
+		C8DBABE548074486525896B62A1D9471 /* JSONValue.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = JSONValue.swift; path = Sources/Core/JSONValue.swift; sourceTree = "<group>"; };
+		C8E9B5DFF0AA8548EEFB164F9B7EFB41 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = Resources/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		CFA904C0F70F3F0ABFDDE3C5311B232E /* Cinefern-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Cinefern-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		E6D4D6CE1AB9006776A3CD3311FD4BDC /* LibraryScreens.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = LibraryScreens.swift; path = Sources/App/LibraryScreens.swift; sourceTree = "<group>"; };
+		D2F5B09F4B1D277FC030216A8B3BF0D0 /* SettingsScreen.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SettingsScreen.swift; path = Sources/App/SettingsScreen.swift; sourceTree = "<group>"; };
+		D506A4768348798BFD8B2ED981285547 /* PlayerScreen.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PlayerScreen.swift; path = Sources/App/PlayerScreen.swift; sourceTree = "<group>"; };
+		F24C8BB31EA7CB98583D7CCD5F0A0CDB /* NativeHTTP.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = NativeHTTP.swift; path = Sources/Core/NativeHTTP.swift; sourceTree = "<group>"; };
 		FB264EF4026736C07DA7BE6CC59A83DF /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
-		FE2B0A613893F8DBD69B6A1F36BD34C3 /* PlaybackSession.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PlaybackSession.swift; path = Sources/App/PlaybackSession.swift; sourceTree = "<group>"; };
+		FBA0878709D469CBDA8B45F851F8F3C3 /* PlaybackSession.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PlaybackSession.swift; path = Sources/App/PlaybackSession.swift; sourceTree = "<group>"; };
+		FD73BBBDBF0F65F7631B26E1B9E5B6E3 /* runtime.js.LEGAL.txt */ = {isa = PBXFileReference; includeInIndex = 1; name = runtime.js.LEGAL.txt; path = Sources/Core/Resources/runtime.js.LEGAL.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		094AD8259F915A726D419C1B3D774F32 /* Frameworks */ = {
+		60DA9B1092E9120BA60C790B6A266BDD /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BDA0AC4F7FA0D54056A5EC5DED4E8659 /* Foundation.framework in Frameworks */,
+				AB103568C63ABBF8EEEAD4B03C34A5B0 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		74EFF5767D7D968607D9894A5E29E660 /* Frameworks */ = {
+		A6B7E41DACF39D50F0625A8614A7C112 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5008E4BB0C0EF6C686A3439456218958 /* Foundation.framework in Frameworks */,
+				E34E6853B5ACF3B9FB8F60C90F8A34F2 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		7DAB53B0AEEAB252077D59130D285302 /* Frameworks */ = {
+		B778FF6CC3024E8C8DFA6FDC9CD33CE5 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				20B1EDEF19C33CE6BAFB5EAB9B5A34F7 /* Cocoa.framework in Frameworks */,
+				599E9FE3F85190C3AE612F69404C949B /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -139,6 +149,32 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		23F9EF03BEE28ED23BAAA02B9D2A945F /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				3427E59D362BB285972591AE0866B017 /* AppModel.swift */,
+				7B91F29ABBC19B2F54EC14F71A33D8B5 /* CinefernApp.swift */,
+				45D92EF9B8438FFD2E0C5E36C2416784 /* LibraryScreens.swift */,
+				FBA0878709D469CBDA8B45F851F8F3C3 /* PlaybackSession.swift */,
+				D506A4768348798BFD8B2ED981285547 /* PlayerScreen.swift */,
+				56B2F860E05E1469C934A3A21B311774 /* ProviderScreens.swift */,
+				D2F5B09F4B1D277FC030216A8B3BF0D0 /* SettingsScreen.swift */,
+				C8DBABE548074486525896B62A1D9471 /* JSONValue.swift */,
+				84F0AFCAAE50F6DB6707DB5D2D49E7A4 /* JavaScriptHost.swift */,
+				57835A0F9F9641B42C32CC5F846A00AE /* ManifestRewriter.swift */,
+				37CBD07B587233E2313168F48182A875 /* MediaRelay.swift */,
+				74E38D75659B08956F678C155704A1A3 /* NativeDownloads.swift */,
+				F24C8BB31EA7CB98583D7CCD5F0A0CDB /* NativeHTTP.swift */,
+				6A1A5DDFA9E1644685D5FC4A2296FD80 /* NativeStorage.swift */,
+				9D4D1A69CF56BB831A3BD3A2C088B56F /* PlayerTrack.swift */,
+				84925EA7E23F6DB0B24D91759C6D2184 /* Acknowledgements.txt */,
+				782E2B7757477264A5D9C86D871A7D9E /* runtime.js */,
+				FD73BBBDBF0F65F7631B26E1B9E5B6E3 /* runtime.js.LEGAL.txt */,
+				80EE3D846B3956EF460CAAE2726EAD03 /* PlayerUITests.swift */,
+			);
+			name = Sources;
+			sourceTree = "<group>";
+		};
 		2E5EC7CE1655AF74191066ACA85A6640 /* tvOS */ = {
 			isa = PBXGroup;
 			children = (
@@ -152,7 +188,9 @@
 			children = (
 				FD946D7DC2727296F7C42902BB6334C2 /* Products */,
 				B64605ABD1F154BEA9784A8FC3E2F57F /* Frameworks */,
-				BE9F9397CAD7DB576241215BCC4A914E /* Sources */,
+				23F9EF03BEE28ED23BAAA02B9D2A945F /* Sources */,
+				89E5C4A516A2A40BCE16366499C1AC1E /* Assets.xcassets */,
+				C8E9B5DFF0AA8548EEFB164F9B7EFB41 /* PrivacyInfo.xcprivacy */,
 			);
 			sourceTree = "<group>";
 		};
@@ -172,31 +210,6 @@
 				2E5EC7CE1655AF74191066ACA85A6640 /* tvOS */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		BE9F9397CAD7DB576241215BCC4A914E /* Sources */ = {
-			isa = PBXGroup;
-			children = (
-				4A30EF9DB31B5A66BDBC2A09C01FF64E /* AppModel.swift */,
-				AAAAB9D11B3169092B2A08C7B73992F6 /* CinefernApp.swift */,
-				E6D4D6CE1AB9006776A3CD3311FD4BDC /* LibraryScreens.swift */,
-				FE2B0A613893F8DBD69B6A1F36BD34C3 /* PlaybackSession.swift */,
-				7E62005435C4FB6A3BB9B19088E53B68 /* PlayerScreen.swift */,
-				76CC91262EF4744C899F4AD3AC5CA3DF /* ProviderScreens.swift */,
-				5E3CCD60E0B060813D742FF43B5EC5F5 /* SettingsScreen.swift */,
-				AAB2B449898ED20B37EF87A61794FB86 /* JSONValue.swift */,
-				5254CE202462252938C038AFBC0E672E /* JavaScriptHost.swift */,
-				AEB7B5E10D8C903E30BB6066DD2E7018 /* ManifestRewriter.swift */,
-				CB6A19DE0351812FD5252778B88EB481 /* MediaRelay.swift */,
-				0FFA5CD0BE51B24E3B0F875744D3FECA /* NativeDownloads.swift */,
-				B3377DD7BB4FCBCA365CB1F4F640A82C /* NativeHTTP.swift */,
-				6E5E9EB8F9257438040DFDA9BBBADBC5 /* NativeStorage.swift */,
-				ACD745C77ADD56A76BDD0200733AB2E4 /* PlayerTrack.swift */,
-				9866FF358717F624844F06B9E9C0A599 /* runtime.js */,
-				B637C817CCFF720F7A118846552CA933 /* runtime.js.LEGAL.txt */,
-				AD798F4713E0D82616FCA6E33D3BC440 /* PlayerUITests.swift */,
-			);
-			name = Sources;
 			sourceTree = "<group>";
 		};
 		D9A161F7D9FD5104F512BE9C1418A5A7 /* OS X */ = {
@@ -221,13 +234,13 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		1BF339F215CC5F47477A0851B268B046 /* Cinefern-iOS */ = {
+		26A3CBCC91998407D54692C7033A36F0 /* Cinefern-iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1AF5FF30897576225F377BB030F045DD /* Build configuration list for PBXNativeTarget "Cinefern-iOS" */;
+			buildConfigurationList = 055D1914EC40D3729D9C961DADB065C6 /* Build configuration list for PBXNativeTarget "Cinefern-iOS" */;
 			buildPhases = (
-				1676C9969E1DB68BBE93302E4D239C38 /* Sources */,
-				74EFF5767D7D968607D9894A5E29E660 /* Frameworks */,
-				9BA219D4EA659749F77C9F24B618717C /* Resources */,
+				2CE1A3009A3D1C0EA6176693633E74D1 /* Sources */,
+				A6B7E41DACF39D50F0625A8614A7C112 /* Frameworks */,
+				E770DC0596082738E393876F419E4F2B /* Resources */,
 			);
 			buildRules = (
 			);
@@ -238,30 +251,13 @@
 			productReference = 8D7EF79771AC4FCAC4887AD08EA40783 /* Cinefern-iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
-		3D087D1B3582B4555CBDFD82EE68DCCF /* Cinefern-macOS */ = {
+		63753D15E2F0787C16D3A62B216C7598 /* Cinefern-tvOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 461F3E820108FECFF23C5C7FE44CA1F3 /* Build configuration list for PBXNativeTarget "Cinefern-macOS" */;
+			buildConfigurationList = 596527225DF520B2FAB3630C5F99DF7F /* Build configuration list for PBXNativeTarget "Cinefern-tvOS" */;
 			buildPhases = (
-				BF769878E1A19939AD664464F284C5AF /* Sources */,
-				7DAB53B0AEEAB252077D59130D285302 /* Frameworks */,
-				E8C4F8CC41380FA461A9EBD7EDCA70C8 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "Cinefern-macOS";
-			productName = "Cinefern-macOS";
-			productReference = 0DDACA069F3E080D15415C107294E282 /* Cinefern-macOS.app */;
-			productType = "com.apple.product-type.application";
-		};
-		42E932C4E1AC284FD7BAA4DA8B73226C /* Cinefern-tvOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 3E82094E47FEB06DACB7302B848A25DB /* Build configuration list for PBXNativeTarget "Cinefern-tvOS" */;
-			buildPhases = (
-				4BEA738F04AE8C5BBCBE911AEE877284 /* Sources */,
-				094AD8259F915A726D419C1B3D774F32 /* Frameworks */,
-				04D2D87043A3F8D959D13C04F7687739 /* Resources */,
+				28DCCB52BC64E12DB2CBE956FCB2D5BE /* Sources */,
+				60DA9B1092E9120BA60C790B6A266BDD /* Frameworks */,
+				792AD83BBF3D0C72585ACEA8011D7C56 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -270,6 +266,23 @@
 			name = "Cinefern-tvOS";
 			productName = "Cinefern-tvOS";
 			productReference = CFA904C0F70F3F0ABFDDE3C5311B232E /* Cinefern-tvOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+		8E41B5B05D8B97A9D9E1F09B81079F39 /* Cinefern-macOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5E2BA07712B8C3EF5B58106A6D32BB06 /* Build configuration list for PBXNativeTarget "Cinefern-macOS" */;
+			buildPhases = (
+				F5E775C7783B349748ED8255F187CE09 /* Sources */,
+				B778FF6CC3024E8C8DFA6FDC9CD33CE5 /* Frameworks */,
+				B9B245C1D994F9BDB2D6BBB396C22B33 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Cinefern-macOS";
+			productName = "Cinefern-macOS";
+			productReference = 0DDACA069F3E080D15415C107294E282 /* Cinefern-macOS.app */;
 			productType = "com.apple.product-type.application";
 		};
 		EF7E87EA1C23931DA33DD08E498E9987 /* Cinefern-UITests */ = {
@@ -283,7 +296,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				E3332C9BCE2884BCCE70949E5F187C01 /* PBXTargetDependency */,
+				D9F90FDE2F27A3CF590979596AC42FAD /* PBXTargetDependency */,
 			);
 			name = "Cinefern-UITests";
 			productName = "Cinefern-UITests";
@@ -314,24 +327,15 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				1BF339F215CC5F47477A0851B268B046 /* Cinefern-iOS */,
+				26A3CBCC91998407D54692C7033A36F0 /* Cinefern-iOS */,
 				EF7E87EA1C23931DA33DD08E498E9987 /* Cinefern-UITests */,
-				3D087D1B3582B4555CBDFD82EE68DCCF /* Cinefern-macOS */,
-				42E932C4E1AC284FD7BAA4DA8B73226C /* Cinefern-tvOS */,
+				8E41B5B05D8B97A9D9E1F09B81079F39 /* Cinefern-macOS */,
+				63753D15E2F0787C16D3A62B216C7598 /* Cinefern-tvOS */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		04D2D87043A3F8D959D13C04F7687739 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B1E2864569958C1C7DA63DD1C96CC754 /* runtime.js in Resources */,
-				85FF3A19B45326FE4BF099B28D358758 /* runtime.js.LEGAL.txt in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		16DD3284460EA21EC2D7419B7C021147 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -339,68 +343,84 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		9BA219D4EA659749F77C9F24B618717C /* Resources */ = {
+		792AD83BBF3D0C72585ACEA8011D7C56 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CC6458110F71F0AA5EA656C0EB45DF0A /* runtime.js in Resources */,
-				E0578D314B3D773486140D4B86340E98 /* runtime.js.LEGAL.txt in Resources */,
+				14CA5B05B0CFAAA94761280FEFA88862 /* Acknowledgements.txt in Resources */,
+				9AC89FF1CFA0340B9CF523B6BAE5B86F /* runtime.js in Resources */,
+				A4F0AC07714E60E543E3EAD35110C17D /* runtime.js.LEGAL.txt in Resources */,
+				54DB231DFF25F88F22DBE8FC80658840 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		E8C4F8CC41380FA461A9EBD7EDCA70C8 /* Resources */ = {
+		B9B245C1D994F9BDB2D6BBB396C22B33 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				02147E255E300CC75365B087B43D5FB2 /* runtime.js in Resources */,
-				4CB82EF46DFBAC8006B11281AE7A5468 /* runtime.js.LEGAL.txt in Resources */,
+				5783A4C315F9CA2026B8F78BD6B7BC6F /* Acknowledgements.txt in Resources */,
+				21CDA9AF6D9C418B4E86153A2CBC4F13 /* runtime.js in Resources */,
+				C47AB09786F5518EB87C5973830F2F48 /* runtime.js.LEGAL.txt in Resources */,
+				43363E60DFF4D40ECD1BD729E231AB4B /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E770DC0596082738E393876F419E4F2B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E6CF75EDD9F3A2D65295FF8651D1B576 /* Acknowledgements.txt in Resources */,
+				6E316A76846A4B9CAC83E6BDD1A81167 /* runtime.js in Resources */,
+				A0130BA86D6A669942E554980CA03FB8 /* runtime.js.LEGAL.txt in Resources */,
+				8501576DB829D8DD20F273C85C14C320 /* PrivacyInfo.xcprivacy in Resources */,
+				B428AD7CF56FF8CB1B572C01AB7E9350 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		1676C9969E1DB68BBE93302E4D239C38 /* Sources */ = {
+		28DCCB52BC64E12DB2CBE956FCB2D5BE /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DDF32D054130C355450BD5FF60D44497 /* AppModel.swift in Sources */,
-				152EE626EACC72A860B3E1AE10DAF332 /* CinefernApp.swift in Sources */,
-				07C118C14F2F5A262C9EE842F8DD9728 /* LibraryScreens.swift in Sources */,
-				7C7C64C4ED4B9E55BB2411A30B47B050 /* PlaybackSession.swift in Sources */,
-				E6CC5FC51E374B53CC4864C1DE8C489E /* PlayerScreen.swift in Sources */,
-				C7828E585A9A83F9CCF853612D73E3CE /* ProviderScreens.swift in Sources */,
-				1F8ED1239AD76C2ED429DBC6C0FAAE5B /* SettingsScreen.swift in Sources */,
-				6D403704E33B4CB47D6DCAF5FEE26FFE /* JSONValue.swift in Sources */,
-				E4C99D71425381B4A070129803A37FA5 /* JavaScriptHost.swift in Sources */,
-				D6FDC693EA2E68F8EE1C567F34B4E763 /* ManifestRewriter.swift in Sources */,
-				A8A5BBC0E163CADA274E45643E953DBF /* MediaRelay.swift in Sources */,
-				84820F28C307082DFF294927610E397D /* NativeDownloads.swift in Sources */,
-				F190AB9C3377791C7562720296396F3D /* NativeHTTP.swift in Sources */,
-				01AFEC1AB861724CC3FFE92468E3C3B7 /* NativeStorage.swift in Sources */,
-				3E5C190BD9D3D5B94415F7562FD8CD4F /* PlayerTrack.swift in Sources */,
+				4CA9F0178CA7A4B64A5B7DE22697D312 /* AppModel.swift in Sources */,
+				F7A34DAF34114C2C092A110820EA9833 /* CinefernApp.swift in Sources */,
+				0C5F10FCA05C79C3C2A86551874AD515 /* LibraryScreens.swift in Sources */,
+				66813E2CA521E0A713F5CB1C75082C4F /* PlaybackSession.swift in Sources */,
+				507C68A37E28EA0AA0F5C4346FA6A16A /* PlayerScreen.swift in Sources */,
+				EA52D21F5C5986DEC59DF502A49B079B /* ProviderScreens.swift in Sources */,
+				4D62038418E85AFC858BBFF50D96D83E /* SettingsScreen.swift in Sources */,
+				0D0129F42ECD77BABD79839644703EE7 /* JSONValue.swift in Sources */,
+				FD98B797D72758776612985C9177E723 /* JavaScriptHost.swift in Sources */,
+				3F23A70E24D6BB88FD7EC21B8B668A72 /* ManifestRewriter.swift in Sources */,
+				ECF00C13716F52B43D8FEB7442C52AB6 /* MediaRelay.swift in Sources */,
+				229CA46CB4D21437FFA04461AFC07559 /* NativeDownloads.swift in Sources */,
+				013C25656CD049E0CAF6386331CC75C3 /* NativeHTTP.swift in Sources */,
+				FAA9C01AD0955B26DEDCBAAA73376D93 /* NativeStorage.swift in Sources */,
+				DC3FA8D85A481A440825E0D9CE17A233 /* PlayerTrack.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		4BEA738F04AE8C5BBCBE911AEE877284 /* Sources */ = {
+		2CE1A3009A3D1C0EA6176693633E74D1 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C2C81FA083A27C2A0D58F05E5F073987 /* AppModel.swift in Sources */,
-				6969A1E25A8AF82B2E2547EF710D88AD /* CinefernApp.swift in Sources */,
-				9812F8B0B47BE4DB5CD3922C84BF2BDF /* LibraryScreens.swift in Sources */,
-				E96734D053AE0CDB1D7B8E69EF329AF9 /* PlaybackSession.swift in Sources */,
-				4DD293FA7FD97F63AD8A757B2B492CF2 /* PlayerScreen.swift in Sources */,
-				66DB7518921FEC0275CE980623A0536A /* ProviderScreens.swift in Sources */,
-				743924B9830C96F58C9B02E6BE65E8D3 /* SettingsScreen.swift in Sources */,
-				FE56384898B545123953F105F06AD946 /* JSONValue.swift in Sources */,
-				434020A34325949895E6653B5E6FF680 /* JavaScriptHost.swift in Sources */,
-				D5A7D833FD943DC848B4EDD4F5B11D6D /* ManifestRewriter.swift in Sources */,
-				5491A2DEBF3B86F235D201A6DE250FC4 /* MediaRelay.swift in Sources */,
-				51AB3D3B06D2C7FFB905C6F38B3C52C8 /* NativeDownloads.swift in Sources */,
-				0E49B31460A4D240BDE276D427A8126D /* NativeHTTP.swift in Sources */,
-				131C0BD2BA78B61348204855BB9843C1 /* NativeStorage.swift in Sources */,
-				FACD44B9F109790EEE1672DBC5E1AC39 /* PlayerTrack.swift in Sources */,
+				FF83CA5B2DF804FE8563A36F733CDECD /* AppModel.swift in Sources */,
+				B96A749E0E8D875C50DFDAEA8D3B8F66 /* CinefernApp.swift in Sources */,
+				C78C82BA48C14B4586DBD74A239E5EFB /* LibraryScreens.swift in Sources */,
+				AED70FBCEDD26945A056FFDF0FD100F6 /* PlaybackSession.swift in Sources */,
+				5D90C5F0985B7873EA972D727F423D54 /* PlayerScreen.swift in Sources */,
+				F9AC4B23FE7969CE2E337524096396DB /* ProviderScreens.swift in Sources */,
+				49C84AE7FAB78D93D69F8A9A82C90530 /* SettingsScreen.swift in Sources */,
+				B941664C091CB10AE9F1597D8E10E6B8 /* JSONValue.swift in Sources */,
+				267E9E97F1A84630EC4AE9186BA3B591 /* JavaScriptHost.swift in Sources */,
+				5BECA45A59DE85E44A46D94666E6CC04 /* ManifestRewriter.swift in Sources */,
+				CBC0C628C1E2E93CB9A8FC4AF7CE0FB0 /* MediaRelay.swift in Sources */,
+				05C4BF633E54019DFA806A17DE81F48A /* NativeDownloads.swift in Sources */,
+				56FBB4A523B5AB39DF421BA4EF855B84 /* NativeHTTP.swift in Sources */,
+				A1FE3B1D1694C0EDE3A6374EB8345AE8 /* NativeStorage.swift in Sources */,
+				91D31207296466EC51EFB49332AAF034 /* PlayerTrack.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -412,41 +432,135 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		BF769878E1A19939AD664464F284C5AF /* Sources */ = {
+		F5E775C7783B349748ED8255F187CE09 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6D8AA930982533F3186243CF5D3E756B /* AppModel.swift in Sources */,
-				7AD1DB7F709B8C9432A8C20777B58B0B /* CinefernApp.swift in Sources */,
-				B592C8C53F133EC975AEBB0BB1BAB23A /* LibraryScreens.swift in Sources */,
-				14BA9A6E214463A814D4DB8D253AF180 /* PlaybackSession.swift in Sources */,
-				DACD9D17B0FE7E1C3AAD634FDE5530A4 /* PlayerScreen.swift in Sources */,
-				D16C50B31CA8B2B846B50EBA9193040A /* ProviderScreens.swift in Sources */,
-				6E14B29E1B0CD57604B915BEBBACBC57 /* SettingsScreen.swift in Sources */,
-				D00829BEC1F4AF106FDCD6F09E0E7D3D /* JSONValue.swift in Sources */,
-				0F711797F934A54461E04FF249AC90E3 /* JavaScriptHost.swift in Sources */,
-				F8C40B0647B179D8E662B39C12C86DCF /* ManifestRewriter.swift in Sources */,
-				C7045FF900B32B8A4D7C083D672EE102 /* MediaRelay.swift in Sources */,
-				D8A190DFA1FB87E55EF40B00CFBA666D /* NativeDownloads.swift in Sources */,
-				2F38E5A4C3013084116A92379F9B623A /* NativeHTTP.swift in Sources */,
-				00AAFE1E4E9187AF4E3AF2E2C5C7CAC0 /* NativeStorage.swift in Sources */,
-				3C131F2450AD23790310A1A8771BE24C /* PlayerTrack.swift in Sources */,
+				AD67036CA4507D47B5D70B6015A2C6DF /* AppModel.swift in Sources */,
+				AC2FCA38D12A2A0C180C56294418CAB4 /* CinefernApp.swift in Sources */,
+				1EC8D847968FDD7A64F11DFE58B4AC04 /* LibraryScreens.swift in Sources */,
+				9D75E45FDDD36959D50A497808527E41 /* PlaybackSession.swift in Sources */,
+				9A6FAE7BD2C520BE284EECFC38939D23 /* PlayerScreen.swift in Sources */,
+				DFAF9E88E8699278C7E53193BABADC0A /* ProviderScreens.swift in Sources */,
+				D4EF51134D71DA75423418048B8AFDAF /* SettingsScreen.swift in Sources */,
+				615E6E9BC908F63EAE952CC9CB719F5C /* JSONValue.swift in Sources */,
+				24C318AA10A787BF87B009D0795E5F5E /* JavaScriptHost.swift in Sources */,
+				C0BD3D26094C6830F17F808B83E4322A /* ManifestRewriter.swift in Sources */,
+				3BCE9D0E0E7EFDD1B7BD9089948D5EA7 /* MediaRelay.swift in Sources */,
+				CE121D361BAF7008608B965041A36BED /* NativeDownloads.swift in Sources */,
+				137D45BBCBED3FED9BBF6F31E95887AB /* NativeHTTP.swift in Sources */,
+				58765BED214D252A435E40BD3560F207 /* NativeStorage.swift in Sources */,
+				0542A590F43B200A562A67FE68B9814A /* PlayerTrack.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		E3332C9BCE2884BCCE70949E5F187C01 /* PBXTargetDependency */ = {
+		D9F90FDE2F27A3CF590979596AC42FAD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "Cinefern-iOS";
-			target = 1BF339F215CC5F47477A0851B268B046 /* Cinefern-iOS */;
-			targetProxy = 1BAB763F805AEFE4A3BF4CC038AB5E88 /* PBXContainerItemProxy */;
+			target = 26A3CBCC91998407D54692C7033A36F0 /* Cinefern-iOS */;
+			targetProxy = C023358BBF56EDC29E216CD86F5D64C1 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		06E376BC5DC4000D2FD29F4D222D9B2F /* Release */ = {
+		03E174DCC28369FD41CFFC4ECDDBCAFD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = macOS.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.cinefern.native.osx;
+				PRODUCT_NAME = Cinefern;
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		2947AC8E2DEC31DF334A60C25C94D788 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.cinefern.native.uitests;
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Cinefern-iOS";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		5E284DDEC3DC25446E8F2E7342AB6711 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.cinefern.native.tvos;
+				PRODUCT_NAME = Cinefern;
+				SDKROOT = appletvos;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 17.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		90A73817CACC564CA977FD071DBDA244 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.cinefern.native.tvos;
+				PRODUCT_NAME = Cinefern;
+				SDKROOT = appletvos;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 17.0;
+			};
+			name = Debug;
+		};
+		9312AD02F70360A9D7CF5B335F376D42 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -475,49 +589,6 @@
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
-		};
-		2947AC8E2DEC31DF334A60C25C94D788 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				CODE_SIGN_STYLE = Automatic;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.cinefern.native.uitests;
-				SDKROOT = iphoneos;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = "Cinefern-iOS";
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
-		91BDEE28AAEEA9A57C624F92141A8CB0 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = macOS.entitlements;
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
-				ENABLE_HARDENED_RUNTIME = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 0.1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.cinefern.native.osx;
-				PRODUCT_NAME = Cinefern;
-				SDKROOT = macosx;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Debug;
 		};
 		934FC9A5DD24507C886D8FC212AF4C09 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -580,83 +651,29 @@
 			};
 			name = Debug;
 		};
-		942E26221D8A812DC01013BD8C642A09 /* Debug */ = {
+		B67C3C4D4014BD99B0AA026ADD772E01 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = macOS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Info.plist;
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 0.1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.cinefern.native.ios;
+				PRODUCT_BUNDLE_IDENTIFIER = org.cinefern.native.osx;
 				PRODUCT_NAME = Cinefern;
-				SDKROOT = iphoneos;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
+				SDKROOT = macosx;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		9CF45F72B5FE0D7EA7491E0228E4E065 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 0.1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.cinefern.native.tvos;
-				PRODUCT_NAME = Cinefern;
-				SDKROOT = appletvos;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator";
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 17.0;
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
-		D62743BED59EB126086F8B8309853A30 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 0.1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.cinefern.native.tvos;
-				PRODUCT_NAME = Cinefern;
-				SDKROOT = appletvos;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator";
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 17.0;
 			};
 			name = Debug;
 		};
@@ -714,31 +731,34 @@
 			};
 			name = Release;
 		};
-		F3D045F821D66FB79A03F2414CA5CD66 /* Release */ = {
+		E85F16D4C648F4A46E3ED7928F55885F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = macOS.entitlements;
+				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 0.1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.cinefern.native.osx;
+				PRODUCT_BUNDLE_IDENTIFIER = org.cinefern.native.ios;
 				PRODUCT_NAME = Cinefern;
-				SDKROOT = macosx;
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = Release;
+			name = Debug;
 		};
 		FDE8E335198B60A825973775331E8109 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -759,29 +779,29 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1AF5FF30897576225F377BB030F045DD /* Build configuration list for PBXNativeTarget "Cinefern-iOS" */ = {
+		055D1914EC40D3729D9C961DADB065C6 /* Build configuration list for PBXNativeTarget "Cinefern-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				06E376BC5DC4000D2FD29F4D222D9B2F /* Release */,
-				942E26221D8A812DC01013BD8C642A09 /* Debug */,
+				9312AD02F70360A9D7CF5B335F376D42 /* Release */,
+				E85F16D4C648F4A46E3ED7928F55885F /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3E82094E47FEB06DACB7302B848A25DB /* Build configuration list for PBXNativeTarget "Cinefern-tvOS" */ = {
+		596527225DF520B2FAB3630C5F99DF7F /* Build configuration list for PBXNativeTarget "Cinefern-tvOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				9CF45F72B5FE0D7EA7491E0228E4E065 /* Release */,
-				D62743BED59EB126086F8B8309853A30 /* Debug */,
+				5E284DDEC3DC25446E8F2E7342AB6711 /* Release */,
+				90A73817CACC564CA977FD071DBDA244 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		461F3E820108FECFF23C5C7FE44CA1F3 /* Build configuration list for PBXNativeTarget "Cinefern-macOS" */ = {
+		5E2BA07712B8C3EF5B58106A6D32BB06 /* Build configuration list for PBXNativeTarget "Cinefern-macOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				F3D045F821D66FB79A03F2414CA5CD66 /* Release */,
-				91BDEE28AAEEA9A57C624F92141A8CB0 /* Debug */,
+				03E174DCC28369FD41CFFC4ECDDBCAFD /* Release */,
+				B67C3C4D4014BD99B0AA026ADD772E01 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
