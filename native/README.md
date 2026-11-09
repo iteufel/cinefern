@@ -53,6 +53,11 @@ VLC `.xcodeproj` without its workspace. The Settings player picker exposes VLC
 only when the appropriate platform module is linked. It reports an unavailable
 saved VLC selection rather than silently changing engines.
 
+Generated VLC application targets disable Xcode user-script sandboxing for
+CocoaPods' framework embedding/signing script, whose input/output declarations
+omit nested framework contents. AVKit targets keep it enabled. This setting does
+not change the application's entitlements or signing requirements.
+
 Rebuild runtime resources after editing shared TypeScript or its dependencies:
 
 ```sh

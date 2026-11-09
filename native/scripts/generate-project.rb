@@ -1,6 +1,7 @@
 require 'xcodeproj'
 root=File.expand_path('..',__dir__)
-project_name=ARGV.include?('--vlc') ? 'CinefernVLC.xcodeproj' : 'Cinefern.xcodeproj'
+vlc=ARGV.include?('--vlc')
+project_name=vlc ? 'CinefernVLC.xcodeproj' : 'Cinefern.xcodeproj'
 project=Xcodeproj::Project.new(File.join(root,project_name))
 project.root_object.attributes['LastUpgradeCheck']='2710'
 group=project.main_group.new_group('Sources')
@@ -16,7 +17,9 @@ resources=Dir[File.join(root,'Sources/Core/Resources/*')].sort.map { |path| grou
       'PRODUCT_NAME'=>'Cinefern', 'SWIFT_VERSION'=>'5.0',
       'GENERATE_INFOPLIST_FILE'=>'YES', 'INFOPLIST_FILE'=>'Info.plist',
       'MARKETING_VERSION'=>'0.1.0', 'CURRENT_PROJECT_VERSION'=>'1',
-      'CODE_SIGN_STYLE'=>'Automatic', 'ENABLE_USER_SCRIPT_SANDBOXING'=>'YES',
+      'CODE_SIGN_STYLE'=>'Automatic',
+      # CocoaPods' embed phase copies/signs framework contents not declared in its file lists.
+      'ENABLE_USER_SCRIPT_SANDBOXING'=>vlc ? 'NO' : 'YES',
       'SDKROOT'=>sdk,
       'SWIFT_EMIT_LOC_STRINGS'=>'YES', 'CLANG_ENABLE_MODULES'=>'YES',
       'ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS'=>'YES',

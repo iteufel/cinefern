@@ -59,27 +59,51 @@ runtime iOS 27.2.iPhone19.4. No physical device or store upload was used.
 
 - **PASS:** native TypeScript check, 17 Swift Core tests, root TypeScript check
   and 64 existing JavaScript tests.
-- **PASS:** AVKit iOS, macOS and tvOS builds; Xcode-signed AVKit and VLC iOS
-  simulator builds. The local VLC build required the invocation-only
-  `ENABLE_USER_SCRIPT_SANDBOXING=NO` override after CocoaPods' framework copy
-  failed on `_CodeSignature` file access. Project sandbox settings are unchanged.
+- **PASS:** AVKit and VLC iOS, macOS and tvOS builds; Xcode-signed AVKit and
+  VLC iOS simulator builds. Native CI also reproduced CocoaPods' framework-copy
+  sandbox failure. The generator now disables user-script sandboxing only for
+  VLC application targets because the embed script's file declarations omit
+  copied/signed framework contents. AVKit retains script sandboxing; application
+  entitlements and signing are unchanged. The standard VLC build command passes
+  without a command-line override.
 - **PASS:** `testAVKitPausedPlaybackSurvivesRotationAndSourceChange` on Duo's
-  outer display. It plays authenticated synthetic HLS, pauses, advances exactly
+  outer display and, after fixing sheet queries, the divided inner display. It
+  plays authenticated synthetic HLS, pauses, advances exactly
   15 seconds, rotates, switches to authenticated MP4 while retaining the paused
   position, resumes, and closes. The new seek assertion failed before the
   `.borderless` row fix and passed afterward. An intermediate run also hit
   XCTest's invalid offscreen activation-point error; the test now scrolls back
-  before querying the paused control.
+  before querying the paused control. On the inner display, the first match
+  originally selected an inline control behind the options sheet and produced
+  the invalid hit point `{-1, -1}`. Both playback tests now scope queries and
+  scrolling to the identified options Form; the previously failing inner run passes.
+- **PASS:** VLC inner-display UI test discovers two MKV audio tracks, selects
+  audio and embedded subtitles, turns subtitles off, and retains its paused
+  clock/state across orientation requests. This uses the actual VLC decoder,
+  native storage and authenticated fixture. Both UI tests also pass together
+  in the VLC workspace (2 tests, 0 failures); VLC passed once alone and again
+  in that suite. This supersedes the earlier repeatability limit for this
+  inner-display fixture, not for untested poses or physical hardware.
 - **PASS, manual:** updated VLC playback on the outer display at default and
   maximum accessibility text sizes. All four transport controls remain visible;
   the icon-only Pause action changes to Play when activated. Rotation retains
   the active player.
+- **PASS, manual, updated AVKit:** an outer-to-inner display transition with
+  the options sheet already open retains that sheet and continuing HLS playback
+  (96 seconds before the request, 116 afterward). Dismissing the sheet shows
+  video beside inline controls; Pause works and holds at 156 seconds. The task
+  output `duo-avkit-inner-paused.png` records this layout.
+- **LIMIT:** the device command still reports “the first hinge-angle read returned
+  no sample.” Its advised screenshot/snapshot fallback confirms the active inner
+  display and divided layout, but cannot establish a numeric hinge angle. Subsequent
+  portrait/landscape requests retained the paused state without a visibly different
+  layout. **Tabletop, fully-open/closed sequences and a complete post-change
+  fold/pose matrix remain unaccepted.**
 - **Baseline observed:** provider setup, authenticated HLS on outer/inner
   displays, side-by-side controls in the divided layout, and paused position
   retained at 136 seconds through rotation and return to the outer display.
-  The device tool dispatched fold changes but could not read a hinge-angle
-  sample. Screenshots confirmed the display/layout changes; **numeric hinge
-  verification and a complete post-change fold/pose matrix remain unaccepted**.
+  These earlier observations precede the persistent arrangement change; the
+  updated-app evidence and limits are listed above.
 
 To repeat the AVKit regression, first run the fixture server and install/enable
 its bundle as described in [the handoff](native-test-handoff.md), then use:
@@ -91,8 +115,8 @@ xcodebuild -project native/Cinefern.xcodeproj -scheme Cinefern-iOS \
   -only-testing:Cinefern-UITests/PlayerUITests/testAVKitPausedPlaybackSurvivesRotationAndSourceChange test
 ```
 
-This does not supersede the remaining physical-device, Tent, PiP/AirPlay,
-third-party-service, or repeated VLC acceptance gates below.
+Physical-device, Tent, PiP/AirPlay, third-party-service and other pose acceptance
+remain outstanding. The earlier evidence below is historical.
 
 ## Earlier simulator evidence — 24 October 2026
 

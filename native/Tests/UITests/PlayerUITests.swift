@@ -21,18 +21,21 @@ final class PlayerUITests: XCTestCase {
     XCTAssertTrue(options.waitForExistence(timeout: 15))
     options.tap()
 
-    let toggle = app.buttons["player.toggle"].firstMatch
+    // The divided layout also has inline controls behind this sheet.
+    let controls = app.collectionViews["player.options.controls"]
+    XCTAssertTrue(controls.waitForExistence(timeout: 5))
+    let toggle = controls.buttons["player.toggle"].firstMatch
     let playing = expectation(for: NSPredicate(format: "value == 'playing'"), evaluatedWith: toggle)
     wait(for: [playing], timeout: 15)
-    app.sliders["Position"].firstMatch.adjust(toNormalizedSliderPosition: 0.1)
+    controls.sliders["Position"].firstMatch.adjust(toNormalizedSliderPosition: 0.1)
     toggle.tap()
     let paused = expectation(for: NSPredicate(format: "value == 'paused'"), evaluatedWith: toggle)
     wait(for: [paused], timeout: 5)
-    let position = app.staticTexts["player.position"].firstMatch
+    let position = controls.staticTexts["player.position"].firstMatch
     func seconds() -> Int { Int(position.label.split(separator: " ").first ?? "") ?? -100 }
     let before = seconds()
     XCTAssertGreaterThanOrEqual(before, 0)
-    app.buttons["+15 s"].firstMatch.tap()
+    controls.buttons["+15 s"].firstMatch.tap()
     let sought = expectation(
       for: NSPredicate { _, _ in abs(seconds() - before - 15) <= 1 }, evaluatedWith: position)
     wait(for: [sought], timeout: 5)
@@ -43,8 +46,8 @@ final class PlayerUITests: XCTestCase {
     XCTAssertEqual(toggle.value as? String, "paused")
     XCTAssertLessThanOrEqual(abs(seconds() - soughtPosition), 1)
 
-    let source = app.buttons["Authenticated MP4"].firstMatch
-    for _ in 0..<5 where !source.isHittable { app.swipeUp() }
+    let source = controls.buttons["Authenticated MP4"].firstMatch
+    for _ in 0..<5 where !source.isHittable { controls.swipeUp() }
     XCTAssertTrue(source.isHittable)
     source.tap()
     let selected = expectation(
@@ -52,7 +55,7 @@ final class PlayerUITests: XCTestCase {
     wait(for: [selected], timeout: 10)
     // On Duo, XCTest can throw (rather than return false) when querying an
     // offscreen Form button's activation point. Scroll back before querying it.
-    for _ in 0..<4 { app.swipeDown() }
+    for _ in 0..<4 { controls.swipeDown() }
     XCTAssertEqual(toggle.value as? String, "paused")
     XCTAssertLessThanOrEqual(abs(seconds() - soughtPosition), 1)
     toggle.tap()
@@ -79,34 +82,37 @@ final class PlayerUITests: XCTestCase {
     let options = app.buttons["player.options"]
     XCTAssertTrue(options.waitForExistence(timeout: 15))
     options.tap()
-    app.sliders["Position"].firstMatch.adjust(toNormalizedSliderPosition: 0.1)
-    let source = app.buttons["VLC: two audio tracks + subtitles"]
-    for _ in 0..<5 where !source.isHittable { app.swipeUp() }
+    // The divided layout also has inline controls behind this sheet.
+    let controls = app.collectionViews["player.options.controls"]
+    XCTAssertTrue(controls.waitForExistence(timeout: 5))
+    controls.sliders["Position"].firstMatch.adjust(toNormalizedSliderPosition: 0.1)
+    let source = controls.buttons["VLC: two audio tracks + subtitles"]
+    for _ in 0..<5 where !source.isHittable { controls.swipeUp() }
     XCTAssertTrue(source.isHittable)
     source.tap()
-    let german = app.buttons.matching(
+    let german = controls.buttons.matching(
       NSPredicate(format: "identifier BEGINSWITH 'player.audio.' AND label CONTAINS[c] 'German'")
     ).firstMatch
-    let deutsch = app.buttons.matching(
+    let deutsch = controls.buttons.matching(
       NSPredicate(format: "identifier BEGINSWITH 'player.audio.' AND label CONTAINS[c] 'Deutsch'")
     ).firstMatch
-    let audio = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'player.audio.'"))
-    for _ in 0..<8 where !audio.firstMatch.exists { app.swipeUp() }
+    let audio = controls.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'player.audio.'"))
+    for _ in 0..<8 where !audio.firstMatch.exists { controls.swipeUp() }
     XCTAssertTrue(audio.firstMatch.waitForExistence(timeout: 15), "VLC tracks were not discovered.")
     XCTAssertEqual(audio.count, 2)
     let second = german.exists ? german : (deutsch.exists ? deutsch : audio.element(boundBy: 1))
-    for _ in 0..<5 where !second.isHittable { app.swipeUp() }
+    for _ in 0..<5 where !second.isHittable { controls.swipeUp() }
     XCTAssertTrue(second.isHittable)
     second.tap()
     Thread.sleep(forTimeInterval: 0.7)
     XCTAssertTrue(NSPredicate(format: "value == 'selected'").evaluate(with: second))
-    let subtitle = app.buttons.matching(
+    let subtitle = controls.buttons.matching(
       NSPredicate(
         format: "identifier BEGINSWITH 'player.subtitle.' AND identifier != 'player.subtitle.off'")
     ).firstMatch
-    for _ in 0..<6 where !subtitle.exists { app.swipeUp() }
+    for _ in 0..<6 where !subtitle.exists { controls.swipeUp() }
     XCTAssertTrue(subtitle.waitForExistence(timeout: 10))
-    for _ in 0..<4 where !subtitle.isHittable { app.swipeUp() }
+    for _ in 0..<4 where !subtitle.isHittable { controls.swipeUp() }
     subtitle.tap()
     Thread.sleep(forTimeInterval: 0.7)
     XCTAssertTrue(NSPredicate(format: "value == 'selected'").evaluate(with: subtitle))
@@ -114,11 +120,12 @@ final class PlayerUITests: XCTestCase {
     attachment.name = "VLC audio and subtitle selection"
     attachment.lifetime = .keepAlways
     add(attachment)
-    let off = app.buttons["player.subtitle.off"]
+    let off = controls.buttons["player.subtitle.off"]
     off.tap()
     XCTAssertEqual(off.value as? String, "selected")
-    let pause = app.buttons["player.toggle"]
-    for _ in 0..<8 where !pause.isHittable { app.swipeDown() }
+    let pause = controls.buttons["player.toggle"]
+    // Scroll before asking XCTest for the offscreen button's activation point.
+    for _ in 0..<8 { controls.swipeDown() }
     let playing = expectation(for: NSPredicate(format: "value == 'playing'"), evaluatedWith: pause)
     wait(for: [playing], timeout: 15)
     XCTAssertEqual(pause.label, "Pause")
@@ -126,7 +133,7 @@ final class PlayerUITests: XCTestCase {
     let paused = expectation(for: NSPredicate(format: "value == 'paused'"), evaluatedWith: pause)
     wait(for: [paused], timeout: 5)
     Thread.sleep(forTimeInterval: 0.7)
-    let position = app.staticTexts["player.position"]
+    let position = controls.staticTexts["player.position"]
     let seconds = { (text: String) in Int(text.split(separator: " ").first ?? "") ?? -100 }
     let before = position.label
     XCUIDevice.shared.orientation = .portrait

@@ -59,11 +59,13 @@ struct PlayerScreen: View {
         }
         .sheet(isPresented: $menu) {
           NavigationStack {
-            controls.navigationTitle(model.text("Playback options", "Wiedergabeoptionen")).toolbar {
-              ToolbarItem(placement: .confirmationAction) {
-                Button(model.text("Done", "Fertig")) { menu = false }
+            controls.accessibilityIdentifier("player.options.controls")
+              .navigationTitle(model.text("Playback options", "Wiedergabeoptionen"))
+              .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                  Button(model.text("Done", "Fertig")) { menu = false }
+                }
               }
-            }
           }
         }
         .onDisappear { session.stop() }
