@@ -1,8 +1,67 @@
 import XCTest
 
 /// Requires the local synthetic-media server and its installed/enabled fixture provider.
-/// Uses the real signed app, native Keychain store, media relay and VLC decoder.
+/// Uses the real signed app, native Keychain store, media relay and AVKit/VLC decoders.
 final class PlayerUITests: XCTestCase {
+  /// Run on the Duo in either outer or divided-inner presentation. The fixture
+  /// must already be installed and enabled; no credentials or launch backdoor.
+  @MainActor func testAVKitPausedPlaybackSurvivesRotationAndSourceChange() throws {
+    continueAfterFailure = false
+    let app = XCUIApplication(bundleIdentifier: "org.cinefern.native.ios")
+    app.launchArguments = ["-cinefern.native.player", "avkit"]
+    app.launch()
+    let explore = app.buttons["Explore"]
+    XCTAssertTrue(explore.waitForExistence(timeout: 15), "Install/enable the local media fixture.")
+    explore.tap()
+    let play = app.buttons["Play"]
+    for _ in 0..<4 where !play.isHittable { app.swipeUp() }
+    XCTAssertTrue(play.isHittable)
+    play.tap()
+    let options = app.buttons["player.options"]
+    XCTAssertTrue(options.waitForExistence(timeout: 15))
+    options.tap()
+
+    let toggle = app.buttons["player.toggle"].firstMatch
+    let playing = expectation(for: NSPredicate(format: "value == 'playing'"), evaluatedWith: toggle)
+    wait(for: [playing], timeout: 15)
+    app.sliders["Position"].firstMatch.adjust(toNormalizedSliderPosition: 0.1)
+    toggle.tap()
+    let paused = expectation(for: NSPredicate(format: "value == 'paused'"), evaluatedWith: toggle)
+    wait(for: [paused], timeout: 5)
+    let position = app.staticTexts["player.position"].firstMatch
+    func seconds() -> Int { Int(position.label.split(separator: " ").first ?? "") ?? -100 }
+    let before = seconds()
+    XCTAssertGreaterThanOrEqual(before, 0)
+    app.buttons["+15 s"].firstMatch.tap()
+    let sought = expectation(
+      for: NSPredicate { _, _ in abs(seconds() - before - 15) <= 1 }, evaluatedWith: position)
+    wait(for: [sought], timeout: 5)
+    let soughtPosition = seconds()
+
+    XCUIDevice.shared.orientation = .landscapeRight
+    XCUIDevice.shared.orientation = .portrait
+    XCTAssertEqual(toggle.value as? String, "paused")
+    XCTAssertLessThanOrEqual(abs(seconds() - soughtPosition), 1)
+
+    let source = app.buttons["Authenticated MP4"].firstMatch
+    for _ in 0..<5 where !source.isHittable { app.swipeUp() }
+    XCTAssertTrue(source.isHittable)
+    source.tap()
+    let selected = expectation(
+      for: NSPredicate(format: "value == 'selected'"), evaluatedWith: source)
+    wait(for: [selected], timeout: 10)
+    // On Duo, XCTest can throw (rather than return false) when querying an
+    // offscreen Form button's activation point. Scroll back before querying it.
+    for _ in 0..<4 { app.swipeDown() }
+    XCTAssertEqual(toggle.value as? String, "paused")
+    XCTAssertLessThanOrEqual(abs(seconds() - soughtPosition), 1)
+    toggle.tap()
+    let resumed = expectation(for: NSPredicate(format: "value == 'playing'"), evaluatedWith: toggle)
+    wait(for: [resumed], timeout: 10)
+    app.buttons["Done"].tap()
+    app.buttons["Close"].firstMatch.tap()
+  }
+
   @MainActor func testVLCTracksAndPausedRotation() throws {
     continueAfterFailure = false
     let app = XCUIApplication(bundleIdentifier: "org.cinefern.native.ios")

@@ -20,15 +20,16 @@ struct PlayerScreen: View {
         #if os(iOS)
           if #available(iOS 27.1, *) {
             GeometryReader { proxy in
-              if !proxy.reservedRegions(kind: .division).isEmpty {
-                ArrangementView {
-                  video
-                } secondary: {
-                  controls
-                }.arrangementViewStyle(.split)
-              } else {
+              // Keep the same video surface in the hierarchy when a division
+              // activates or disappears. Replacing it can detach AVKit/PiP or
+              // the VLC drawable even though PlaybackSession itself survives.
+              let divided = !proxy.reservedRegions(kind: .division).isEmpty
+              let axes: Axis.Set = divided ? [.horizontal, .vertical] : []
+              ArrangementView {
                 video
-              }
+              } secondary: {
+                controls
+              }.arrangementViewStyle(.split.axes(axes))
             }
           } else {
             video
@@ -88,34 +89,46 @@ struct PlayerScreen: View {
       }
       if let failure = session.failure { Text(failure).padding().background(.regularMaterial) }
       if session.engine == .vlc {
-        HStack {
-          Button {
-            session.seek(session.position - 15)
-          } label: {
-            Label("−15", systemImage: "gobackward.15")
+        #if os(tvOS)
+          transportControls.padding().modifier(PlayerGlass()).padding()
+        #else
+          ViewThatFits(in: .horizontal) {
+            transportControls
+            transportControls.labelStyle(.iconOnly)
           }
-          Button {
-            session.setPlaying(!session.playbackRequested)
-          } label: {
-            Label(
-              model.text(
-                session.playbackRequested ? "Pause" : "Play",
-                session.playbackRequested ? "Pause" : "Wiedergabe"),
-              systemImage: session.playbackRequested ? "pause.fill" : "play.fill")
-          }
-          Button {
-            session.seek(session.position + 15)
-          } label: {
-            Label("+15", systemImage: "goforward.15")
-          }
-          Button {
-            menu = true
-          } label: {
-            Label(model.text("Options", "Optionen"), systemImage: "slider.horizontal.3")
-          }
-        }.padding().modifier(PlayerGlass()).padding()
+          .buttonStyle(PlayerTransportButtonStyle())
+          .padding(8).modifier(PlayerGlass()).padding(8)
+        #endif
       }
     }.frame(maxWidth: .infinity, maxHeight: .infinity)
+  }
+  var transportControls: some View {
+    HStack(spacing: 8) {
+      Button {
+        session.seek(session.position - 15)
+      } label: {
+        Label("−15", systemImage: "gobackward.15")
+      }.accessibilityLabel(model.text("Back 15 seconds", "15 Sekunden zurück"))
+      Button {
+        session.setPlaying(!session.playbackRequested)
+      } label: {
+        Label(
+          model.text(
+            session.playbackRequested ? "Pause" : "Play",
+            session.playbackRequested ? "Pause" : "Wiedergabe"),
+          systemImage: session.playbackRequested ? "pause.fill" : "play.fill")
+      }
+      Button {
+        session.seek(session.position + 15)
+      } label: {
+        Label("+15", systemImage: "goforward.15")
+      }.accessibilityLabel(model.text("Forward 15 seconds", "15 Sekunden vor"))
+      Button {
+        menu = true
+      } label: {
+        Label(model.text("Options", "Optionen"), systemImage: "slider.horizontal.3")
+      }
+    }
   }
   var controls: some View {
     Form {
@@ -136,6 +149,8 @@ struct PlayerScreen: View {
           Spacer()
           Button("+15 s") { session.seek(session.position + 15) }
         }
+        // Automatic Form row actions can invoke both buttons from one tap.
+        .buttonStyle(.borderless)
         Text("\(Int(session.position)) / \(Int(session.duration)) s").monospacedDigit()
           .accessibilityIdentifier("player.position")
         #if !os(tvOS)
@@ -255,6 +270,14 @@ struct PlayerScreen: View {
         }
       }
     }
+  }
+}
+struct PlayerTransportButtonStyle: ButtonStyle {
+  func makeBody(configuration: Configuration) -> some View {
+    configuration.label
+      .frame(minWidth: 44, minHeight: 44)
+      .contentShape(Rectangle())
+      .opacity(configuration.isPressed ? 0.5 : 1)
   }
 }
 struct PlayerGlass: ViewModifier {

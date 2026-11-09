@@ -1,6 +1,8 @@
 # Native Apple: test evidence and handoff
 
-Status: **draft / no native release acceptance**, 24 October 2026.
+Status: **draft / no native release acceptance**. Original evidence: 24 October 2026.
+See the [9 November Duo follow-up](native-duo.md#follow-up-validation--9-november-2026)
+for the persistent player layout, seek-row regression and current simulator results.
 Baseline: `aaf38e11d91b828c7d3aa2b5fd600271b18393f1`.
 Branch: `codex/native-apple-migration`; draft PR: https://github.com/iteufel/cinefern/pull/1.
 

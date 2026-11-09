@@ -119,7 +119,10 @@ by the synthetic playback fixture, not a DRM compatibility claim.
 
 The advanced controls are in a system toolbar and scrollable Form/sheet, not a
 fixed panel positioned beyond the right edge. A retained PlaybackSession owns the
-player independently of layout; source changes preserve position and pause state.
+player independently of layout. On iOS 27.1+, a persistent ArrangementView changes
+its split axes instead of replacing the video surface during fold transitions;
+source changes preserve position and pause state. VLC transport buttons fall back
+to accessible icons when their text labels do not fit.
 Sidecar SRT/VTT subtitles overlay the in-app surface; test their behavior in AVKit
 system fullscreen/PiP/AirPlay before promising them there. VLC embedded audio/subtitle menus use actual VLC track IDs, language preferences,
 and an explicit subtitle-off choice; embedded and sidecar subtitles are mutually
